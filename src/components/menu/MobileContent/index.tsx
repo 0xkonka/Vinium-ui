@@ -77,7 +77,7 @@ export default function MobileContent({ isActive, currentAccount }: MobileConten
       >
         <div className="MobileContent__content">
           <div className="MobileContent__top">
-            {/*<MarketSwitcher />*/}
+            <MarketSwitcher />
             <AddressInfo />
           </div>
 

@@ -168,7 +168,7 @@ export default function MarketSwitcher({ toTop, className, textButton }: MarketS
 
           &__button-content {
             color: ${currentTheme.white.hex};
-            background: ${currentTheme.darkBlue.hex};
+            background: none;
             &:hover {
               border-color: ${currentTheme.white.hex};
             }

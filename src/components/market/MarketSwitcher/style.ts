@@ -132,6 +132,7 @@ const staticStyles = css.global`
 
     &__content {
       width: 120px;
+      background:#000;
       @include respond-to(sm) {
         width: 180px;
       }
