@@ -1,0 +1,121 @@
+name: CI
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # build
+      - name: restore build
+        continue-on-error: true
+        id: restore
+        uses: actions/download-artifact@v2
+        with:
+          name: build_${{github.sha}}
+
+      - name: prepare env
+        if: steps.restore.outcome != 'success'
+        run: cp ${ENV:-'.github/.env.preview'} .env
+
+      - uses: ./.github/actions/build
+        if: steps.restore.outcome != 'success'
+
+      # compare size
+      - name: track size
+        run: npm run analyze -- --json stats-${{ github.sha }}.json
+
+      - name: download cached bundle size
+        uses: actions/cache@v2
+        with:
+          path: stats-master.json
+          key: stats-master
+
+      - uses: actions/github-script@v5
+        env:
+          HEAD: ${{ github.sha }}
+        with:
+          script: |
+            const script = require('./scripts/compare-size')
+            script({github, context})
+
+  cypress_test:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        market:
+          - main
+          - amm
+          - polygon
+          - avalanche
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: install
+        run: npm ci --prefer-offline --no-audit
+
+      - name: download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build_${{github.sha}}
+          path: build
+
+      - name: test
+        uses: cypress-io/github-action@v2
+        with:
+          headless: true
+          install: false
+          record: false
+          start: npm run start:prod
+          wait-on: 'http://localhost:3000'
+          command: npm run test:${{matrix.market}}
+        env:
+          CYPRESS_URL: 'http://localhost:3000'
+          CYPRESS_TENDERLY_ACCOUNT: ${{ secrets.TENDERLY_ACCOUNT }}
+          CYPRESS_TENDERLY_KEY: ${{ secrets.TENDERLY_KEY }}
+          CYPRESS_TENDERLY_PROJECT: ${{ secrets.TENDERLY_PROJECT }}
+
+      - name: upload screenshots
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-fail-screenshots-${{matrix.market}}
+          path: cypress/screenshots
+
+  upload:
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      uri: ${{ steps.pinata.outputs.uri }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build_${{github.sha}}
+          path: build
+
+      - name: pinata
+        id: pinata
+        uses: aave/pinata-action@v1.1
+        with:
+          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
+          PINATA_SECRET_KEY: ${{ secrets.PINATA_SECRET_KEY }}
+          PIN_ALIAS: "${{ format('pull_request_{0}', github.head_ref) }}"
+          BUILD_LOCATION: './build'
+          CID_VERSION: 1

@@ -1,0 +1,61 @@
+name: Deploy
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy_ipfs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # build
+      - name: prepare env
+        run: cp ${ENV:-'.github/.env.staging'} .env
+
+      - uses: ./.github/actions/build
+
+      # track size
+      - name: track size
+        run: npm run analyze -- --json stats-master.json
+        shell: bash
+
+      - name: cache bundle size
+        uses: actions/cache@v2
+        with:
+          path: stats-master.json
+          key: stats-master
+
+      # upload to ipfs
+      - name: pinata
+        id: pinata
+        uses: aave/pinata-action@v1.1
+        with:
+          PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
+          PINATA_SECRET_KEY: ${{ secrets.PINATA_SECRET_KEY }}
+          PIN_ALIAS: staging
+          BUILD_LOCATION: './build'
+          CID_VERSION: 1
+
+      - name: crust
+        uses: crustio/ipfs-crust-action@18f5ab4e8496351cfaca10a55ced7119cb0fe677
+        continue-on-error: true
+        timeout-minutes: 2
+        with:
+          cid: ${{ steps.pinata.outputs.hash }}
+          seeds: ${{ secrets.CRUST_SEEDS }}
+
+      - name: deploy
+        id: deploy
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          HASH: ${{ steps.pinata.outputs.hash }}
+          CF_DEPLOYMENT_DOMAIN: staging-classic.aave.com
+        run: node scripts/update-cloudflare.js
