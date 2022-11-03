@@ -127,7 +127,7 @@ export default function LTVInfoModal({ visible, setVisible }: LTVInfoModalProps)
         <Caption
           title={intl.formatMessage(messages.liquidationOverview)}
           description={intl.formatMessage(messages.liquidationOverviewDescription)}
-          onWhiteBackground={true}
+          onWhiteBackground={false}
         />
 
         <div className="LTVInfoModal__content">
@@ -135,28 +135,28 @@ export default function LTVInfoModal({ visible, setVisible }: LTVInfoModalProps)
             title={
               <MaxLTVHelpModal
                 text={intl.formatMessage(messages.currentLTV)}
-                onWhiteBackground={true}
+                onWhiteBackground={false}
               />
             }
             withMargin={true}
           >
-            <ValuePercent value={loanToValue} onWhiteBackground={true} />
+            <ValuePercent value={loanToValue} onWhiteBackground={false} />
           </Row>
 
           <Row
             title={intl.formatMessage(messages.maximumLTV)}
             withMargin={true}
-            onWhiteBackground={true}
+            onWhiteBackground={false}
           >
-            <ValuePercent value={currentLoanToValue} onWhiteBackground={true} />
+            <ValuePercent value={currentLoanToValue} onWhiteBackground={false} />
           </Row>
 
           <Row
             title={intl.formatMessage(messages.liquidationThreshold)}
             withMargin={conditions}
-            onWhiteBackground={true}
+            onWhiteBackground={false}
           >
-            <ValuePercent value={currentLiquidationThreshold} onWhiteBackground={true} />
+            <ValuePercent value={currentLiquidationThreshold} onWhiteBackground={false} />
           </Row>
 
           {conditions && (
@@ -169,14 +169,14 @@ export default function LTVInfoModal({ visible, setVisible }: LTVInfoModalProps)
                   </div>
                 }
                 withMargin={true}
-                onWhiteBackground={true}
+                onWhiteBackground={false}
               >
                 <Value
-                  symbol="ETH"
+                  symbol="AVAX"
                   subSymbol="USD"
                   value={unitPrice}
                   subValue={unitPriceUsd}
-                  onWhiteBackground={true}
+                  onWhiteBackground={false}
                 />
               </Row>
 
@@ -192,14 +192,14 @@ export default function LTVInfoModal({ visible, setVisible }: LTVInfoModalProps)
                     {intl.formatMessage(!borrowIsStable ? messages.borrow : messages.collateral)}
                   </p>
                 }
-                onWhiteBackground={true}
+                onWhiteBackground={false}
               >
                 <Value
-                  symbol="ETH"
+                  symbol="AVAX"
                   subSymbol="USD"
                   value={liquidationPrice}
                   subValue={liquidationPriceUSD}
-                  onWhiteBackground={true}
+                  onWhiteBackground={false}
                 />
               </Row>
             </>
