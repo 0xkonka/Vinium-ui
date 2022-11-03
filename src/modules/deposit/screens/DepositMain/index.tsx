@@ -128,7 +128,7 @@ export default function DepositsMain() {
       <ScreenWrapper
         pageTitle={intl.formatMessage(defaultMessages.deposit)}
         isTitleOnDesktop={true}
-        withMobileGrayBg={true}
+        withMobileGrayBg={false}
       >
         {sm && (
           <AssetsFilterPanel

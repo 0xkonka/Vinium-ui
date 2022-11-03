@@ -50,7 +50,8 @@ export default function MobileCardWrapper({
       </style>
       <style jsx={true} global={true}>{`
         .MobileCardWrapper {
-          background: ${currentTheme.whiteElement.hex};
+          background: transparent;
+          border: 1px solid white;
 
           &__symbol--inner {
             border-bottom: 1px solid ${currentTheme.mainBg.hex};

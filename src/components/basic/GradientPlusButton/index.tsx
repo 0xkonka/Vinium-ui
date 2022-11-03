@@ -46,7 +46,8 @@ export default function GradientPlusButton({
       <style jsx={true}>{staticStyles}</style>
       <style jsx={true}>{`
         .GradientPlusButton {
-          background: ${gradientBackground};
+          background: gray;
+          margin-right: 10px;
           span {
             background: ${currentTheme.white.hex};
           }

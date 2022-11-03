@@ -118,7 +118,7 @@ export default function BorrowMain() {
       <ScreenWrapper
         pageTitle={intl.formatMessage(defaultMessages.borrow)}
         isTitleOnDesktop={true}
-        withMobileGrayBg={true}
+        withMobileGrayBg={false}
       >
         {sm && (
           <AssetsFilterPanel

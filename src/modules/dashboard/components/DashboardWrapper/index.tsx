@@ -17,7 +17,7 @@ export default function DashboardWrapper({ children }: DashboardWrapperProps) {
     <ScreenWrapper
       pageTitle={intl.formatMessage(messages.pageTitle)}
       className="DashboardWrapper"
-      withMobileGrayBg={true}
+      withMobileGrayBg={false}
     >
       <div className="DashboardWrapper__content">{children}</div>
 

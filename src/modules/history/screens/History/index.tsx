@@ -164,7 +164,7 @@ export default function History() {
     <ScreenWrapper
       pageTitle={intl.formatMessage(messages.pageTitle)}
       isTitleOnDesktop={true}
-      withMobileGrayBg={true}
+      withMobileGrayBg={false}
     >
       {loading ? (
         <Preloader withText={true} />

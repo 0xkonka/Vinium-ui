@@ -59,7 +59,7 @@ export function RewardConfirm() {
     <ScreenWrapper
       pageTitle={intl.formatMessage(messages.pageTitle)}
       isTitleOnDesktop={true}
-      withMobileGrayBg={true}
+      withMobileGrayBg={false}
     >
       <ContentWrapper withBackButton={true} withFullHeight={true}>
         <PoolTxConfirmationView

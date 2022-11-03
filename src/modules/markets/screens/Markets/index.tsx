@@ -103,7 +103,7 @@ export default function Markets() {
     <ScreenWrapper
       pageTitle={intl.formatMessage(messages.pageTitle)}
       className="Markets"
-      withMobileGrayBg={true}
+      withMobileGrayBg={false}
     >
       
       <TopPanelWrapper isCollapse={true} withoutCollapseButton={true}>

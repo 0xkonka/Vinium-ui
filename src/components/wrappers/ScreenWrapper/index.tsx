@@ -72,7 +72,6 @@ export default function ScreenWrapper({
         />
       )}
       {subTitle && <div className="ScreenWrapper__mobileSubTitle">{subTitle}</div>}
-
       {DISPLAY_BRIDGE_BANNER_PAGES.includes(location.pathname) && bridge && (
         <>
           <div className="ScreenWrapper__bannerWrapper">
@@ -81,13 +80,11 @@ export default function ScreenWrapper({
           <div className="ScreenWrapper__bannerSpacer" />
         </>
       )}
-
       {children}
-
       <div className="ScreenWrapper__mobile-bottomBorder">
         <p>i</p>
       </div>
-
+  
       <style jsx={true} global={true}>
         {staticStyles}
       </style>
@@ -98,7 +95,7 @@ export default function ScreenWrapper({
             background: ${withMobileGrayBg
               ? currentTheme.mainBg.hex
               : isCurrentThemeDark
-              ? currentTheme.mainBg.hex
+              ? 'transparent'
               : currentTheme.white.hex};
           }
 

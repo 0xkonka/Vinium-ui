@@ -76,7 +76,7 @@ function ReserveOverview({
         !(!sm && !poolReserve.borrowingEnabled) || (!sm && !isReserveHistoryGraphsVisible)
       }
       className="ReserveOverview"
-      withMobileGrayBg={true}
+      withMobileGrayBg={false}
     >
       <div className="ReserveOverview__content">
         <div className="ReserveOverview__mobileUserInformation-wrapper">

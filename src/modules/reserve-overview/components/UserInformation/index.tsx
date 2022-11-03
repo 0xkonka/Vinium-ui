@@ -316,7 +316,6 @@ export default function UserInformation({
           @import 'src/_mixins/screen-size';
 
           @include respond-to(sm) {
-            background: ${currentTheme.darkBlue.hex};
           }
 
           &__mobile-caption {
