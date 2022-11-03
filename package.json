@@ -48,7 +48,7 @@
     "front-matter": "^4.0.2",
     "graphql": "^15.6.1",
     "intl": "^1.2.5",
-    "paraswap": "^5.0.1",
+    "paraswap": "^5.2.0",
     "query-string": "^6.13.7",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
