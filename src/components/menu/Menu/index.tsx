@@ -95,7 +95,7 @@ export default function Menu({ title }: MenuProps) {
         </div>
 
         <div className="Menu__buttons-inner">
-         <MarketSwitcher />
+         {/*<MarketSwitcher />*/}
           <AddressInfo />
         </div>
       </div>

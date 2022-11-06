@@ -11,7 +11,7 @@ export enum CustomMarket {
   // proto_mumbai = 'proto_mumbai',
   // amm_kovan = 'amm_kovan',
   // amm_mainnet = 'amm_mainnet',
-  proto_fuji = 'proto_fuji',
+  // proto_fuji = 'proto_fuji',
 }
 
 export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType } = {
@@ -110,7 +110,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
   //     SWAP_COLLATERAL_ADAPTER: '0x35784a624D4FfBC3594f4d16fA3801FeF063241c',
   //   },
   // },
-  [CustomMarket.proto_fuji]: {
+  /*[CustomMarket.proto_fuji]: {
     chainId: ChainId.fuji,
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
@@ -129,7 +129,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       WETH_GATEWAY: '0xa70140E5C2385410063Bd996953156236CA7A9a2',
       FAUCET: '0x90E5BAc5A98fff59617080848959f44eACB4Cd7B',
     },
-  },
+  },*/
   [CustomMarket.proto_avalanche]: {
     chainId: ChainId.avalanche,
     logo: logos.aaveLogo,

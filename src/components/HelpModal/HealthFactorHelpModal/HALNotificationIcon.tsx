@@ -27,7 +27,7 @@ const marketToHALAaveVersionUrlParam = (market: CustomMarket): string | undefine
 
     // case CustomMarket.proto_kovan:
     // case CustomMarket.proto_mumbai:
-    case CustomMarket.proto_fuji:
+    // case CustomMarket.proto_fuji:
     // case CustomMarket.amm_kovan:
     // case CustomMarket.amm_mainnet:
       return undefined;
