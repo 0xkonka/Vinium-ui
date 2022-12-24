@@ -136,8 +136,8 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
     publicJsonRPCUrl: ['https://api.avax.network/ext/bc/C/rpc'],
     publicJsonRPCWSUrl: 'wss://api.avax.network/ext/bc/C/rpc',
     addresses: {
-      walletBalanceProvider: '0xfDa48D11eFFdd856D6b1f0213d5B5D6ddEeaB521',
-      uiPoolDataProvider: '0x3AA0495f31058dCC940e0C17BE10cf23F3C441e6',
+      walletBalanceProvider: '0x7369AF947aF3430384fd4489EA49235180dbd3E1',
+      uiPoolDataProvider: '0xee8048CA6ed522BcEAcBD97610Dc49253c19395b',
       //uiIncentiveDataProvider: '0x8070BC0ac70c87C16dff3a55Af34EA7D6c1ce25C',
     },
     protocolDataUrl: 'https://thegraph.com/hosted-service/subgraph/denisil/vinium',
