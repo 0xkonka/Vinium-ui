@@ -24,7 +24,6 @@ const navigation: Navigation[] = [
   {
     link: 'https://main.vinium.finance/#/markets',
     title: messages.markets,
-    absolute: true,
   },
   {
     link: '/markets',
