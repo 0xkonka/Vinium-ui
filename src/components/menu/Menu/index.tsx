@@ -77,7 +77,7 @@ export default function Menu({ title }: MenuProps) {
               <Link
                 className="MenuLink ButtonLink"
                 to={link.link}
-                inNewWindow={link.absolute}
+                inNewWindow={link.newTab}
                 absolute={link.absolute}
               >
                 <p>{intl.formatMessage(link.title)}</p>

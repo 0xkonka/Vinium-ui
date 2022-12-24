@@ -16,6 +16,7 @@ export interface Navigation {
   title: MessageDescriptor;
   hiddenWithoutWallet?: boolean;
   absolute?: boolean;
+  newTab?: boolean;
   onClick?: () => void;
   isVisible?: (data: MarketDataType) => boolean | undefined;
 }
@@ -24,6 +25,7 @@ const navigation: Navigation[] = [
   {
     link: 'https://main.vinium.finance/#/markets',
     title: messages.markets,
+    absolute: true,
   },
   {
     link: '/markets',
@@ -45,6 +47,7 @@ const navigation: Navigation[] = [
     link: 'https://docs.vinium.finance/',
     title: messages.docs,
     absolute: true,
+    newTab: true,
   },
  /* {
     link: '/asset-swap',
