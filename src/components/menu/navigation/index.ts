@@ -22,14 +22,14 @@ export interface Navigation {
 
 const navigation: Navigation[] = [
   {
-    link: '/markets',
+    link: 'https://main.vinium.finance/#/markets',
     title: messages.markets,
-  },
- /* {
-    link: 'https://grapefinanace.app',
-    title: messages.dmarkets,
     absolute: true,
-  },*/
+  },
+  {
+    link: '/markets',
+    title: messages.dmarkets,
+  },
   {
     link: '/dashboard',
     title: messages.dashboard,
