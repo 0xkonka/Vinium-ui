@@ -24,7 +24,7 @@ const marketToHALAaveVersionUrlParam = (market: CustomMarket): string | undefine
       return 'aaveavalanche';
     // case CustomMarket.proto_mainnet:
     //   return 'aavev2';
-
+    case CustomMarket.proto_ARB:
     // case CustomMarket.proto_kovan:
     // case CustomMarket.proto_mumbai:
     // case CustomMarket.proto_fuji:

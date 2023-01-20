@@ -160,4 +160,33 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
       logo: avalancheBridgeLogo,
     },
   },
+  [ChainId.arbitrum_one]: {
+    name: 'Arbitrum',
+    publicJsonRPCUrl: ['https://arb1.arbitrum.io/rpc'],
+    publicJsonRPCWSUrl: 'wss://arb1.arbitrum.io/rpc',
+    addresses: {
+      walletBalanceProvider: '0x66D8E2D9FBF90307c25d6c749F8129FbdC6e6d56',
+      uiPoolDataProvider: '0x394fdc975b2906FA85289806287492f8f563D7BB',
+      //uiIncentiveDataProvider: '0x2a1bbCC3681199D830A80849A52C83a2B3458924',
+    },
+    protocolDataUrl: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v2-avalanche',
+    cachingServerUrl: 'https://cache-api-avalanche.aave.com/graphql',
+    cachingWSServerUrl: 'wss://cache-api-avalanche.aave.com/graphql',
+    baseUniswapAdapter: '0x0',
+    baseAsset: 'ETH',
+    baseAssetWrappedAddress: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    // incentives hardcoded information
+    rewardTokenSymbol: 'ETH',
+    rewardTokenAddress: API_ETH_MOCK_ADDRESS,
+    rewardTokenDecimals: 18,
+    explorerLink: 'https://arbiscan.io/',
+    rpcOnly: false,
+    usdMarket: true,
+    bridge: {
+      brandColor: '232, 65, 66',
+      name: 'Avalanche Bridge',
+      url: 'https://bridge.avax.network/',
+      logo: avalancheBridgeLogo,
+    },
+  }
 } as const;
