@@ -6,7 +6,7 @@ import * as logos from './images';
 export enum CustomMarket {
   // proto_kovan = 'proto_kovan',
   // proto_mainnet = 'proto_mainnet',
-  proto_avalanche = 'proto_avalanche',
+  //proto_avalanche = 'proto_avalanche',
   // proto_matic = 'proto_matic',
   // proto_mumbai = 'proto_mumbai',
   // amm_kovan = 'amm_kovan',
@@ -130,7 +130,8 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       WETH_GATEWAY: '0xa70140E5C2385410063Bd996953156236CA7A9a2',
       FAUCET: '0x90E5BAc5A98fff59617080848959f44eACB4Cd7B',
     },
-  },*/
+  },
+  
   [CustomMarket.proto_avalanche]: {
     chainId: ChainId.avalanche,
     logo: logos.aaveLogo,
@@ -147,7 +148,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       WETH_GATEWAY: '0x87EDF69FF8912CfF318FEAd777594B207eA47ada',
       //SWAP_COLLATERAL_ADAPTER: '0x2EcF2a2e74B19Aab2a62312167aFF4B78E93B6C5',
     },
-  },
+  },*/
   [CustomMarket.proto_ARB]: {
     chainId: ChainId.arbitrum_one,
     logo: logos.aaveLogo,
