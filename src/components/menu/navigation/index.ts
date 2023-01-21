@@ -27,11 +27,6 @@ const navigation: Navigation[] = [
     title: messages.markets,
   },
   {
-    link: 'https://isolated.vinium.finance/#/markets',
-    title: messages.dmarkets,
-    absolute: true,
-  },
-  {
     link: '/dashboard',
     title: messages.dashboard,
   },
@@ -44,7 +39,7 @@ const navigation: Navigation[] = [
     title: messages.borrow,
   },
   {
-    link: 'https://docs.vinium.finance/',
+    link: '#',
     title: messages.docs,
     absolute: true,
     newTab: true,
