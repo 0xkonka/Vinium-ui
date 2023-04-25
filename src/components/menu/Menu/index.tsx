@@ -105,7 +105,7 @@ export default function Menu({ title }: MenuProps) {
       </style>
       <style jsx={true} global={true}>{`
         .Menu {
-          background: #000;
+          background: transparent;
           &:after {
             background: none;
           }
@@ -119,7 +119,7 @@ export default function Menu({ title }: MenuProps) {
         .MenuLink p{ 
           &:hover,
           &:active{
-            color:#FF002E;
+            color:#216999;
           }
       }
       `}</style>

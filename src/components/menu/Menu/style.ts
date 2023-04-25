@@ -6,7 +6,7 @@ const staticStyles = css.global`
   @import 'src/_mixins/screen-size';
 
   .Menu {
-    background: #000;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -16,8 +16,8 @@ const staticStyles = css.global`
     height: 50px;
     .Menu__logo-inner {
       img {
-        width: 150px;
-        height: 30px;
+        width: auto;
+        height: 40px;
       }
     }
     @include respond-to(sm) {

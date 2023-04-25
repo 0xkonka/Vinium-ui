@@ -11,7 +11,7 @@ import messages from './messages';
 import staticStyles from './style';
 
 import background from '../../../images/background.svg';
-import backgroundDark from '../../../images/01.png';
+import backgroundDark from '../../../images/05.png';
 
 export interface ScreensWrapperProps {
   children: ReactNode;
@@ -69,6 +69,7 @@ export default function ScreensWrapper({ children }: ScreensWrapperProps) {
 
       <Footer inside={true} />
       <img
+        style={{ opacity: 0.5}}
         className="ScreensWrapper__background"
         src={isCurrentThemeDark ? backgroundDark : background}
         alt=""

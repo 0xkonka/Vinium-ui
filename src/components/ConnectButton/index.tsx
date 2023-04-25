@@ -44,7 +44,7 @@ export default function ConnectButton({ className, size = 'normal' }: ConnectBut
 
           &:before,
           &:after {
-            background: linear-gradient(to right,#bd2626,#421787,#1c1ab7,#870e0e);
+            background: linear-gradient(to right,#B5DCF7,#7AB3DA,#2C79AC,#124E78);
           }
 
           &__inner {

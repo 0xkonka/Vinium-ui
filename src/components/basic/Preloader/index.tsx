@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { useThemeContext } from '@aave/aave-ui-kit';
 
 import background from '../../../images/background.svg';
-import backgroundDark from '../../../images/grid.png';
+import backgroundDark from '../../../images/05.png';
 
 import messages from './messages';
 import staticStyles from './style';
@@ -68,10 +68,11 @@ export default function Preloader({
 
       {withBackground && (
         <img
+          style={{ opacity: 0.5 }}
           className="Preloader__background"
           src={isCurrentThemeDark ? backgroundDark : background}
           alt=""
-      />
+        />
       )}
 
       <style jsx={true} global={true}>
@@ -81,7 +82,7 @@ export default function Preloader({
         .Preloader {
           &__withBackground {
             background: #000;
-            z-index:1;
+            z-index: 1;
           }
 
           &__text {
@@ -119,7 +120,7 @@ export default function Preloader({
             }
           }
         }
-      
+
         @keyframes animation {
           0% {
             opacity: 0;

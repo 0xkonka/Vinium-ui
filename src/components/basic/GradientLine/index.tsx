@@ -23,7 +23,7 @@ export default function GradientLine({ height }: GradientLineProps) {
           width: 100%;
           height: ${height || 1}px;
           display: block;
-          background: linear-gradient(to right,#bd2626,#421787,#1c1ab7,#870e0e);
+          background: linear-gradient(to right,#B5DCF7,#7AB3DA,#2C79AC,#124E78);
         }
       `}</style>
     </span>
