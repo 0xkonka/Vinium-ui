@@ -46,7 +46,7 @@ export default function WalletCard({
         .WalletCard {
           &:hover {
             &:after {
-              background: #FF002E;
+              background: #216999;
             }
           }
           &:disabled {

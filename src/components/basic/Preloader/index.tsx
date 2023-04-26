@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { useThemeContext } from '@aave/aave-ui-kit';
 
 import background from '../../../images/background.svg';
-import backgroundDark from '../../../images/grid.png';
+import backgroundDark from '../../../images/05.png';
 
 import messages from './messages';
 import staticStyles from './style';

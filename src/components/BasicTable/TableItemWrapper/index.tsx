@@ -46,12 +46,12 @@ export default function TableItemWrapper({
           border: 1px solid #999;
           color: ${currentTheme.darkBlue.hex};
           &:hover {
-            box-shadow: 0 0 9px 0 #FF002E;
+            box-shadow: 0 0 9px 0 #216999;
             
           }
           &:active {
             box-shadow: none;
-            border-color: #FF002E;
+            border-color: #216999;
           }
         }
       `}</style>
