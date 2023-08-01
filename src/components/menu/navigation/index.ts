@@ -23,6 +23,12 @@ export interface Navigation {
 
 const navigation: Navigation[] = [
   {
+    link: 'https://vinium-bridge.vercel.app/',
+    title: messages.bridge,
+    absolute: true,
+    newTab: true,
+  },
+  {
     link: '/markets',
     title: messages.markets,
   },
@@ -49,7 +55,7 @@ const navigation: Navigation[] = [
     absolute: true,
     newTab: true,
   },
- /* {
+  /* {
     link: '/asset-swap',
     title: messages.swap,
     isVisible: isFeatureEnabled.liquiditySwap,

@@ -3,6 +3,7 @@ import { IntlShape, useIntl } from 'react-intl';
 import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
+import { ExternalProvider } from '@ethersproject/providers';
 
 import AddressModal from '../../components/AddressModal';
 import {
@@ -21,6 +22,12 @@ import {
 
 import messages from './messages';
 import { ChainId } from '@aave/contract-helpers';
+
+declare global {
+  interface Window {
+    ethereum?: ExternalProvider;
+  }
+}
 
 interface UserWalletData {
   availableAccounts: string[];
@@ -144,6 +151,34 @@ export function Web3Provider({
   // TODO: most probably useless, check it and remove
   const [showLedgerBanner, setLedgerBanner] = useState(false);
 
+  const switchRequest = async (connector: any) => {
+    const provider = await connector?.getProvider();
+
+    return provider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x' + ChainId.fuji.toString(16) }],
+    });
+  };
+
+  const switchNetwork = async (connector: any) => {
+    if (window.ethereum) {
+      try {
+        await switchRequest(connector);
+        console.log('switchRequest');
+      } catch (error) {
+        const err = error as any; // Typecasting error to CustomError
+        if (err.code === 4902) {
+          try {
+            await switchRequest(connector);
+          } catch (addError) {
+            console.log(error);
+          }
+        }
+        console.log(error);
+      }
+    }
+  };
+
   /** Handlers */
   const handleActivation = async (
     connectorName: AvailableWeb3Connectors,
@@ -157,6 +192,16 @@ export function Web3Provider({
     //TODO: maybe next line is useless
     localStorage.setItem('preferredChainId', network as unknown as string);
     try {
+      const connector = getWeb3Connector(
+        connectorName,
+        network,
+        availableNetworks,
+        connectorConfig
+      );
+      const chainId = await connector?.getChainId();
+      if (chainId !== '0x' + ChainId.fuji.toString(16)) {
+        await switchNetwork(connector);
+      }
       await activate(
         getWeb3Connector(connectorName, network, availableNetworks, connectorConfig),
         () => {},

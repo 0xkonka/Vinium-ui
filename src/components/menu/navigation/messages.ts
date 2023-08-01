@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
+  bridge: 'Bridge',
   markets: 'Main Markets',
   dmarkets: 'Isolated Markets',
   dashboard: 'Dashboard',

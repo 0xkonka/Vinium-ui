@@ -20,16 +20,17 @@ const marketToHALAaveVersionUrlParam = (market: CustomMarket): string | undefine
   switch (market) {
     // case CustomMarket.proto_matic:
     //   return 'aavepolygon';
-    case CustomMarket.proto_avalanche:
-      return 'aaveavalanche';
+    // case CustomMarket.proto_avalanche:
+    //   return 'aaveavalanche';
     // case CustomMarket.proto_mainnet:
     //   return 'aavev2';
 
     // case CustomMarket.proto_kovan:
     // case CustomMarket.proto_mumbai:
-    // case CustomMarket.proto_fuji:
-    // case CustomMarket.amm_kovan:
-    // case CustomMarket.amm_mainnet:
+    case CustomMarket.proto_fuji:
+      return 'aavefuji';
+      // case CustomMarket.amm_kovan:
+      // case CustomMarket.amm_mainnet:
       return undefined;
 
     default:

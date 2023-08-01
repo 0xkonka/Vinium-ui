@@ -6,12 +6,12 @@ import * as logos from './images';
 export enum CustomMarket {
   // proto_kovan = 'proto_kovan',
   // proto_mainnet = 'proto_mainnet',
-  proto_avalanche = 'proto_avalanche',
+  // proto_avalanche = 'proto_avalanche',
   // proto_matic = 'proto_matic',
   // proto_mumbai = 'proto_mumbai',
   // amm_kovan = 'amm_kovan',
   // amm_mainnet = 'amm_mainnet',
-  // proto_fuji = 'proto_fuji',
+  proto_fuji = 'proto_fuji',
 }
 
 export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType } = {
@@ -110,7 +110,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
   //     SWAP_COLLATERAL_ADAPTER: '0x35784a624D4FfBC3594f4d16fA3801FeF063241c',
   //   },
   // },
-  /*[CustomMarket.proto_fuji]: {
+  [CustomMarket.proto_fuji]: {
     chainId: ChainId.fuji,
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
@@ -129,22 +129,22 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       WETH_GATEWAY: '0xa70140E5C2385410063Bd996953156236CA7A9a2',
       FAUCET: '0x90E5BAc5A98fff59617080848959f44eACB4Cd7B',
     },
-  },*/
-  [CustomMarket.proto_avalanche]: {
-    chainId: ChainId.avalanche,
-    logo: logos.aaveLogo,
-    activeLogo: logos.aaveActiveLogo,
-    subLogo: logos.avalanche,
-    aTokenPrefix: 'Vi',
-    enabledFeatures: {
-      liquiditySwap: false,
-      incentives: false,
-    },
-    addresses: {
-      LENDING_POOL_ADDRESS_PROVIDER: '0xAb534e276FAE6b2f3b30Eb3fcbb495304d808603'.toLowerCase(),
-      LENDING_POOL: '0xc246579105cd52a40C0E654CAdEB34c39F2dbe3f',
-      WETH_GATEWAY: '0x87EDF69FF8912CfF318FEAd777594B207eA47ada',
-      //SWAP_COLLATERAL_ADAPTER: '0x2EcF2a2e74B19Aab2a62312167aFF4B78E93B6C5',
-    },
   },
+  // [CustomMarket.proto_avalanche]: {
+  //   chainId: ChainId.avalanche,
+  //   logo: logos.aaveLogo,
+  //   activeLogo: logos.aaveActiveLogo,
+  //   subLogo: logos.avalanche,
+  //   aTokenPrefix: 'Vi',
+  //   enabledFeatures: {
+  //     liquiditySwap: false,
+  //     incentives: false,
+  //   },
+  //   addresses: {
+  //     LENDING_POOL_ADDRESS_PROVIDER: '0xAb534e276FAE6b2f3b30Eb3fcbb495304d808603'.toLowerCase(),
+  //     LENDING_POOL: '0xc246579105cd52a40C0E654CAdEB34c39F2dbe3f',
+  //     WETH_GATEWAY: '0x87EDF69FF8912CfF318FEAd777594B207eA47ada',
+  //     //SWAP_COLLATERAL_ADAPTER: '0x2EcF2a2e74B19Aab2a62312167aFF4B78E93B6C5',
+  //   },
+  // },
 } as const;
