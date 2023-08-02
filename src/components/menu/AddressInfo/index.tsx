@@ -66,9 +66,9 @@ export default function AddressInfo() {
               onClick={() => setVisible(!visible)}
               type="button"
             >
-              <p>{networkName}</p>
-              <span>
-                {ensNameAbbreviated ? ensNameAbbreviated : textCenterEllipsis(currentAccount, 4, 4)}
+              <p style={{ fontSize: '15px' }}>{networkName}</p>
+              <span className="AddressInfo__span">
+                {ensNameAbbreviated ? ensNameAbbreviated : textCenterEllipsis(currentAccount, 6, 4)}
               </span>
             </button>
           }
@@ -83,7 +83,7 @@ export default function AddressInfo() {
               {ensName ? <p className="AddressInfo__content-ens">{ensName}</p> : <></>}
             </div>
 
-           {/* <Link
+            {/* <Link
               to="/history"
               className="AddressInfo__contentButton ButtonLink"
               onClick={() => {
@@ -126,15 +126,22 @@ export default function AddressInfo() {
       <style jsx={true} global={true}>{`
         .AddressInfo {
           &__button {
-            background: #000;
+            // background: #051a2b;
             color: ${currentTheme.white.hex};
-            &:hover {
-              border-color: ${currentTheme.white.hex};
-            }
+            // &:hover {
+            //   border-color: ${currentTheme.white.hex};
+            // }
           }
 
-          &__buttonActive {
-            border-color: ${currentTheme.white.hex};
+          // &__buttonActive {
+          //   border-color: ${currentTheme.white.hex};
+          // }
+
+          &__span {
+            font-size: 15px;
+            &:hover {
+              color: #2ebcc6;
+            }
           }
 
           &__content {

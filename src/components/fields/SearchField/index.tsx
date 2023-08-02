@@ -67,16 +67,19 @@ export default function SearchField({
         .SearchField {
           &:hover {
             &:after {
+              border-radius: 10px;
               border-color: ${currentTheme.primary.hex};
             }
           }
           &:after {
+            border-radius: 10px;
             border-color: ${currentTheme.textDarkBlue.hex};
           }
         }
 
         .SearchFieldFocused {
           &:after {
+            border-radius: 10px;
             border-color: ${currentTheme.primary.hex};
           }
         }

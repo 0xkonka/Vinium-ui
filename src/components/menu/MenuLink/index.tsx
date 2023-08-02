@@ -11,15 +11,24 @@ interface MenuLinkProps {
   to: string;
   title: string;
   isActive: boolean;
+  inNewWindow?: boolean;
+  absolute?: boolean;
   hidden?: boolean;
 }
 
-export default function MenuLink({ to, title, isActive, hidden }: MenuLinkProps) {
+export default function MenuLink({
+  to,
+  title,
+  isActive,
+  inNewWindow,
+  absolute,
+  hidden,
+}: MenuLinkProps) {
   const { currentTheme } = useThemeContext();
 
   const activeGradient = gradient(
     230,
-    `${currentTheme.primary.rgb}, 1`,
+    `${currentTheme.secondary.rgb}, 1`,
     0,
     `${currentTheme.secondary.rgb}, 1`,
     100
@@ -28,6 +37,8 @@ export default function MenuLink({ to, title, isActive, hidden }: MenuLinkProps)
   return (
     <Link
       to={to}
+      inNewWindow={inNewWindow!}
+      absolute={absolute!}
       className={classNames('MenuLink ButtonLink', {
         MenuLink__active: isActive,
         MenuLink__hidden: hidden,

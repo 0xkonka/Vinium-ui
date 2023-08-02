@@ -325,8 +325,9 @@ export default function UserInformation({
           }
 
           &__info-wrapper {
-            background: #000000e8;
+            background: #0b141be8;
             border: 1px solid #999;
+            border-radius: 15px;
             &:after {
               background: ${currentTheme.white.hex};
             }

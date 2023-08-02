@@ -252,6 +252,7 @@ export default function ReserveInformation({
           &__line {
             color: ${currentTheme.textDarkBlue.hex};
             border: 1px solid ${currentTheme.textDarkBlue.hex};
+            border-radius: 10px;
           }
         }
       `}</style>

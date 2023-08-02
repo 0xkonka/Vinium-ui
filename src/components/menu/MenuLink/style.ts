@@ -27,11 +27,11 @@ const staticStyles = css.global`
       align-items: center;
       justify-content: center;
       @include respond-to(xl) {
-        font-size: $medium;
+        font-size: $large;
         padding: 17px 0;
       }
       @include respond-to(lg) {
-        font-size: $small;
+        font-size: $medium;
         padding: 18px 0;
       }
       p {

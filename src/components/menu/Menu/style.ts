@@ -93,6 +93,7 @@ const staticStyles = css.global`
         display: none;
       }
       ul {
+        // font-size: 20px;
         display: flex;
         align-items: center;
         .Menu__link-inner {

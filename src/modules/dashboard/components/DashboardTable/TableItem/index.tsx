@@ -47,7 +47,7 @@ export default function TableItem({ tokenSymbol, color, children, ...rest }: Tab
       </style>
       <style jsx={true} global={true}>{`
         .TableItem {
-          background: #000000e8;
+          background: #0b141be8;
           border: 1px solid #999;
         }
       `}</style>

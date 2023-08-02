@@ -396,15 +396,14 @@ export default function DepositBorrowTopPanel() {
           }
 
           &__topPanel-inner {
-            background: #000000e8;
+            background: #0b141be8;
             border-bottom: 1px solid #999;
-            border-left:1px solid #999;
-            border-right:1px solid #999;
+            border-left: 1px solid #999;
+            border-right: 1px solid #999;
           }
 
           &__topPanel-captionWrapper {
-            color: #000000e8;
-
+            color: #0b141be8;
           }
         }
       `}</style>

@@ -68,20 +68,22 @@ export default function Menu({ title }: MenuProps) {
                     (link.isVisible && !link.isVisible(currentMarketData)),
                 })}
                 key={index}
-              >{/*
+              >
                 <MenuLink
                   to={link.link}
                   title={intl.formatMessage(link.title)}
                   isActive={isActive(link.link)}
-                />*/}
-              <Link
+                  inNewWindow={link.newTab}
+                  absolute={link.absolute}
+                />
+                {/* <Link
                 className="MenuLink ButtonLink"
                 to={link.link}
                 inNewWindow={link.newTab}
                 absolute={link.absolute}
               >
                 <p>{intl.formatMessage(link.title)}</p>
-              </Link>
+              </Link> */}
               </li>
             ))}
             {/*<li className="Menu__link-inner">
@@ -95,7 +97,7 @@ export default function Menu({ title }: MenuProps) {
         </div>
 
         <div className="Menu__buttons-inner">
-         {/*<MarketSwitcher />*/}
+          {/*<MarketSwitcher />*/}
           <AddressInfo />
         </div>
       </div>
@@ -116,12 +118,12 @@ export default function Menu({ title }: MenuProps) {
             }
           }
         }
-        .MenuLink p{ 
+        .MenuLink p {
           &:hover,
-          &:active{
-            color:#216999;
+          &:active {
+            color: #216999;
           }
-      }
+        }
       `}</style>
     </header>
   );

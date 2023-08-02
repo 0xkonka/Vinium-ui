@@ -48,11 +48,12 @@ export default function ContentWrapper({
       <style jsx={true}>{`
         .ContentWrapper {
           color: ${currentTheme.darkBlue.hex};
-          background: #000000e8;
-
+          background: #0b141be8;
+          border-radius: 15px;
           &__back-button {
             color: ${currentTheme.textDarkBlue.hex};
             border: 1px solid ${currentTheme.textDarkBlue.hex};
+            border-radius: 8px;
             &:hover {
               background: ${currentTheme.textDarkBlue.hex};
               color: ${currentTheme.whiteElement.hex};

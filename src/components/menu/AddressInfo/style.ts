@@ -39,7 +39,7 @@ const staticStyles = css.global`
       }
 
       span {
-        opacity: 0.5;
+        opacity: 0.8;
       }
     }
 

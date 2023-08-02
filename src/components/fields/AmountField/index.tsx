@@ -138,6 +138,7 @@ export default function AmountField({
           }
 
           &__wrapper {
+            border-radius: 10px;
             border: 1px solid
               ${isCurrentThemeDark
                 ? sm

@@ -68,10 +68,11 @@ export default function DefaultButton({
         @import 'src/_mixins/screen-size';
 
         .DefaultButton {
+          border-radius: 10px;
           color: ${currentTheme.white.hex};
 
           &__primary {
-            background: #000;
+            background: #1d577e;
             border-color: #fff;
           }
           &__secondary {

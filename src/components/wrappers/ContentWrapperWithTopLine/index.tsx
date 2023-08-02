@@ -84,8 +84,9 @@ export default function ContentWrapperWithTopLine({
           }
 
           &__content {
-            background: #000000d4;
-            border:1px solid #999;
+            background: #0b141be8;
+            border: 1px solid #999;
+            border-radius: 15px;
           }
         }
       `}</style>
