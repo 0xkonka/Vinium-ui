@@ -400,6 +400,8 @@ export default function DepositBorrowTopPanel() {
             border-bottom: 1px solid #999;
             border-left: 1px solid #999;
             border-right: 1px solid #999;
+            border-end-end-radius: 15px;
+            border-end-start-radius: 15px;
           }
 
           &__topPanel-captionWrapper {

@@ -52,6 +52,7 @@ export default function MobileCardWrapper({
         .MobileCardWrapper {
           background: transparent;
           border: 1px solid white;
+          border-radius: 15px;
 
           &__symbol--inner {
             border-bottom: 1px solid ${currentTheme.mainBg.hex};

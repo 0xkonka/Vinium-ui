@@ -49,6 +49,7 @@ export default function TableItem({ tokenSymbol, color, children, ...rest }: Tab
         .TableItem {
           background: #0b141be8;
           border: 1px solid #999;
+          border-radius: 10px;
         }
       `}</style>
     </div>
