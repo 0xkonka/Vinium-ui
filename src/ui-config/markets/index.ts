@@ -81,7 +81,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.polygon,
-    aTokenPrefix: 'AM',
+    aTokenPrefix: 'viniMumbai',
     enabledFeatures: {
       incentives: true,
       faucet: true,
@@ -93,7 +93,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       FAUCET: '0x0b3C23243106A69449e79C14c58BB49E358f9B10',
     },
   },
-  // [CustomMarket.proto_matic]: {
+  // [CustomMarket.proto_matic]
   //   chainId: ChainId.polygon,
   //   logo: logos.aaveLogo,
   //   activeLogo: logos.aaveActiveLogo,
@@ -115,7 +115,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.avalanche,
-    aTokenPrefix: 'AAVA',
+    aTokenPrefix: 'viniFuji',
     enabledFeatures: {
       faucet: true,
       incentives: true,
@@ -135,7 +135,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.avalanche,
-    aTokenPrefix: 'Vi',
+    aTokenPrefix: 'viniAvax',
     enabledFeatures: {
       liquiditySwap: false,
       incentives: false,
