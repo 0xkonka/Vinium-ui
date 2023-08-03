@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
 import { IntlShape, useIntl } from 'react-intl';
-import { useWeb3React } from '@web3-react/core';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
 import { ExternalProvider } from '@ethersproject/providers';
@@ -156,7 +156,7 @@ export function Web3Provider({
 
     return provider.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x' + ChainId.fuji.toString(16) }],
+      params: [{ chainId: '0x' + ChainId.avalanche.toString(16) }],
     });
   };
 
@@ -189,19 +189,11 @@ export function Web3Provider({
     let isSuccessful = false;
     setActivation(true);
     console.log(network);
+    console.log('availableNetworks', availableNetworks);
+    console.log('connectorConfig', connectorConfig);
     //TODO: maybe next line is useless
     localStorage.setItem('preferredChainId', network as unknown as string);
     try {
-      const connector = getWeb3Connector(
-        connectorName,
-        network,
-        availableNetworks,
-        connectorConfig
-      );
-      const chainId = await connector?.getChainId();
-      if (chainId !== '0x' + ChainId.fuji.toString(16)) {
-        await switchNetwork(connector);
-      }
       await activate(
         getWeb3Connector(connectorName, network, availableNetworks, connectorConfig),
         () => {},
@@ -209,9 +201,22 @@ export function Web3Provider({
       );
       setCurrentProviderName(connectorName);
       isSuccessful = true;
-    } catch (e) {
-      console.log('error on activation', e);
-      disconnectWallet(e);
+    } catch (error) {
+      if (error instanceof UnsupportedChainIdError) {
+        // switch network
+        const connector = getWeb3Connector(
+          connectorName,
+          network,
+          availableNetworks,
+          connectorConfig
+        );
+        const chainId = await connector?.getChainId();
+        if (chainId !== '0x' + ChainId.avalanche.toString(16)) {
+          await switchNetwork(connector);
+        }
+      }
+      console.log('error on activation', error);
+      disconnectWallet(error);
     }
     setActivation(false);
     return isSuccessful;
