@@ -66,6 +66,15 @@ const ADD_CONFIG: {
       decimals: 18,
     },
   },
+  [ChainId.goerli]: {
+    name: 'Ethereum Goerli',
+    explorerUrls: ['https://goerli.etherscan.io'],
+    nativeCurrency: {
+      name: 'Goerli',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+  },
 };
 
 export default function NetworkMismatch({
