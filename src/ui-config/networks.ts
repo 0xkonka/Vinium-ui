@@ -62,9 +62,9 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
     publicJsonRPCWSUrl:
       'wss://goerli.infura.io/ws/v3/42a6af90b424d4e083c87620551311f0d39d784f8a91223893d2fba5d6dbdaa7',
     addresses: {
-      walletBalanceProvider: '0xB053d4869Ca23908306Bf9C3009d78E8826D0ae7',
+      walletBalanceProvider: '0xf9C577b26bD5e677777896eBE6A0AA0eD90bb4DB',
       uiPoolDataProvider: '0x84A63CDC0aa7e851373C9DD1CB824E2c6e7d4f49',
-      uiIncentiveDataProvider: '0xC20bda162d06431ab8891C9810a37F5585EA5147',
+      // uiIncentiveDataProvider: '0xC20bda162d06431ab8891C9810a37F5585EA5147',
     },
     protocolDataUrl: 'https://thegraph.com/hosted-service/subgraph/letteldream/vinium-goerli',
     baseUniswapAdapter: '0x0',
