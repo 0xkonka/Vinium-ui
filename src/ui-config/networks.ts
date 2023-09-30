@@ -62,7 +62,7 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
     publicJsonRPCWSUrl:
       'wss://goerli.infura.io/ws/v3/42a6af90b424d4e083c87620551311f0d39d784f8a91223893d2fba5d6dbdaa7',
     addresses: {
-      walletBalanceProvider: '0xf9C577b26bD5e677777896eBE6A0AA0eD90bb4DB',
+      walletBalanceProvider: '0x8765e192d5f9c06275Fd5De78C12d8bA05D05f6f',
       uiPoolDataProvider: '0x84A63CDC0aa7e851373C9DD1CB824E2c6e7d4f49',
       // uiIncentiveDataProvider: '0xC20bda162d06431ab8891C9810a37F5585EA5147',
     },

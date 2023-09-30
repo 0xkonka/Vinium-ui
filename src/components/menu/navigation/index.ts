@@ -55,7 +55,7 @@ const navigation: Navigation[] = [
     absolute: true,
     newTab: true,
   },
-  /* {
+  {
     link: '/asset-swap',
     title: messages.swap,
     isVisible: isFeatureEnabled.liquiditySwap,
@@ -64,7 +64,7 @@ const navigation: Navigation[] = [
     link: '/staking',
     title: messages.stake,
     isVisible: () => !!stakeConfig,
-  }*/
+  },
 ];
 
 export const moreNavigation: Navigation[] = [...moreMenuItems, ...moreMenuExtraItems];
