@@ -21,6 +21,7 @@ import {
   Dashboard,
   Governance,
   Staking,
+  Manage,
   AssetSwap,
 } from './modules';
 import SwapBorrowRateModeConfirmation from './modules/swap/SwapBorrowRateModeConfirmation';
@@ -85,6 +86,8 @@ function ModulesWithMenu() {
           <Route path="/governance" component={Governance} key="Governance" />,
         ]}
         {!!stakeConfig && [<Route path="/staking" component={Staking} key="Staking" />]}
+
+        <Route path="/manage" component={Manage} key="Reward" />
 
         <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" />
         <Route

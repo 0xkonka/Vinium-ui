@@ -9,6 +9,7 @@ import Faucet from './faucet';
 import Dashboard from './dashboard';
 import Governance from './governance';
 import Staking from './staking';
+import Manage from './manage';
 import AssetSwap from './asset-swap';
 
 export {
@@ -23,5 +24,6 @@ export {
   Dashboard,
   Governance,
   Staking,
+  Manage,
   AssetSwap,
 };

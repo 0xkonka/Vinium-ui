@@ -53,7 +53,7 @@ export function usePoolData(
       const reservesResponse = await poolDataProviderContract.getReservesHumanized(
         lendingPoolAddressProvider
       );
-      console.log('reservesResponse >>>>>', reservesResponse);
+      // console.log('reservesResponse >>>>>', reservesResponse);
       setReserves(reservesResponse);
       setErrorReserves(false);
     } catch (e) {

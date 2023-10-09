@@ -151,7 +151,7 @@ export function StakeDataProvider({
     [Stake.aave]: computeStakeData(rawData[Stake.aave]),
     // [Stake.bpt]: computeStakeData(rawData[Stake.bpt]),
   };
-  // console.log('computedData', computedData)
+  console.log('computedData', computedData);
   const usdPriceEth = normalize((isRPCActive && usdPriceEthRpc) || usdPriceEthCached || '0', 18);
 
   return (

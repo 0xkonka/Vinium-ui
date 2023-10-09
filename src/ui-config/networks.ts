@@ -56,8 +56,9 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
   [ChainId.goerli]: {
     name: 'Ethereum Goerli',
     publicJsonRPCUrl: [
-      'https://eth-goerli.alchemyapi.io/v2/y6JWvczJyMCtx6wgho1QMqOrRFUoVadE',
+      'https://eth-goerli.g.alchemy.com/v2/demo',
       'https://ethereum-goerli.publicnode.com',
+      'https://goerli.blockpi.network/v1/rpc/public',
     ],
     publicJsonRPCWSUrl:
       'wss://goerli.infura.io/ws/v3/42a6af90b424d4e083c87620551311f0d39d784f8a91223893d2fba5d6dbdaa7',

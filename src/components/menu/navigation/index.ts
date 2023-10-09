@@ -50,6 +50,15 @@ const navigation: Navigation[] = [
     title: messages.borrow,
   },
   {
+    link: '/manage',
+    title: messages.manage,
+  },
+  {
+    link: '/staking',
+    title: messages.stake,
+    isVisible: () => !!stakeConfig,
+  },
+  {
     link: 'https://docs.vinium.finance/',
     title: messages.docs,
     absolute: true,
@@ -59,11 +68,6 @@ const navigation: Navigation[] = [
     link: '/asset-swap',
     title: messages.swap,
     isVisible: isFeatureEnabled.liquiditySwap,
-  },
-  {
-    link: '/staking',
-    title: messages.stake,
-    isVisible: () => !!stakeConfig,
   },
 ];
 

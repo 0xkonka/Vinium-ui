@@ -10,5 +10,6 @@ export default defineMessages({
   docs: 'Docs',
   swap: 'Swap',
   stake: 'Stake',
+  manage: 'Manage',
   governance: 'Governance',
 });

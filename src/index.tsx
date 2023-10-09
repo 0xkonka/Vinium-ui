@@ -38,6 +38,7 @@ import { PermissionProvider } from './libs/use-permissions/usePermissions';
 import { DynamicPoolDataProvider } from './libs/pool-data-provider';
 import { ConnectionStatusProvider } from './libs/connection-status-provider';
 import { IncentivesDataProvider } from './libs/pool-data-provider/hooks/use-incentives-data-context';
+import MultiFeeDistributionProviderWrapper from './components/MultiFeeDistributionProviderWrapper';
 
 initSentry();
 Modal.setAppElement('#root');
@@ -77,9 +78,11 @@ ReactDOM.render(
                               <StaticPoolDataProviderWrapper>
                                 <DynamicPoolDataProvider>
                                   <IncentivesDataProvider>
-                                    <TxBuilderProvider>
-                                      <App />
-                                    </TxBuilderProvider>
+                                    <MultiFeeDistributionProviderWrapper>
+                                      <TxBuilderProvider>
+                                        <App />
+                                      </TxBuilderProvider>
+                                    </MultiFeeDistributionProviderWrapper>
                                   </IncentivesDataProvider>
                                 </DynamicPoolDataProvider>
                               </StaticPoolDataProviderWrapper>
