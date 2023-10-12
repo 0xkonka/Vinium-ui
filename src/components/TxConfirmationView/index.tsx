@@ -31,7 +31,8 @@ import NetworkMismatch from './NetworkMismatch';
 
 import messages from './messages';
 import staticStyles from './style';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../helpers/chainID';
+
 
 export interface TxConfirmationViewProps {
   caption?: string;

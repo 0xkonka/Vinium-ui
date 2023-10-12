@@ -1,8 +1,9 @@
-import { ChainId } from '@aave/contract-helpers';
+
 import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/client';
 import React, { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useProtocolDataContext } from '../protocol-data-provider';
 import { getApolloClient } from './client-config';
+import { ChainId } from '../../helpers/chainID';
 
 const ApolloConfigContext = React.createContext<{ chainId?: ChainId }>({});
 

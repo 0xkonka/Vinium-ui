@@ -21,7 +21,7 @@ import { calculateHFAfterSwap } from '../../helpers';
 import defaultMessages from '../../../../defaultMessages';
 import messages from './messages';
 import { getAtokenInfo } from '../../../../helpers/get-atoken-info';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../../../helpers/chainID';
 
 interface QueryParams {
   fromAsset?: string;

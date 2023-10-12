@@ -2,7 +2,7 @@ import { API_ETH_MOCK_ADDRESS } from '@aave/protocol-js';
 import { BaseNetworkConfig } from '../helpers/config/types';
 import polygonBridgeLogo from './branding/images/polygonLogo.svg';
 import avalancheBridgeLogo from './branding/images/avalancheLogo.svg';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../helpers/chainID';
 
 export const networkConfigs: Record<string, BaseNetworkConfig> = {
   [ChainId.kovan]: {

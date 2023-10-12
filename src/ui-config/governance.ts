@@ -1,4 +1,4 @@
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from "../helpers/chainID";
 
 export interface GovernanceConfig {
   chainId: ChainId;

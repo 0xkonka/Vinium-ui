@@ -1,4 +1,5 @@
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from "../chainID";
+
 
 // walets config
 export const AUTHEREUM_API_KEY = process.env.REACT_APP_AUTHEREUM_API_KEY;

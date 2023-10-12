@@ -39,7 +39,7 @@ import { getAssetColor } from '../../../../helpers/config/assets-config';
 
 import messages from './messages';
 import staticStyles from './style';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../../../helpers/chainID';
 
 export default function Dashboard() {
   const intl = useIntl();

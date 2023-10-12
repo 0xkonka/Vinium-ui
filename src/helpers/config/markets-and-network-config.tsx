@@ -1,4 +1,4 @@
-import { ChainId } from '@aave/contract-helpers';
+
 
 import { networkConfigs as _networkConfigs } from '../../ui-config/networks';
 import { CustomMarket, marketsData as _marketsData } from '../../ui-config/markets/index';
@@ -10,6 +10,7 @@ import {
   BaseNetworkConfig,
 } from './types';
 import { ethers } from 'ethers';
+import { ChainId } from '../chainID';
 
 export type Pool = {
   address: string;

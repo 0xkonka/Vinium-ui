@@ -1,7 +1,6 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { useThemeContext } from '@aave/aave-ui-kit';
-import { ChainId } from '@aave/contract-helpers';
 import messages from './messages';
 import staticStyles from './style';
 
@@ -20,6 +19,7 @@ import { useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
 import NetworkMismatch from '../../../../components/TxConfirmationView/NetworkMismatch';
 import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
 import ManageMain from '../ManageMain';
+import { ChainId } from '../../../../helpers/chainID';
 
 export default function ManageOverview() {
   const intl = useIntl();

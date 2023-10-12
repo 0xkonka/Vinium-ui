@@ -21,7 +21,7 @@ import {
 } from '../referral-handler';
 
 import messages from './messages';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../helpers/chainID';
 
 declare global {
   interface Window {
@@ -225,6 +225,8 @@ export function Web3Provider({
   const handleNetworkChange = async (network: ChainId) => {
     setPreferredNetwork(network);
     localStorage.setItem('preferredChainId', network as unknown as string);
+    console.log('currentProviderName :>> ', currentProviderName);
+    console.log('library :>> ', library);
     if (currentProviderName && library) {
       return await handleActivation(
         currentProviderName,

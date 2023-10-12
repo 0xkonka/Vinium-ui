@@ -13,9 +13,10 @@ import { getNetworkConfig } from '../../../helpers/config/markets-and-network-co
 
 import messages from './messages';
 import staticStyles from './style';
-import { ChainId } from '@aave/contract-helpers';
+
 import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
+import { ChainId } from '../../../helpers/chainID';
 
 interface NetworkMismatchProps {
   neededChainId: ChainId;

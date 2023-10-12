@@ -5,7 +5,8 @@ import { AnimationArrow, DropdownWrapper, useThemeContext } from '@aave/aave-ui-
 import messages from './messages';
 import staticStyles from './style';
 import { getNetworkConfig } from '../../../../helpers/config/markets-and-network-config';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../../../helpers/chainID';
+
 
 interface SelectPreferredNetworkProps {
   preferredNetwork: ChainId;

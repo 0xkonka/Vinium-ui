@@ -1,5 +1,5 @@
-import { ChainId } from '@aave/contract-helpers';
 import { Stake } from '@aave/protocol-js';
+import { ChainId } from '../helpers/chainID';
 
 export interface StakeConfig {
   chainId: ChainId;

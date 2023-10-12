@@ -12,10 +12,14 @@ import { getAssetInfo, TokenIcon } from '../../../../helpers/config/assets-confi
 import staticStyles from './style';
 import { ChefIncentiveHumanized } from '../../../../libs/emission-reward-provider/hooks/use-chef-incentive-controller';
 import { Box, Button, Typography } from '@mui/material';
-import { ethers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import { useTxBuilderContext } from '../../../../libs/tx-provider';
 import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
 import { SpinLoader, useThemeContext } from '@aave/aave-ui-kit';
+import { useWeb3React } from '@web3-react/core';
+import { useProtocolDataContext } from '../../../../libs/protocol-data-provider';
+import { useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
+import { getDefaultChainId } from '../../../../helpers/config/markets-and-network-config';
 
 export interface MarketTableItemProps {
   id: string;
@@ -63,12 +67,30 @@ export default function MarketTableItem({
   viniumIncentive,
 }: MarketTableItemProps) {
   const history = useHistory();
-  const { currentAccount } = useUserWalletDataContext();
+  const { currentAccount, handleNetworkChange } = useUserWalletDataContext();
   const { chefIncentiveController } = useTxBuilderContext();
   const { currentTheme } = useThemeContext();
+
+  const { library: provider, chainId } = useWeb3React<providers.Web3Provider>();
+  const { chainId: currentMarketChainId, networkConfig } = useProtocolDataContext();
+  const { refresh, chainId: txChainId } = useStaticPoolDataContext();
+  const currentWalletChainId = chainId as number;
   const asset = getAssetInfo(currencySymbol);
 
   const [loading, setLoading] = useState(false);
+
+  let networkMismatch = false;
+  let neededChainId = getDefaultChainId();
+
+  if (currentMarketChainId !== currentWalletChainId) {
+    networkMismatch = true;
+    neededChainId = currentMarketChainId;
+  }
+
+  if (txChainId !== currentWalletChainId) {
+    networkMismatch = true;
+    neededChainId = txChainId;
+  }
 
   const handleClick = () => {
     history.push(`/reserve-overview/${underlyingAsset}-${id}`);
@@ -152,7 +174,17 @@ export default function MarketTableItem({
             {viniumIncentive && +viniumIncentive?.claimableReward !== 0 ? (
               <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Typography color={'white'}>{(+ethers.utils.formatEther(viniumIncentive?.claimableReward!)).toFixed(2)}</Typography>
-                {loading ? (
+                {networkMismatch ? (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log('neededChainId :>> ', neededChainId);
+                      handleNetworkChange(neededChainId);
+                    }}
+                  >
+                    Switch
+                  </Button>
+                ) : loading ? (
                   <SpinLoader className="DotStatus__loader" color={currentTheme.orange.hex} />
                 ) : (
                   <Button
@@ -166,7 +198,9 @@ export default function MarketTableItem({
                 )}
               </Box>
             ) : (
-              <Typography color={'white'} sx={{alignSelf:'start'}}>0</Typography>
+              <Typography color={'white'} sx={{ alignSelf: 'start' }}>
+                0
+              </Typography>
             )}
           </TableColumn>
 

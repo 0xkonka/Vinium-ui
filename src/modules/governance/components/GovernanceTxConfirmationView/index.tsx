@@ -4,7 +4,7 @@ import TxConfirmationView, {
   TxConfirmationViewProps,
 } from '../../../../components/TxConfirmationView';
 import { useGovernanceDataContext } from '../../../../libs/governance-provider';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../../../helpers/chainID';
 
 type GovernanceTxConfirmationViewProps = Omit<
   TxConfirmationViewProps,

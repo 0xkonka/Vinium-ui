@@ -7,8 +7,9 @@ import GradientText from '../../basic/GradientText';
 
 import messages from './messages';
 import staticStyles from './style';
-import { ChainId } from '@aave/contract-helpers';
+
 import { getNetworkConfig } from '../../../helpers/config/markets-and-network-config';
+import { ChainId } from '../../../helpers/chainID';
 
 interface MarketSelectButtonProps {
   onClick: () => void;

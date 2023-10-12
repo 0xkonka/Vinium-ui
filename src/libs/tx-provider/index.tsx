@@ -14,9 +14,9 @@ import { getContract } from '../utils';
 export interface TxBuilderContextInterface {
   lendingPool: LendingPool;
   faucetService: FaucetService;
-  multiFeeDistribution?: Contract;
-  chefIncentiveController?: Contract;
-  viniumContract?: Contract;
+  multiFeeDistribution?: '' | Contract | undefined;
+  chefIncentiveController?: '' | Contract | undefined;
+  viniumContract?: '' | Contract | undefined;
 }
 
 const TxBuilderContext = React.createContext({} as TxBuilderContextInterface);
@@ -33,36 +33,21 @@ export function TxBuilderProvider({ children }: PropsWithChildren<{}>) {
     WETH_GATEWAY: currentMarketData.addresses.WETH_GATEWAY,
   });
 
-  const faucetService = new FaucetService(
-    getProvider(currentChainId),
-    currentMarketData.addresses.FAUCET
-  );
+  const faucetService = new FaucetService(getProvider(currentChainId), currentMarketData.addresses.FAUCET);
 
-  const multiFeeDistribution = getContract(
-    currentMarketData.addresses.MULTIFEE_DISTRIBUTION!,
-    MultiFeeDistributionABI,
-    provider!,
-    currentAccount
-  );
+  const multiFeeDistribution =
+    currentMarketData.addresses.MULTIFEE_DISTRIBUTION &&
+    getContract(currentMarketData.addresses.MULTIFEE_DISTRIBUTION!, MultiFeeDistributionABI, provider!, currentAccount);
 
-  const chefIncentiveController = getContract(
-    currentMarketData.addresses.INCENTIVES_CONTROLLER!,
-    ChefIncentivesControllerABI,
-    provider!,
-    currentAccount
-  );
+  const chefIncentiveController =
+    currentMarketData.addresses.INCENTIVES_CONTROLLER &&
+    getContract(currentMarketData.addresses.INCENTIVES_CONTROLLER!, ChefIncentivesControllerABI, provider!, currentAccount);
 
-  const viniumContract = getContract(
-    currentMarketData.addresses.VINIUM_OFT!,
-    ViniumTokenABI,
-    provider!,
-    currentAccount
-  );
+  const viniumContract =
+    currentMarketData.addresses.VINIUM_OFT && getContract(currentMarketData.addresses.VINIUM_OFT!, ViniumTokenABI, provider!, currentAccount);
 
   return (
-    <TxBuilderContext.Provider
-      value={{ lendingPool, faucetService, multiFeeDistribution, chefIncentiveController, viniumContract }}
-    >
+    <TxBuilderContext.Provider value={{ lendingPool, faucetService, multiFeeDistribution, chefIncentiveController, viniumContract }}>
       {children}
     </TxBuilderContext.Provider>
   );

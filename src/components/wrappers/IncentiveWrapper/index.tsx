@@ -10,7 +10,7 @@ import { useProtocolDataContext } from '../../../libs/protocol-data-provider';
 
 import messages from './messages';
 import staticStyles from './style';
-import { ChainId } from '@aave/contract-helpers';
+import { ChainId } from '../../../helpers/chainID';
 
 // Fetch reward token symbol from hard coded non-reserve tokens or from reserves array
 export function getRewardTokenSymbol(

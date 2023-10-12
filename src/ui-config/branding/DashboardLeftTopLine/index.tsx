@@ -1,5 +1,5 @@
-import { ChainId } from '@aave/contract-helpers';
 import { IntlShape } from 'react-intl/src/types';
+import { ChainId } from '../../../helpers/chainID';
 
 export interface DashboardLeftTopLineProps {
   chainId: ChainId;
