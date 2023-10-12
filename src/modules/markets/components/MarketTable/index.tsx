@@ -49,6 +49,10 @@ export default function MarketTable({
       title: messages.variable,
       sortKey: 'variableBorrowRate',
     },
+    {
+      title: messages.reward,
+      sortKey: 'incentive',
+    },
     /*{
       title: messages.stable,
       sortKey: 'stableBorrowRate',
@@ -83,7 +87,7 @@ export default function MarketTable({
                 setSortDesc={setSortDesc}
                 sortKey={column.sortKey}
                 withSorting={true}
-                title={intl.formatMessage(messages.borrowAPY)}
+                title={intl.formatMessage(column.title)}
                 subTitle={''}
                 size="small"
               />

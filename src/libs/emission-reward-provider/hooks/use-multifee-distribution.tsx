@@ -1,45 +1,38 @@
 import { useState } from 'react';
 import { BigNumber, providers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
-import {
-  // UiPoolDataProvider,
-  ChainId,
-} from '@aave/contract-helpers';
 import { usePolling } from '../../hooks/use-polling';
 import { getContract } from '../../utils';
 
+import IncentiveControllerABI from '../abi/ChefIncentivesControllerABI.json';
 import MultiFeeDistributionABI from '../abi/MultiFeeDistributionABI.json';
-import {
-  DataHumanized,
-  EarnedBalance,
-  LockedBalances,
-  RewardData,
-  UserDataHumanized,
-  WithdrawableBalance,
-} from '../types';
+import MulticallABI from '../abi/Multicall.json';
+import { DataHumanized, UserDataHumanized } from '../types';
+import { useProtocolDataContext } from '../../protocol-data-provider';
+import { useConnectionStatusContext } from '../../connection-status-provider';
+import multicall from '../../multicall';
+import { useUserWalletDataContext } from '../../web3-data-provider';
 
 // interval in which the rpc data is refreshed
 const POLLING_INTERVAL = 30 * 1000;
 
-export interface PoolDataResponse {
+export interface MultiFeeDistributionResponse {
   loading: boolean;
   error: boolean;
-  data: {
-    data?: DataHumanized;
-    userData?: UserDataHumanized;
-  };
+  data?: DataHumanized;
+  userData?: UserDataHumanized;
   refresh: () => Promise<any>;
 }
 
 // Fetch reserve and user incentive data from UiIncentiveDataProvider
-export function useMultiFeeDistributionData(
-  multifeeDistributionAddress: string,
-  chainId: ChainId,
-  skip: boolean,
-  // rewardTokenAddress: string,
-  userAddress?: string
-): PoolDataResponse {
-  const currentAccount: string | undefined = userAddress ? userAddress.toLowerCase() : undefined;
+export function useMultiFeeDistributionData(): MultiFeeDistributionResponse {
+  const { currentAccount } = useUserWalletDataContext();
+  const { library: provider } = useWeb3React<providers.Web3Provider>();
+  const { currentMarketData, chainId } = useProtocolDataContext();
+  const { isRPCActive } = useConnectionStatusContext();
+
+  let skip = !isRPCActive;
+
   const [loadingData, setLoadingData] = useState<boolean>(false);
   const [errorData, setErrorData] = useState<boolean>(false);
   const [loadingUserData, setLoadingUserData] = useState<boolean>(false);
@@ -47,39 +40,50 @@ export function useMultiFeeDistributionData(
   const [data, setData] = useState<DataHumanized | undefined>(undefined);
   const [userData, setUserData] = useState<UserDataHumanized | undefined>(undefined);
 
-  const { library: provider } = useWeb3React<providers.Web3Provider>();
+  let multifeeDistributionAddress = currentMarketData.addresses.MULTIFEE_DISTRIBUTION!;
+  let multicallAddress = currentMarketData.addresses.MULTICALL!;
 
-  // Fetch and format reserve incentive data from UiIncentiveDataProvider contract
+  const multicallContract = getContract(multicallAddress, MulticallABI, provider!);
+
   const fetchData = async () => {
     try {
-      console.log('provider', provider);
       if (!provider) return;
       const multiFeeDistribution = getContract(
         multifeeDistributionAddress,
         MultiFeeDistributionABI,
         provider!
       );
+
       setLoadingData(true);
-      console.log('multiFeeDistribution', multiFeeDistribution);
       const rewardTokenAddress = await multiFeeDistribution.stakingToken();
-      // console.log('rewardTokenAddresses', rewardTokenAddresses)
-      // const rewardTokenAddress = rewardTokenAddresses[0];
-      const lastTimeRewardApplicable: BigNumber =
-        await multiFeeDistribution.lastTimeRewardApplicable(rewardTokenAddress);
-      const rewardPerToken: BigNumber = await multiFeeDistribution.rewardPerToken(
-        rewardTokenAddress
-      );
-      const getRewardForDuration: BigNumber = await multiFeeDistribution.getRewardForDuration(
-        rewardTokenAddress
+
+      const [lastTimeRewardApplicable, rewardPerToken, getRewardForDuration] = await multicall(
+        multicallContract,
+        MultiFeeDistributionABI,
+        [
+          {
+            address: multifeeDistributionAddress,
+            name: 'lastTimeRewardApplicable',
+            params: [rewardTokenAddress],
+          },
+          {
+            address: multifeeDistributionAddress,
+            name: 'rewardPerToken',
+            params: [rewardTokenAddress],
+          },
+          {
+            address: multifeeDistributionAddress,
+            name: 'getRewardForDuration',
+            params: [rewardTokenAddress],
+          },
+        ]
       );
 
       let dataResponse: DataHumanized = {
-        lastTimeRewardApplicable,
-        rewardPerToken,
-        getRewardForDuration,
+        lastTimeRewardApplicable: lastTimeRewardApplicable[0],
+        rewardPerToken: rewardPerToken[0],
+        getRewardForDuration: getRewardForDuration[0],
       };
-
-      console.log('dataResponse', dataResponse);
 
       setData(dataResponse);
       setErrorData(false);
@@ -90,45 +94,70 @@ export function useMultiFeeDistributionData(
     setLoadingData(false);
   };
 
-  // Fetch and format user incentive data from UiIncentiveDataProvider
   const fetchUserData = async () => {
-    console.log('currentAccount', currentAccount);
     if (!currentAccount) return;
 
     try {
       if (!provider) return;
-      const multiFeeDistribution = getContract(
-        multifeeDistributionAddress,
-        MultiFeeDistributionABI,
-        provider!,
-        currentAccount
-      );
+
       setLoadingUserData(true);
 
-      const totalBalance: BigNumber = await multiFeeDistribution.totalBalance(currentAccount);
-      const unlockedBalance: BigNumber = await multiFeeDistribution.unlockedBalance(currentAccount);
-      const earnedBalances: EarnedBalance = await multiFeeDistribution.earnedBalances(
-        currentAccount
-      );
-      const lockedBalances: LockedBalances = await multiFeeDistribution.lockedBalances(
-        currentAccount
-      );
-      const withdrawableBalance: WithdrawableBalance =
-        await multiFeeDistribution.withdrawableBalance(currentAccount);
-      const claimableRewards: RewardData[] = await multiFeeDistribution.claimableRewards(
-        currentAccount
-      );
-
-      let userDataResponse: UserDataHumanized = {
+      const [
         totalBalance,
         unlockedBalance,
         earnedBalances,
         lockedBalances,
         withdrawableBalance,
         claimableRewards,
-      };
+      ] = await multicall(multicallContract, MultiFeeDistributionABI, [
+        {
+          address: multifeeDistributionAddress,
+          name: 'totalBalance',
+          params: [currentAccount],
+        },
+        {
+          address: multifeeDistributionAddress,
+          name: 'unlockedBalance',
+          params: [currentAccount],
+        },
+        {
+          address: multifeeDistributionAddress,
+          name: 'earnedBalances',
+          params: [currentAccount],
+        },
+        {
+          address: multifeeDistributionAddress,
+          name: 'lockedBalances',
+          params: [currentAccount],
+        },
+        {
+          address: multifeeDistributionAddress,
+          name: 'withdrawableBalance',
+          params: [currentAccount],
+        },
+        {
+          address: multifeeDistributionAddress,
+          name: 'claimableRewards',
+          params: [currentAccount],
+        },
+      ]);
 
-      console.log('userDataResponse', userDataResponse);
+      let userDataResponse: UserDataHumanized = {
+        totalBalance: totalBalance.amount,
+        unlockedBalance: unlockedBalance.amount,
+        earnedBalances: { total: earnedBalances.total, earningsData: earnedBalances.earningsData },
+        lockedBalances: {
+          total: lockedBalances.total,
+          unlockable: lockedBalances.unlockable,
+          locked: lockedBalances.locked,
+          lockData: lockedBalances.lockData,
+        },
+        withdrawableBalance: {
+          amount: withdrawableBalance.amount,
+          penaltyAmount: withdrawableBalance.penaltyAmount,
+        },
+        claimableRewards: claimableRewards.rewards,
+      };
 
       setUserData(userDataResponse);
       setErrorUserData(false);
@@ -152,7 +181,8 @@ export function useMultiFeeDistributionData(
   return {
     loading,
     error,
-    data: { data, userData },
+    data,
+    userData,
     refresh: () => {
       return Promise.all([fetchUserData(), fetchData()]);
     },

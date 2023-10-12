@@ -8,4 +8,5 @@ export default defineMessages({
   borrowAPY: `Borrow APY`,
   stable: 'Stable',
   variable: 'Variable',
+  reward: 'Vinium Claimable Reward'
 });

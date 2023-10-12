@@ -4,6 +4,7 @@ import { stakeConfig } from '../../ui-config';
 import ErrorPage from '../../components/ErrorPage';
 import ManageMain from './screens/ManageMain';
 import { StakeDataProvider } from '../../libs/pool-data-provider/hooks/use-stake-data-context';
+import ManageOverview from './screens/ManageOverview';
 
 export const faqLink = 'https://docs.aave.com/faq/migration-and-staking';
 
@@ -17,7 +18,7 @@ export default function Manage() {
       <Switch>
         {/* <Route exact={true} path="/staking" component={StakingMain} /> */}
 
-        <Route exact={true} path="/manage" component={ManageMain} />
+        <Route exact={true} path="/manage" component={ManageOverview} />
         {/* <Route
             exact={true}
             path="/staking/disclaimer"

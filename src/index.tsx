@@ -8,6 +8,9 @@ import Modal from 'react-modal';
 import { Web3ReactProvider } from '@web3-react/core';
 import { ethers } from 'ethers';
 import TagManager from 'react-gtm-module';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider as ThemeProviderMUI } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 import * as serviceWorker from './serviceWorker';
 
@@ -38,7 +41,12 @@ import { PermissionProvider } from './libs/use-permissions/usePermissions';
 import { DynamicPoolDataProvider } from './libs/pool-data-provider';
 import { ConnectionStatusProvider } from './libs/connection-status-provider';
 import { IncentivesDataProvider } from './libs/pool-data-provider/hooks/use-incentives-data-context';
-import MultiFeeDistributionProviderWrapper from './components/MultiFeeDistributionProviderWrapper';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 initSentry();
 Modal.setAppElement('#root');
@@ -61,40 +69,41 @@ ReactDOM.render(
       <ReferralHandler>
         <LanguageProvider>
           <ThemeProvider>
-            <ProtocolDataProvider>
-              <WrappedApolloProvider>
-                <ConnectionStatusProvider>
-                  <MenuProvider>
-                    <Web3ReactProvider getLibrary={getWeb3Library}>
-                      <ErrorBoundary>
-                        <Web3Provider
-                          defaultChainId={getDefaultChainId()}
-                          supportedChainIds={getSupportedChainIds()}
-                          preloader={UnlockWalletPreloader}
-                          connectWalletModal={ConnectWalletModal}
-                        >
-                          <PermissionProvider>
-                            <WalletBalanceProvider>
-                              <StaticPoolDataProviderWrapper>
-                                <DynamicPoolDataProvider>
-                                  <IncentivesDataProvider>
-                                    <MultiFeeDistributionProviderWrapper>
+            <ThemeProviderMUI theme={darkTheme}>
+              <CssBaseline />
+              <ProtocolDataProvider>
+                <WrappedApolloProvider>
+                  <ConnectionStatusProvider>
+                    <MenuProvider>
+                      <Web3ReactProvider getLibrary={getWeb3Library}>
+                        <ErrorBoundary>
+                          <Web3Provider
+                            defaultChainId={getDefaultChainId()}
+                            supportedChainIds={getSupportedChainIds()}
+                            preloader={UnlockWalletPreloader}
+                            connectWalletModal={ConnectWalletModal}
+                          >
+                            <PermissionProvider>
+                              <WalletBalanceProvider>
+                                <StaticPoolDataProviderWrapper>
+                                  <DynamicPoolDataProvider>
+                                    <IncentivesDataProvider>
                                       <TxBuilderProvider>
                                         <App />
                                       </TxBuilderProvider>
-                                    </MultiFeeDistributionProviderWrapper>
-                                  </IncentivesDataProvider>
-                                </DynamicPoolDataProvider>
-                              </StaticPoolDataProviderWrapper>
-                            </WalletBalanceProvider>
-                          </PermissionProvider>
-                        </Web3Provider>
-                      </ErrorBoundary>
-                    </Web3ReactProvider>
-                  </MenuProvider>
-                </ConnectionStatusProvider>
-              </WrappedApolloProvider>
-            </ProtocolDataProvider>
+                                    </IncentivesDataProvider>
+                                  </DynamicPoolDataProvider>
+                                </StaticPoolDataProviderWrapper>
+                              </WalletBalanceProvider>
+                            </PermissionProvider>
+                          </Web3Provider>
+                        </ErrorBoundary>
+                      </Web3ReactProvider>
+                    </MenuProvider>
+                  </ConnectionStatusProvider>
+                </WrappedApolloProvider>
+              </ProtocolDataProvider>
+            </ThemeProviderMUI>
           </ThemeProvider>
         </LanguageProvider>
       </ReferralHandler>

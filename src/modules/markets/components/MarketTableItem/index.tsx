@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import TableItemWrapper from '../../../../components/BasicTable/TableItemWrapper';
@@ -10,6 +10,12 @@ import LiquidityMiningCard from '../../../../components/liquidityMining/Liquidit
 import { getAssetInfo, TokenIcon } from '../../../../helpers/config/assets-config';
 
 import staticStyles from './style';
+import { ChefIncentiveHumanized } from '../../../../libs/emission-reward-provider/hooks/use-chef-incentive-controller';
+import { Box, Button, Typography } from '@mui/material';
+import { ethers } from 'ethers';
+import { useTxBuilderContext } from '../../../../libs/tx-provider';
+import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
+import { SpinLoader, useThemeContext } from '@aave/aave-ui-kit';
 
 export interface MarketTableItemProps {
   id: string;
@@ -31,6 +37,7 @@ export interface MarketTableItemProps {
   stableBorrowRateEnabled?: boolean;
   isFreezed?: boolean;
   isPriceInUSD?: boolean;
+  viniumIncentive?: ChefIncentiveHumanized;
 }
 
 export default function MarketTableItem({
@@ -53,27 +60,38 @@ export default function MarketTableItem({
   stableBorrowRateEnabled,
   isFreezed,
   isPriceInUSD,
+  viniumIncentive,
 }: MarketTableItemProps) {
-
-
   const history = useHistory();
-
+  const { currentAccount } = useUserWalletDataContext();
+  const { chefIncentiveController } = useTxBuilderContext();
+  const { currentTheme } = useThemeContext();
   const asset = getAssetInfo(currencySymbol);
+
+  const [loading, setLoading] = useState(false);
 
   const handleClick = () => {
     history.push(`/reserve-overview/${underlyingAsset}-${id}`);
   };
 
+  const claimVinium = async () => {
+    if (!viniumIncentive || !chefIncentiveController || !currentAccount) return;
+    console.log('viniumIncentive.rewardTokens :>> ', viniumIncentive.rewardTokens);
+    setLoading(true);
+    try {
+      const tx = await chefIncentiveController.claim(currentAccount, viniumIncentive.rewardTokens);
+      await tx.wait();
+    } catch (e) {
+      console.log(e);
+    }
+
+    setLoading(false);
+  };
+
   return (
     <TableItemWrapper onClick={handleClick} className="MarketTableItem" withGoToTop={true}>
       <TableColumn className="MarketTableItem__column">
-        <TokenIcon
-          tokenSymbol={currencySymbol}
-          height={35}
-          width={35}
-          tokenFullName={asset.name}
-          className="MarketTableItem__token"
-        />
+        <TokenIcon tokenSymbol={currencySymbol} height={35} width={35} tokenFullName={asset.name} className="MarketTableItem__token" />
       </TableColumn>
       <TableColumn className="MarketTableItem__column">
         <Value
@@ -127,6 +145,28 @@ export default function MarketTableItem({
               />
             ) : (
               <NoData color="dark" />
+            )}
+          </TableColumn>
+
+          <TableColumn className="MarketTableItem__column">
+            {viniumIncentive && +viniumIncentive?.claimableReward !== 0 ? (
+              <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography color={'white'}>{(+ethers.utils.formatEther(viniumIncentive?.claimableReward!)).toFixed(2)}</Typography>
+                {loading ? (
+                  <SpinLoader className="DotStatus__loader" color={currentTheme.orange.hex} />
+                ) : (
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      claimVinium();
+                    }}
+                  >
+                    Claim
+                  </Button>
+                )}
+              </Box>
+            ) : (
+              <Typography color={'white'} sx={{alignSelf:'start'}}>0</Typography>
             )}
           </TableColumn>
 

@@ -7,6 +7,7 @@ import { useProtocolDataContext } from '../protocol-data-provider';
 import { getProvider } from '../../helpers/config/markets-and-network-config';
 import MultiFeeDistributionABI from '../emission-reward-provider/abi/MultiFeeDistributionABI.json';
 import ChefIncentivesControllerABI from '../emission-reward-provider/abi/ChefIncentivesControllerABI.json';
+import ViniumTokenABI from '../emission-reward-provider/abi/ViniumTokenABI.json';
 import { useUserWalletDataContext } from '../web3-data-provider';
 import { getContract } from '../utils';
 
@@ -15,6 +16,7 @@ export interface TxBuilderContextInterface {
   faucetService: FaucetService;
   multiFeeDistribution?: Contract;
   chefIncentiveController?: Contract;
+  viniumContract?: Contract;
 }
 
 const TxBuilderContext = React.createContext({} as TxBuilderContextInterface);
@@ -50,9 +52,16 @@ export function TxBuilderProvider({ children }: PropsWithChildren<{}>) {
     currentAccount
   );
 
+  const viniumContract = getContract(
+    currentMarketData.addresses.VINIUM_OFT!,
+    ViniumTokenABI,
+    provider!,
+    currentAccount
+  );
+
   return (
     <TxBuilderContext.Provider
-      value={{ lendingPool, faucetService, multiFeeDistribution, chefIncentiveController }}
+      value={{ lendingPool, faucetService, multiFeeDistribution, chefIncentiveController, viniumContract }}
     >
       {children}
     </TxBuilderContext.Provider>

@@ -89,5 +89,7 @@ export type MarketDataType = {
     PERMISSION_MANAGER?: string;
     INCENTIVES_CONTROLLER?: string;
     MULTIFEE_DISTRIBUTION?: string;
+    VINIUM_OFT?: string;
+    MULTICALL?: string;
   };
 };
