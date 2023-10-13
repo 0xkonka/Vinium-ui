@@ -20,6 +20,8 @@ import { useWeb3React } from '@web3-react/core';
 import { useProtocolDataContext } from '../../../../libs/protocol-data-provider';
 import { useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
 import { getDefaultChainId } from '../../../../helpers/config/markets-and-network-config';
+import NetworkMismatchButton from '../../../../components/TxConfirmationView/NetworkMismatchButton';
+import { ChainId } from '../../../../helpers/chainID';
 
 export interface MarketTableItemProps {
   id: string;
@@ -67,10 +69,10 @@ export default function MarketTableItem({
   viniumIncentive,
 }: MarketTableItemProps) {
   const history = useHistory();
-  const { currentAccount, handleNetworkChange } = useUserWalletDataContext();
+  const { currentAccount, currentProviderName } = useUserWalletDataContext();
   const { chefIncentiveController } = useTxBuilderContext();
   const { currentTheme } = useThemeContext();
-
+  
   const { library: provider, chainId } = useWeb3React<providers.Web3Provider>();
   const { chainId: currentMarketChainId, networkConfig } = useProtocolDataContext();
   const { refresh, chainId: txChainId } = useStaticPoolDataContext();
@@ -174,16 +176,12 @@ export default function MarketTableItem({
             {viniumIncentive && +viniumIncentive?.claimableReward !== 0 ? (
               <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Typography color={'white'}>{(+ethers.utils.formatEther(viniumIncentive?.claimableReward!)).toFixed(2)}</Typography>
-                {networkMismatch ? (
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      console.log('neededChainId :>> ', neededChainId);
-                      handleNetworkChange(neededChainId);
-                    }}
-                  >
-                    Switch
-                  </Button>
+                {networkMismatch && currentProviderName ? (
+                  <NetworkMismatchButton
+                    neededChainId={neededChainId}
+                    currentChainId={chainId as ChainId}
+                    currentProviderName={currentProviderName}
+                  />
                 ) : loading ? (
                   <SpinLoader className="DotStatus__loader" color={currentTheme.orange.hex} />
                 ) : (
