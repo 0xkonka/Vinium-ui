@@ -121,14 +121,14 @@ const LoopAction = ({ assetId, userAssetBal, loopCount }: LoopActionProps) => {
     if (!leveragerAddr || !currentAccount || !AssetContract || !provider || !leveragerContract) return;
     setLoading(true);
     try {
-      console.log('userAssetBal :>> ', userAssetBal);
-      console.log('loopCount :>> ', loopCount);
-      console.log('reserves[assetId].variableDebtTokenAddress :>> ', reserves[assetId].variableDebtTokenAddress);
+      let baseLTVasCollateral = +reserves[assetId].baseLTVasCollateral;
+      if (baseLTVasCollateral === 0) baseLTVasCollateral = 9000;
+
       let tx = await leveragerContract.loop(
         reserves[assetId].underlyingAsset,
         ethers.utils.parseUnits(userAssetBal, reserves[assetId].decimals),
         2,
-        +reserves[assetId].baseLTVasCollateral * 10000,
+        baseLTVasCollateral,
         loopCount
       );
       await tx.wait();
