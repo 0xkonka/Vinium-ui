@@ -49,6 +49,8 @@
     "graphql": "^15.6.1",
     "intl": "^1.2.5",
     "paraswap": "^5.0.1",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "query-string": "^6.13.7",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
@@ -74,9 +76,9 @@
   "devDependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@ethersproject/experimental": "5.4.0",
     "@mui/icons-material": "^5.6.2",
     "@mui/material": "^5.6.4",
-    "@ethersproject/experimental": "5.4.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -132,7 +134,8 @@
     "i18n": "NODE_ENV=development node ./scripts/extract-intl-messages.js",
     "prepare": "husky install",
     "pre-commit": "lint-staged && npm run i18n && git add ./src/translations",
-    "analyze": "npx source-map-explorer 'build/static/js/*.js'"
+    "analyze": "npx source-map-explorer 'build/static/js/*.js'",
+    "postinstall": "patch-package"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
