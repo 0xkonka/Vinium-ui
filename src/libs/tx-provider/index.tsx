@@ -5,9 +5,11 @@ import { useWeb3React } from '@web3-react/core';
 import { LendingPool, FaucetService } from '@aave/contract-helpers';
 import { useProtocolDataContext } from '../protocol-data-provider';
 import { getProvider } from '../../helpers/config/markets-and-network-config';
-import MultiFeeDistributionABI from '../emission-reward-provider/abi/MultiFeeDistributionABI.json';
-import ChefIncentivesControllerABI from '../emission-reward-provider/abi/ChefIncentivesControllerABI.json';
-import ViniumTokenABI from '../emission-reward-provider/abi/ViniumTokenABI.json';
+import MultiFeeDistributionABI from '../../abi/MultiFeeDistributionABI.json';
+import ChefIncentivesControllerABI from '../../abi/ChefIncentivesControllerABI.json';
+import ViniumTokenABI from '../../abi/ViniumTokenABI.json';
+import erc20ABI from '../../abi/erc20ABI.json';
+import LeveragerABI from '../../abi/LeveragerABI.json';
 import { useUserWalletDataContext } from '../web3-data-provider';
 import { getContract } from '../utils';
 
@@ -16,7 +18,9 @@ export interface TxBuilderContextInterface {
   faucetService: FaucetService;
   multiFeeDistribution?: '' | Contract | undefined;
   chefIncentiveController?: '' | Contract | undefined;
-  viniumContract?: '' | Contract | undefined;
+  viniumTokenContract?: '' | Contract | undefined;
+  viniumLPContract?: '' | Contract | undefined;
+  leveragerContract?: '' | Contract | undefined;
 }
 
 const TxBuilderContext = React.createContext({} as TxBuilderContextInterface);
@@ -43,11 +47,19 @@ export function TxBuilderProvider({ children }: PropsWithChildren<{}>) {
     currentMarketData.addresses.INCENTIVES_CONTROLLER &&
     getContract(currentMarketData.addresses.INCENTIVES_CONTROLLER!, ChefIncentivesControllerABI, provider!, currentAccount);
 
-  const viniumContract =
+  const viniumTokenContract =
     currentMarketData.addresses.VINIUM_OFT && getContract(currentMarketData.addresses.VINIUM_OFT!, ViniumTokenABI, provider!, currentAccount);
 
+  const viniumLPContract =
+    currentMarketData.addresses.VINIUM_OFT && getContract(currentMarketData.addresses.VINIUM_LP!, erc20ABI, provider!, currentAccount);
+
+  const leveragerContract =
+    currentMarketData.addresses.LEVERAGER && getContract(currentMarketData.addresses.LEVERAGER!, LeveragerABI, provider!, currentAccount);
+
   return (
-    <TxBuilderContext.Provider value={{ lendingPool, faucetService, multiFeeDistribution, chefIncentiveController, viniumContract }}>
+    <TxBuilderContext.Provider
+      value={{ lendingPool, faucetService, multiFeeDistribution, chefIncentiveController, viniumTokenContract, viniumLPContract, leveragerContract }}
+    >
       {children}
     </TxBuilderContext.Provider>
   );

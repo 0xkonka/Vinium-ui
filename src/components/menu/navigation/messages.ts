@@ -7,6 +7,7 @@ export default defineMessages({
   dashboard: 'Dashboard',
   deposit: 'Deposit',
   borrow: 'Borrow',
+  loop: 'Loop',
   docs: 'Docs',
   swap: 'Swap',
   stake: 'Stake',

@@ -24,13 +24,18 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
   functions: {
     "addPool(address,uint256)": FunctionFragment;
     "batchUpdateAllocPoint(address[],uint256[])": FunctionFragment;
+    "changeEmissionSchedule(uint128[],uint128[])": FunctionFragment;
     "claim(address,address[])": FunctionFragment;
     "claimReceiver(address)": FunctionFragment;
     "claimableReward(address,address[])": FunctionFragment;
+    "emissionSchedule(uint256)": FunctionFragment;
     "handleAction(address,uint256,uint256)": FunctionFragment;
+    "initialize(uint128[],uint128[],address,address,uint256)": FunctionFragment;
     "maxMintableTokens()": FunctionFragment;
     "mintedTokens()": FunctionFragment;
     "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "poolConfigurator()": FunctionFragment;
     "poolInfo(address)": FunctionFragment;
     "poolLength()": FunctionFragment;
@@ -44,6 +49,7 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     "startTime()": FunctionFragment;
     "totalAllocPoint()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "unpause()": FunctionFragment;
     "userBaseClaimable(address)": FunctionFragment;
     "userInfo(address,address)": FunctionFragment;
   };
@@ -55,6 +61,10 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "batchUpdateAllocPoint",
     values: [string[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeEmissionSchedule",
+    values: [BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "claim",
@@ -69,8 +79,16 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     values: [string, string[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "emissionSchedule",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "handleAction",
     values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [BigNumberish[], BigNumberish[], string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "maxMintableTokens",
@@ -81,6 +99,8 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "poolConfigurator",
     values?: undefined
@@ -124,6 +144,7 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "userBaseClaimable",
     values: [string]
@@ -138,6 +159,10 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     functionFragment: "batchUpdateAllocPoint",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeEmissionSchedule",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimReceiver",
@@ -148,9 +173,14 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "emissionSchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "handleAction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxMintableTokens",
     data: BytesLike
@@ -160,6 +190,8 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "poolConfigurator",
     data: BytesLike
@@ -200,6 +232,7 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "userBaseClaimable",
     data: BytesLike
@@ -208,11 +241,17 @@ interface ChefIncentivesControllerInterface extends ethers.utils.Interface {
 
   events: {
     "BalanceUpdated(address,address,uint256,uint256)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BalanceUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export class ChefIncentivesController extends Contract {
@@ -250,6 +289,18 @@ export class ChefIncentivesController extends Contract {
     "batchUpdateAllocPoint(address[],uint256[])"(
       _tokens: string[],
       _allocPoints: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    changeEmissionSchedule(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "changeEmissionSchedule(uint128[],uint128[])"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -295,6 +346,26 @@ export class ChefIncentivesController extends Contract {
       0: BigNumber[];
     }>;
 
+    emissionSchedule(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      startTimeOffset: BigNumber;
+      rewardsPerSecond: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+
+    "emissionSchedule(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      startTimeOffset: BigNumber;
+      rewardsPerSecond: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+
     handleAction(
       _user: string,
       _balance: BigNumberish,
@@ -306,6 +377,24 @@ export class ChefIncentivesController extends Contract {
       _user: string,
       _balance: BigNumberish,
       _totalSupply: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    initialize(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "initialize(uint128[],uint128[],address,address,uint256)"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -331,6 +420,18 @@ export class ChefIncentivesController extends Contract {
 
     "owner()"(overrides?: CallOverrides): Promise<{
       0: string;
+    }>;
+
+    pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
+
+    "paused()"(overrides?: CallOverrides): Promise<{
+      0: boolean;
     }>;
 
     poolConfigurator(overrides?: CallOverrides): Promise<{
@@ -469,6 +570,10 @@ export class ChefIncentivesController extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
     userBaseClaimable(
       arg0: string,
       overrides?: CallOverrides
@@ -530,6 +635,18 @@ export class ChefIncentivesController extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  changeEmissionSchedule(
+    _startTimeOffset: BigNumberish[],
+    _rewardsPerSecond: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "changeEmissionSchedule(uint128[],uint128[])"(
+    _startTimeOffset: BigNumberish[],
+    _rewardsPerSecond: BigNumberish[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   claim(
     _user: string,
     _tokens: string[],
@@ -561,6 +678,26 @@ export class ChefIncentivesController extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  emissionSchedule(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<{
+    startTimeOffset: BigNumber;
+    rewardsPerSecond: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
+
+  "emissionSchedule(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<{
+    startTimeOffset: BigNumber;
+    rewardsPerSecond: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
+
   handleAction(
     _user: string,
     _balance: BigNumberish,
@@ -575,6 +712,24 @@ export class ChefIncentivesController extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  initialize(
+    _startTimeOffset: BigNumberish[],
+    _rewardsPerSecond: BigNumberish[],
+    _poolConfigurator: string,
+    _rewardMinter: string,
+    _maxMintable: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "initialize(uint128[],uint128[],address,address,uint256)"(
+    _startTimeOffset: BigNumberish[],
+    _rewardsPerSecond: BigNumberish[],
+    _poolConfigurator: string,
+    _rewardMinter: string,
+    _maxMintable: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   maxMintableTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
   "maxMintableTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -586,6 +741,14 @@ export class ChefIncentivesController extends Contract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
+
+  pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
   poolConfigurator(overrides?: CallOverrides): Promise<string>;
 
@@ -695,6 +858,10 @@ export class ChefIncentivesController extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "unpause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
   userBaseClaimable(
     arg0: string,
     overrides?: CallOverrides
@@ -752,6 +919,18 @@ export class ChefIncentivesController extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    changeEmissionSchedule(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "changeEmissionSchedule(uint128[],uint128[])"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     claim(
       _user: string,
       _tokens: string[],
@@ -783,6 +962,26 @@ export class ChefIncentivesController extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    emissionSchedule(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      startTimeOffset: BigNumber;
+      rewardsPerSecond: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+
+    "emissionSchedule(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      startTimeOffset: BigNumber;
+      rewardsPerSecond: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+
     handleAction(
       _user: string,
       _balance: BigNumberish,
@@ -797,6 +996,24 @@ export class ChefIncentivesController extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    initialize(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "initialize(uint128[],uint128[],address,address,uint256)"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     maxMintableTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     "maxMintableTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -808,6 +1025,14 @@ export class ChefIncentivesController extends Contract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     "owner()"(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    "pause()"(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    "paused()"(overrides?: CallOverrides): Promise<boolean>;
 
     poolConfigurator(overrides?: CallOverrides): Promise<string>;
 
@@ -917,6 +1142,10 @@ export class ChefIncentivesController extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    "unpause()"(overrides?: CallOverrides): Promise<void>;
+
     userBaseClaimable(
       arg0: string,
       overrides?: CallOverrides
@@ -958,10 +1187,16 @@ export class ChefIncentivesController extends Contract {
       totalSupply: null
     ): EventFilter;
 
+    Initialized(version: null): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
     ): EventFilter;
+
+    Paused(account: null): EventFilter;
+
+    Unpaused(account: null): EventFilter;
   };
 
   estimateGas: {
@@ -986,6 +1221,18 @@ export class ChefIncentivesController extends Contract {
     "batchUpdateAllocPoint(address[],uint256[])"(
       _tokens: string[],
       _allocPoints: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    changeEmissionSchedule(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "changeEmissionSchedule(uint128[],uint128[])"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1020,6 +1267,16 @@ export class ChefIncentivesController extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    emissionSchedule(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "emissionSchedule(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     handleAction(
       _user: string,
       _balance: BigNumberish,
@@ -1034,6 +1291,24 @@ export class ChefIncentivesController extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    initialize(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "initialize(uint128[],uint128[],address,address,uint256)"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     maxMintableTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     "maxMintableTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1045,6 +1320,14 @@ export class ChefIncentivesController extends Contract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(overrides?: Overrides): Promise<BigNumber>;
+
+    "pause()"(overrides?: Overrides): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "paused()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     poolConfigurator(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1129,6 +1412,10 @@ export class ChefIncentivesController extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    unpause(overrides?: Overrides): Promise<BigNumber>;
+
+    "unpause()"(overrides?: Overrides): Promise<BigNumber>;
+
     userBaseClaimable(
       arg0: string,
       overrides?: CallOverrides
@@ -1177,6 +1464,18 @@ export class ChefIncentivesController extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    changeEmissionSchedule(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "changeEmissionSchedule(uint128[],uint128[])"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     claim(
       _user: string,
       _tokens: string[],
@@ -1211,6 +1510,16 @@ export class ChefIncentivesController extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    emissionSchedule(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "emissionSchedule(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     handleAction(
       _user: string,
       _balance: BigNumberish,
@@ -1222,6 +1531,24 @@ export class ChefIncentivesController extends Contract {
       _user: string,
       _balance: BigNumberish,
       _totalSupply: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "initialize(uint128[],uint128[],address,address,uint256)"(
+      _startTimeOffset: BigNumberish[],
+      _rewardsPerSecond: BigNumberish[],
+      _poolConfigurator: string,
+      _rewardMinter: string,
+      _maxMintable: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1238,6 +1565,14 @@ export class ChefIncentivesController extends Contract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "pause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "paused()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     poolConfigurator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1330,6 +1665,10 @@ export class ChefIncentivesController extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    unpause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "unpause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     userBaseClaimable(
       arg0: string,

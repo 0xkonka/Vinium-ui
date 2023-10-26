@@ -19,7 +19,7 @@ export default function WalletCard({
   handleUnlockExternalWallet,
   errorMessage,
 }: WalletCardProps) {
-  const { currentTheme, isCurrentThemeDark } = useThemeContext();
+  const { currentTheme } = useThemeContext();
 
   return (
     <button

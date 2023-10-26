@@ -114,7 +114,7 @@ function DepositConfirmation({
         blockingError={blockingError}
         aTokenData={aTokenData}
       >
-        <Row title={intl.formatMessage(messages.valueRowTitle)} withMargin={notShowHealthFactor}>
+        {/* <Row title={intl.formatMessage(messages.valueRowTitle)} withMargin={notShowHealthFactor}>
           <Value
             symbol={currencySymbol}
             value={amount.toString()}
@@ -146,7 +146,7 @@ function DepositConfirmation({
             withoutModal={true}
             value={healthFactorAfterDeposit.toString()}
           />
-        )}
+        )} */}
       </PoolTxConfirmationView>
     </DepositCurrencyWrapper>
   );

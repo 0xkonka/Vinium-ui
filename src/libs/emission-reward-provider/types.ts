@@ -7,10 +7,8 @@ export interface DataHumanized {
 }
 
 export interface UserDataHumanized {
-  totalBalance: BigNumber;
-  unlockedBalance: BigNumber;
-  earnedBalances: EarnedBalance;
   lockedBalances: LockedBalances;
+  earnedBalances: EarnedBalance;
   withdrawableBalance: WithdrawableBalance;
   claimableRewards: RewardData[];
 }
@@ -40,4 +38,6 @@ export interface LockedBalances {
 export interface WithdrawableBalance {
   amount: BigNumber;
   penaltyAmount: BigNumber;
+  treausryAmount: BigNumber;
+  amountWithoutPenalty: BigNumber;
 }

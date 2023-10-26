@@ -34,7 +34,6 @@ const marketToHALAaveVersionUrlParam = (market: CustomMarket): string | undefine
       return 'aavefuji';
       // case CustomMarket.amm_kovan:
       // case CustomMarket.amm_mainnet:
-      return undefined;
 
     default:
       return exhaustCases(market);

@@ -100,7 +100,6 @@ export default function MarketTableItem({
 
   const claimVinium = async () => {
     if (!viniumIncentive || !chefIncentiveController || !currentAccount) return;
-    console.log('viniumIncentive.rewardTokens :>> ', viniumIncentive.rewardTokens);
     setLoading(true);
     try {
       const tx = await chefIncentiveController.claim(currentAccount, viniumIncentive.rewardTokens);

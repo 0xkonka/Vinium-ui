@@ -30,6 +30,7 @@ import { RewardConfirm } from './modules/reward/screens/RewardConfirm';
 import { governanceConfig, stakeConfig } from './ui-config';
 import { useProtocolDataContext } from './libs/protocol-data-provider';
 import { isFeatureEnabled } from './helpers/config/markets-and-network-config';
+import Loop from './modules/loop';
 
 const staticStyles = css.global`
   .App {
@@ -87,7 +88,8 @@ function ModulesWithMenu() {
         ]}
         {!!stakeConfig && [<Route path="/staking" component={Staking} key="Staking" />]}
 
-        <Route path="/manage" component={Manage} key="Reward" />
+        <Route path="/loop" component={Loop} key="Loop" />
+        <Route path="/manage" component={Manage} key="Manage" />
 
         <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" />
         <Route

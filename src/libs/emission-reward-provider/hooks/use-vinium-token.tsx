@@ -4,7 +4,7 @@ import { useWeb3React } from '@web3-react/core';
 import { usePolling } from '../../hooks/use-polling';
 import { getContract } from '../../utils';
 
-import ViniumTokenABI from '../abi/ViniumTokenABI.json';
+import ViniumTokenABI from '../../../abi/ViniumTokenABI.json';
 import { useProtocolDataContext } from '../../protocol-data-provider';
 import { useConnectionStatusContext } from '../../connection-status-provider';
 import { useUserWalletDataContext } from '../../web3-data-provider';
@@ -48,7 +48,7 @@ export function useViniumTokenData(): ViniumTokenDataResponse {
       let response: ViniumTokenHumanized = {
         balance,
       };
-      
+
       setUserData(response);
       setErrorData(false);
     } catch (e) {

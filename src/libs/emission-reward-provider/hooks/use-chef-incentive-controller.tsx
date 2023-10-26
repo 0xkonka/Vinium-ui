@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { BigNumber, providers } from 'ethers';
-import { useWeb3React } from '@web3-react/core';
+import { BigNumber } from 'ethers';
 import { usePolling } from '../../hooks/use-polling';
-import { getContract } from '../../utils';
-import IncentiveControllerABI from '../abi/ChefIncentivesControllerABI.json';
 import { useProtocolDataContext } from '../../protocol-data-provider';
 import { useConnectionStatusContext } from '../../connection-status-provider';
 import { ComputedReserveData, useDynamicPoolDataContext } from '../../pool-data-provider';
 import { useUserWalletDataContext } from '../../web3-data-provider';
 import { getProvider } from '../../../helpers/config/markets-and-network-config';
 import { ChefIncentivesControllerFactory } from '../contracts/ChefIncentivesControllerFactory';
+
 
 // interval in which the rpc data is refreshed
 const POLLING_INTERVAL = 30 * 1000;
@@ -68,20 +66,12 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
         let response: ChefIncentiveHumanized = {
           id: reserves[i].id,
           claimableReward,
-          // rewardTokens: [reserves[i].aTokenAddress, reserves[i].stableDebtTokenAddress, reserves[i].variableDebtTokenAddress],
-          rewardTokens: [reserves[i].aTokenAddress],
+          rewardTokens: [reserves[i].aTokenAddress, reserves[i].variableDebtTokenAddress],
+          // rewardTokens: [reserves[i].aTokenAddress],
         };
         dataResponse.push(response);
       }
-      // const lastTimeRewardApplicable: BigNumber =
-      //   await multiFeeDistribution.lastTimeRewardApplicable(rewardTokenAddress);
-      // const rewardPerToken: BigNumber = await multiFeeDistribution.rewardPerToken(
-      //   rewardTokenAddress
-      // );
-      // const getRewardForDuration: BigNumber = await multiFeeDistribution.getRewardForDuration(
-      //   rewardTokenAddress
-      // );
-
+      
       setData(dataResponse);
       setErrorData(false);
     } catch (e) {

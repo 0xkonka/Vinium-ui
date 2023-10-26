@@ -2,7 +2,7 @@
   "extends": ["react-app", "plugin:react-hooks/recommended", "prettier"],
   "plugins": ["prettier", "react-hooks"],
   "rules": {
-    "react-hooks/rules-of-hooks": "off",
-    "react-hooks/exhaustive-deps": "off"
+    "react-hooks/rules-of-hooks": 1,
+    "react-hooks/exhaustive-deps": 1
   }
 }

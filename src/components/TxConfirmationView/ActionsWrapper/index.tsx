@@ -31,7 +31,7 @@ export default function ActionsWrapper({
   children,
 }: ActionsWrapperProps) {
   const intl = useIntl();
-  const { currentTheme, isCurrentThemeDark } = useThemeContext();
+  const { currentTheme } = useThemeContext();
 
   const activeGradient = gradient(
     90,
@@ -40,13 +40,13 @@ export default function ActionsWrapper({
     `${currentTheme.primary.rgb}, 1`,
     100
   );
-  const allowedGradient = gradient(
-    90,
-    `${currentTheme.secondary.rgb}, 0.5`,
-    0,
-    `${currentTheme.primary.rgb}, 0.5`,
-    100
-  );
+  // const allowedGradient = gradient(
+  //   90,
+  //   `${currentTheme.secondary.rgb}, 0.5`,
+  //   0,
+  //   `${currentTheme.primary.rgb}, 0.5`,
+  //   100
+  // );
 
   const approveSubmitted = approveTxData?.txStatus === TxStatusType.submitted;
   const approveConfirmed = approveTxData?.txStatus === TxStatusType.confirmed;

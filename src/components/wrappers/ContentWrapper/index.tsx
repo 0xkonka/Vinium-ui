@@ -35,7 +35,7 @@ export default function ContentWrapper({
         className
       )}
     >
-      {withBackButton && history.length > 2 && (
+      {withBackButton && history.length > 1 && (
         <button className="ContentWrapper__back-button" onClick={goBack || history.goBack}>
           <span />
           <p>{intl.formatMessage(messages.back)}</p>

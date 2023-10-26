@@ -88,8 +88,10 @@ export type MarketDataType = {
     FAUCET?: string;
     PERMISSION_MANAGER?: string;
     INCENTIVES_CONTROLLER?: string;
+    LEVERAGER?: string;
     MULTIFEE_DISTRIBUTION?: string;
     VINIUM_OFT?: string;
+    VINIUM_LP?: string;
     MULTICALL?: string;
   };
 };

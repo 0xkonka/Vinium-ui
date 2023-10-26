@@ -5,7 +5,6 @@ import { useThemeContext } from '@aave/aave-ui-kit';
 import staticStyles from './style';
 
 import animationCircle from '../../images/animationCircle.svg';
-import aaveGhost from '../../images/aaveGhost.svg';
 
 interface InfoPanelProps {
   children: ReactNode;

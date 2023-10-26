@@ -12,7 +12,7 @@ import Link from '../basic/Link';
 import UnlockWalletWrapper from './components/ConnectWalletWrapper';
 import WalletCard from './components/WalletCard';
 import LedgerChecklist from './components/LedgerChecklist';
-import SelectPreferredNetwork from './components/SelectPreferredNetwork';
+
 import {
   AUTHEREUM_API_KEY,
   getFortmaticKeyByChainId,

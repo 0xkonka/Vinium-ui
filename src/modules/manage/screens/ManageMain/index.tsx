@@ -2,14 +2,11 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import messages from './messages';
 import { Grid } from '@mui/material';
-import StakeVinium from '../../components/StakeVinium';
-import LockVinium from '../../components/LockVinium';
-import ViniumClaim from '../../components/ViniumClaim';
 import NoDataPanel from '../../../../components/NoDataPanel';
 import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
-import ClaimableFees from '../../components/ClaimableFees';
 import ViniumVest from '../../components/ViniumVest';
-import ViniumLock from '../../components/ViniumLock';
+import StatInfo from '../../components/StatInfo';
+import LockLP from '../../components/LockLP';
 
 export default function ManageMain() {
   const intl = useIntl();
@@ -25,16 +22,22 @@ export default function ManageMain() {
         />
       ) : (
         <Grid container spacing={2} rowSpacing={2}>
-          <Grid item xs={12} md={4}>
-            <StakeVinium />
-            <LockVinium />
+          <Grid item xs={12}>
+            <StatInfo />
           </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={6}>
+            <LockLP />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ViniumVest />
+          </Grid>
+          {/* </Grid> */}
+          {/* <Grid item xs={12} md={8}>
             <ViniumClaim />
             <ViniumVest />
             <ViniumLock />
             <ClaimableFees />
-          </Grid>
+          </Grid> */}
         </Grid>
       )}
     </>

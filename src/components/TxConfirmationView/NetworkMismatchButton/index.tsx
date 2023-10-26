@@ -1,15 +1,9 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import classNames from 'classnames';
-import { useThemeContext } from '@aave/aave-ui-kit';
-
-import DefaultButton from '../../basic/DefaultButton';
 import AccessMaticMarketHelpModal from '../../HelpModal/AccessMaticMarketHelpModal';
 import { AvailableWeb3Connectors, useUserWalletDataContext } from '../../../libs/web3-data-provider';
 import { getNetworkConfig } from '../../../helpers/config/markets-and-network-config';
-
 import messages from './messages';
-import staticStyles from './style';
 
 import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
@@ -78,7 +72,6 @@ const ADD_CONFIG: {
 
 export default function NetworkMismatchButton({ neededChainId, currentChainId, currentProviderName }: NetworkMismatchProps) {
   const intl = useIntl();
-  const { currentTheme } = useThemeContext();
   const { library } = useWeb3React<providers.Web3Provider>();
   const { handleNetworkChange } = useUserWalletDataContext();
 
@@ -92,11 +85,11 @@ export default function NetworkMismatchButton({ neededChainId, currentChainId, c
   // const isExternalNetworkUpdateNeeded =
   //   !isMetaMaskForMatic && ['browser', 'wallet-connect'].includes(currentProviderName);
   const isManualNetworkUpdateNeeded = ['torus', 'portis'].includes(currentProviderName);
-  const isNeededNetworkNotSupported =
-    neededChainId === ChainId.polygon && ['authereum', 'fortmatic', 'mew-wallet', 'ledger'].includes(currentProviderName);
+  // const isNeededNetworkNotSupported =
+  //   neededChainId === ChainId.polygon && ['authereum', 'fortmatic', 'mew-wallet', 'ledger'].includes(currentProviderName);
 
-  const neededNetworkConfig = getNetworkConfig(neededChainId);
-  const currentNetworkConfig = getNetworkConfig(currentChainId);
+  // const neededNetworkConfig = getNetworkConfig(neededChainId);
+  // const currentNetworkConfig = getNetworkConfig(currentChainId);
 
   return (
     <div className="NetworkMismatch">

@@ -1,11 +1,5 @@
 import { MessageDescriptor } from 'react-intl';
-import {
-  moreMenuExtraItems,
-  moreMenuItems,
-  moreMenuMobileOnlyItems,
-  stakeConfig,
-  governanceConfig,
-} from '../../../ui-config';
+import { moreMenuExtraItems, moreMenuItems, moreMenuMobileOnlyItems, stakeConfig, governanceConfig } from '../../../ui-config';
 import { MarketDataType } from '../../../helpers/config/types';
 import { isFeatureEnabled } from '../../../helpers/config/markets-and-network-config';
 
@@ -22,12 +16,6 @@ export interface Navigation {
 }
 
 const navigation: Navigation[] = [
-  {
-    link: 'https://vinium-bridge.vercel.app/',
-    title: messages.bridge,
-    absolute: true,
-    newTab: true,
-  },
   {
     link: '/markets',
     title: messages.markets,
@@ -50,14 +38,24 @@ const navigation: Navigation[] = [
     title: messages.borrow,
   },
   {
+    link: '/loop',
+    title: messages.loop,
+  },
+  {
     link: '/manage',
     title: messages.manage,
   },
   {
-    link: '/staking',
-    title: messages.stake,
-    isVisible: () => !!stakeConfig,
+    link: 'https://vinium-bridge.vercel.app/',
+    title: messages.bridge,
+    absolute: true,
+    newTab: true,
   },
+  // {
+  //   link: '/staking',
+  //   title: messages.stake,
+  //   isVisible: () => !!stakeConfig,
+  // },
   {
     link: 'https://docs.vinium.finance/',
     title: messages.docs,
