@@ -10,12 +10,9 @@ import Row from '../../../../components/basic/Row';
 import Value from '../../../../components/basic/Value';
 import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
-import {
-  getDefaultChainId,
-  getSupportedChainIds,
-} from '../../../../helpers/config/markets-and-network-config';
+import { getDefaultChainId, getSupportedChainIds } from '../../../../helpers/config/markets-and-network-config';
 import { useProtocolDataContext } from '../../../../libs/protocol-data-provider';
-import { useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
+import { useDynamicPoolDataContext, useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
 import NetworkMismatch from '../../../../components/TxConfirmationView/NetworkMismatch';
 import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
 import LoopMain from '../LoopMain';
@@ -23,26 +20,22 @@ import { ChainId } from '../../../../helpers/chainID';
 
 export default function LoopOverview() {
   const intl = useIntl();
-  const { currentTheme, xl, sm } = useThemeContext();
-  const { disconnectWallet, currentProviderName } = useUserWalletDataContext();
-  const { library: provider, chainId } = useWeb3React<providers.Web3Provider>();
+  const { currentProviderName } = useUserWalletDataContext();
+  const { chainId } = useWeb3React<providers.Web3Provider>();
   const { chainId: currentMarketChainId, networkConfig } = useProtocolDataContext();
-  const { refresh, chainId: txChainId } = useStaticPoolDataContext();
+  const { chainId: txChainId } = useStaticPoolDataContext();
+
+  const { currentAccount } = useUserWalletDataContext();
+  const { reserves, user } = useDynamicPoolDataContext();
 
   let _allowedChainIds = [ChainId.mainnet, ChainId.kovan];
 
   const currentWalletChainId = chainId as number;
-  const allowedChainIds = _allowedChainIds?.filter((chainId) =>
-    getSupportedChainIds().includes(chainId)
-  );
+  const allowedChainIds = _allowedChainIds?.filter((chainId) => getSupportedChainIds().includes(chainId));
 
   const currentMarketNetworkIsSupported =
     !allowedChainIds ||
-    allowedChainIds?.find((network) =>
-      networkConfig.isFork
-        ? network === networkConfig.underlyingChainId
-        : network === currentMarketChainId
-    );
+    allowedChainIds?.find((network) => (networkConfig.isFork ? network === networkConfig.underlyingChainId : network === currentMarketChainId));
 
   let networkMismatch = false;
   let neededChainId = getDefaultChainId();
@@ -59,19 +52,11 @@ export default function LoopOverview() {
 
   return (
     <div className="LoopMain">
-      <ScreenWrapper
-        pageTitle={intl.formatMessage(messages.loop)}
-        isTitleOnDesktop={true}
-        withMobileGrayBg={false}
-      >
+      <ScreenWrapper pageTitle={intl.formatMessage(messages.loop)} isTitleOnDesktop={true} withMobileGrayBg={false}>
         {networkMismatch && currentProviderName ? (
-          <NetworkMismatch
-            neededChainId={neededChainId}
-            currentChainId={chainId as ChainId}
-            currentProviderName={currentProviderName}
-          />
+          <NetworkMismatch neededChainId={neededChainId} currentChainId={chainId as ChainId} currentProviderName={currentProviderName} />
         ) : (
-          <LoopMain />
+          reserves.length !== 0 && <LoopMain reserves={reserves} user={user} currentAccount={currentAccount} />
         )}
       </ScreenWrapper>
     </div>

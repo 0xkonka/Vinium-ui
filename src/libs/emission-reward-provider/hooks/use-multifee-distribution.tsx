@@ -5,12 +5,12 @@ import { usePolling } from '../../hooks/use-polling';
 import { getContract } from '../../utils';
 import MultiFeeDistributionABI from '../../../abi/MultiFeeDistributionABI.json';
 import MulticallABI from '../../../abi/Multicall.json';
-import { DataHumanized, UserDataHumanized } from '../types';
+import { UserDataHumanized } from '../types';
 import { useProtocolDataContext } from '../../protocol-data-provider';
 import { useConnectionStatusContext } from '../../connection-status-provider';
 import multicall from '../../multicall';
 import { useUserWalletDataContext } from '../../web3-data-provider';
-import { MultiFeeDistributionFactory } from '../contracts/MultiFeeDistributionFactory';
+import { MultiFeeDistributionFactory } from '../../vinium-protocol-js/contracts/MultiFeeDistributionFactory';
 
 // interval in which the rpc data is refreshed
 const POLLING_INTERVAL = 30 * 1000;

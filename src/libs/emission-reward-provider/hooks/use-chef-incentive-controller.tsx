@@ -6,8 +6,7 @@ import { useConnectionStatusContext } from '../../connection-status-provider';
 import { ComputedReserveData, useDynamicPoolDataContext } from '../../pool-data-provider';
 import { useUserWalletDataContext } from '../../web3-data-provider';
 import { getProvider } from '../../../helpers/config/markets-and-network-config';
-import { ChefIncentivesControllerFactory } from '../contracts/ChefIncentivesControllerFactory';
-
+import { ChefIncentivesControllerFactory } from '../../vinium-protocol-js/contracts/ChefIncentivesControllerFactory';
 
 // interval in which the rpc data is refreshed
 const POLLING_INTERVAL = 30 * 1000;
@@ -53,7 +52,7 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
       setLoadingData(true);
 
       const incentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
-      
+
       let dataResponse: ChefIncentiveHumanized[] = [];
       for (let i = 0; i < reserves.length; i++) {
         let claimableRewards: BigNumber[] = await incentiveController.claimableReward(currentAccount, [
@@ -71,7 +70,7 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
         };
         dataResponse.push(response);
       }
-      
+
       setData(dataResponse);
       setErrorData(false);
     } catch (e) {
