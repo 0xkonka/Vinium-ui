@@ -18,7 +18,6 @@ import ValuePercent from '../../../../components/basic/ValuePercent';
 import NoDataPanel from '../../../../components/NoDataPanel';
 import StakingTopPanel from '../StakingTopPanel';
 import SidePanelCard from '../SidePanelCard';
-import MainnetWarning from '../../../../components/MainnetWarning';
 import { ComputedStakeData } from '../../../../libs/pool-data-provider/types/stake';
 import CooldownInfoModal from '../CooldownInfoModal';
 
@@ -40,28 +39,22 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
   const [currentAsset, setCurrentAsset] = useState<Stake>(Stake.aave);
   const [isActivateCooldownModalVisible, setActivateCooldownModalVisible] = useState(false);
 
-  const isCurrentAssetAAVE = currentAsset === Stake.aave;
+  // const isCurrentAssetAAVE = currentAsset === Stake.aave;
 
   const selectedStakeData = (data as any)[currentAsset];
 
-  const rewardTokenPriceInUsd = valueToBigNumber(selectedStakeData.rewardTokenPriceEth).dividedBy(
-    usdPriceEth
-  );
+  const rewardTokenPriceInUsd = valueToBigNumber(selectedStakeData.rewardTokenPriceEth).dividedBy(usdPriceEth);
 
   const userEarningsPerDay = valueToBigNumber(selectedStakeData.userEarningsPerDay);
   const userEarningsPerMonth = userEarningsPerDay.multipliedBy(30).toString();
-  const userEarningsPerMonthInUSD = rewardTokenPriceInUsd
-    .multipliedBy(userEarningsPerMonth)
-    .toString();
+  const userEarningsPerMonthInUSD = rewardTokenPriceInUsd.multipliedBy(userEarningsPerMonth).toString();
 
-  const smFundsInUSD = valueToBigNumber(data[Stake.aave].stakeTokenTotalSupply).multipliedBy(
-    data[Stake.aave].stakeTokenPriceEth
-  )
+  const smFundsInUSD = valueToBigNumber(data[Stake.aave].stakeTokenTotalSupply)
+    .multipliedBy(data[Stake.aave].stakeTokenPriceEth)
     .dividedBy(usdPriceEth)
     .toFixed(2);
 
-  const totalDistributionPerDay = valueToBigNumber(data[Stake.aave].distributionPerDay)
-    .toFixed(2);
+  const totalDistributionPerDay = valueToBigNumber(data[Stake.aave].distributionPerDay).toFixed(2);
   const userStakedInUSD = valueToBigNumber(selectedStakeData.stakeTokenUserBalance)
     .multipliedBy(selectedStakeData.stakeTokenPriceEth)
     .dividedBy(usdPriceEth)
@@ -94,26 +87,12 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
 
   const stakeCooldownDays = selectedStakeData.stakeCooldownSeconds / 60 / 60 / 24;
 
-  const gradientBackground = gradient(
-    90,
-    `${currentTheme.secondary.rgb}, 1`,
-    0,
-    `${currentTheme.primary.rgb}, 1`,
-    100
-  );
+  const gradientBackground = gradient(90, `${currentTheme.secondary.rgb}, 1`, 0, `${currentTheme.primary.rgb}, 1`, 100);
   const disabledColor = rgba(`${currentTheme.textDarkBlue.rgb}, 0.2`);
 
   return (
-    <ScreenWrapper
-      className="StakingWrapper"
-      pageTitle={intl.formatMessage(messages.pageTitle)}
-      isTopLineSmall={true}
-    >
-      <StakingTopPanel
-        title={intl.formatMessage(messages.pageTitle)}
-        fundsInTheSM={smFundsInUSD}
-        totalEmissionPerDay={totalDistributionPerDay}
-      />
+    <ScreenWrapper className="StakingWrapper" pageTitle={intl.formatMessage(messages.pageTitle)} isTopLineSmall={true}>
+      <StakingTopPanel title={intl.formatMessage(messages.pageTitle)} fundsInTheSM={smFundsInUSD} totalEmissionPerDay={totalDistributionPerDay} />
 
       {location.pathname === '/staking' && (
         <div className="StakingWrapper__mobile-switcher">
@@ -149,7 +128,6 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
             StakingWrapper__contentRightActive: isShowYourIncentives,
           })}
         >
-
           <div className="StakingWrapper__cards-inner">
             <SidePanelCard
               title={intl.formatMessage(messages.staked, {
@@ -170,9 +148,7 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
                   }}
                   color="dark"
                   disabled={
-                    location.pathname ===
-                      `/staking/${currentAsset}/activate-cooldown/confirmation` ||
-                    selectedStakeData.stakeTokenUserBalance === '0'
+                    location.pathname === `/staking/${currentAsset}/activate-cooldown/confirmation` || selectedStakeData.stakeTokenUserBalance === '0'
                   }
                 />
               )}
@@ -186,9 +162,7 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
                       onComplete={() => setCooldownStep(2)}
                     />
                   </div>
-                  <p className="StakingWrapper__info-timerText">
-                    {intl.formatMessage(messages.coolingDown)}
-                  </p>
+                  <p className="StakingWrapper__info-timerText">{intl.formatMessage(messages.coolingDown)}</p>
                 </div>
               )}
 
@@ -197,19 +171,13 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
                   <Link
                     to={`/staking/${currentAsset}/unstake`}
                     className="StakingWrapper__link ButtonLink"
-                    disabled={
-                      location.pathname === `/staking/${currentAsset}/unstake` ||
-                      selectedStakeData.stakeTokenUserBalance === '0'
-                    }
+                    disabled={location.pathname === `/staking/${currentAsset}/unstake` || selectedStakeData.stakeTokenUserBalance === '0'}
                   >
                     <button
                       onClick={() => setShowYourIncentives(false)}
                       className="StakingWrapper__gradientButton"
                       type="button"
-                      disabled={
-                        location.pathname === `/staking/${currentAsset}/unstake` ||
-                        selectedStakeData.stakeTokenUserBalance === '0'
-                      }
+                      disabled={location.pathname === `/staking/${currentAsset}/unstake` || selectedStakeData.stakeTokenUserBalance === '0'}
                     >
                       <div className="StakingWrapper__gradientButton-inner">
                         <span>{intl.formatMessage(messages.unstake)}</span>
@@ -221,9 +189,7 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
                     <p>{intl.formatMessage(messages.timeLeftToUnstake)}</p>
                     <Timer
                       className="StakingWrapper__unstakeTimer"
-                      dateInFuture={
-                        selectedStakeData.userCooldownEndTime + selectedStakeData.stakeUnstakeWindow
-                      }
+                      dateInFuture={selectedStakeData.userCooldownEndTime + selectedStakeData.stakeUnstakeWindow}
                       onComplete={() => setCooldownStep(0)}
                     />
                   </div>
@@ -241,30 +207,20 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
               <Link
                 to={`/staking/${currentAsset}/claim/confirmation?amount=-1`}
                 className="StakingWrapper__link ButtonLink"
-                disabled={
-                  location.pathname === `/staking/${currentAsset}/claim/confirmation` ||
-                  selectedStakeData.userIncentivesToClaim === '0'
-                }
+                disabled={location.pathname === `/staking/${currentAsset}/claim/confirmation` || selectedStakeData.userIncentivesToClaim === '0'}
               >
                 <DefaultButton
                   title={intl.formatMessage(messages.claim)}
                   className="StakingWrapper__button"
                   color="dark"
                   onClick={() => setShowYourIncentives(false)}
-                  disabled={
-                    location.pathname === `/staking/${currentAsset}/claim/confirmation` ||
-                    selectedStakeData.userIncentivesToClaim === '0'
-                  }
+                  disabled={location.pathname === `/staking/${currentAsset}/claim/confirmation` || selectedStakeData.userIncentivesToClaim === '0'}
                 />
               </Link>
             </SidePanelCard>
           </div>
 
-          <Row
-            title={intl.formatMessage(messages.incentivesPerMonth)}
-            className="StakingWrapper__row"
-            weight="light"
-          >
+          <Row title={intl.formatMessage(messages.incentivesPerMonth)} className="StakingWrapper__row" weight="light">
             <Value
               value={userEarningsPerMonth}
               symbol="AAVE"
@@ -274,34 +230,18 @@ export default function StakingWrapper({ children }: StakingWrapperProps) {
             />
           </Row>
 
-          <Row
-            title={intl.formatMessage(messages.cooldownPeriod)}
-            className="StakingWrapper__row"
-            weight="light"
-          >
+          <Row title={intl.formatMessage(messages.cooldownPeriod)} className="StakingWrapper__row" weight="light">
             <strong className="StakingWrapper__cooldownPeriodTime">
-              {intl.formatNumber(
-                stakeCooldownDays < 1 ? selectedStakeData.stakeCooldownSeconds : stakeCooldownDays
-              )}{' '}
-              <span>
-                {intl.formatMessage(stakeCooldownDays < 1 ? messages.seconds : messages.days)}
-              </span>
+              {intl.formatNumber(stakeCooldownDays < 1 ? selectedStakeData.stakeCooldownSeconds : stakeCooldownDays)}{' '}
+              <span>{intl.formatMessage(stakeCooldownDays < 1 ? messages.seconds : messages.days)}</span>
             </strong>
           </Row>
 
-          <Row
-            title={intl.formatMessage(messages.stakingAPY)}
-            className="StakingWrapper__row"
-            weight="light"
-          >
+          <Row title={intl.formatMessage(messages.stakingAPY)} className="StakingWrapper__row" weight="light">
             <ValuePercent value={+selectedStakeData.stakeApy} />
           </Row>
 
-          <Row
-            title={intl.formatMessage(messages.currentMaxSlashing)}
-            className="StakingWrapper__row"
-            weight="light"
-          >
+          <Row title={intl.formatMessage(messages.currentMaxSlashing)} className="StakingWrapper__row" weight="light">
             <ValuePercent value={0.3} color="red" />
           </Row>
         </div>

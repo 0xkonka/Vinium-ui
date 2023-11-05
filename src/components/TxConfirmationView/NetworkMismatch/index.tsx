@@ -5,10 +5,7 @@ import { useThemeContext } from '@aave/aave-ui-kit';
 
 import DefaultButton from '../../basic/DefaultButton';
 import AccessMaticMarketHelpModal from '../../HelpModal/AccessMaticMarketHelpModal';
-import {
-  AvailableWeb3Connectors,
-  useUserWalletDataContext,
-} from '../../../libs/web3-data-provider';
+import { AvailableWeb3Connectors, useUserWalletDataContext } from '../../../libs/web3-data-provider';
 import { getNetworkConfig } from '../../../helpers/config/markets-and-network-config';
 
 import messages from './messages';
@@ -31,6 +28,15 @@ const ADD_CONFIG: {
     nativeCurrency: { name: string; symbol: string; decimals: number };
   };
 } = {
+  [ChainId.mainnet]: {
+    name: 'Ethereum mainnet',
+    explorerUrls: ['https://etherscan.io'],
+    nativeCurrency: {
+      name: 'Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+  },
   [ChainId.polygon]: {
     name: 'Polygon',
     explorerUrls: ['https://explorer.matic.network'],
@@ -78,11 +84,7 @@ const ADD_CONFIG: {
   },
 };
 
-export default function NetworkMismatch({
-  neededChainId,
-  currentChainId,
-  currentProviderName,
-}: NetworkMismatchProps) {
+export default function NetworkMismatch({ neededChainId, currentChainId, currentProviderName }: NetworkMismatchProps) {
   const intl = useIntl();
   const { currentTheme } = useThemeContext();
   const { library } = useWeb3React<providers.Web3Provider>();
@@ -92,18 +94,14 @@ export default function NetworkMismatch({
   const isMetaMask = (global.window as any)?.ethereum?.isMetaMask;
   // @ts-ignore
   const isCoinbaseWallet = library?.provider?.isCoinbaseWallet === true;
-  const isAddable =
-    (isMetaMask || isCoinbaseWallet) &&
-    ['browser', 'wallet-link'].includes(currentProviderName) &&
-    config;
+  const isAddable = (isMetaMask || isCoinbaseWallet) && ['browser', 'wallet-link'].includes(currentProviderName) && config;
   const { publicJsonRPCWSUrl, publicJsonRPCUrl } = getNetworkConfig(neededChainId);
 
   // const isExternalNetworkUpdateNeeded =
   //   !isMetaMaskForMatic && ['browser', 'wallet-connect'].includes(currentProviderName);
   const isManualNetworkUpdateNeeded = ['torus', 'portis'].includes(currentProviderName);
   const isNeededNetworkNotSupported =
-    neededChainId === ChainId.polygon &&
-    ['authereum', 'fortmatic', 'mew-wallet', 'ledger'].includes(currentProviderName);
+    neededChainId === ChainId.polygon && ['authereum', 'fortmatic', 'mew-wallet', 'ledger'].includes(currentProviderName);
 
   const neededNetworkConfig = getNetworkConfig(neededChainId);
   const currentNetworkConfig = getNetworkConfig(currentChainId);
@@ -119,9 +117,7 @@ export default function NetworkMismatch({
           {isNeededNetworkNotSupported
             ? intl.formatMessage(messages.networkIsNotSupportedCaption)
             : intl.formatMessage(messages.caption, {
-                networkName: neededNetworkConfig.isFork
-                  ? neededNetworkConfig.name + ' Fork'
-                  : neededNetworkConfig.name,
+                networkName: neededNetworkConfig.isFork ? neededNetworkConfig.name + ' Fork' : neededNetworkConfig.name,
               })}
         </h4>
 
@@ -176,10 +172,7 @@ export default function NetworkMismatch({
           )}
 
           {isManualNetworkUpdateNeeded && (
-            <DefaultButton
-              title={intl.formatMessage(messages.changeNetwork)}
-              onClick={() => handleNetworkChange(neededChainId)}
-            />
+            <DefaultButton title={intl.formatMessage(messages.changeNetwork)} onClick={() => handleNetworkChange(neededChainId)} />
           )}
         </div>
       </div>
@@ -189,11 +182,7 @@ export default function NetworkMismatch({
           <div className="NetworkMismatch__bottom-text">
             {isAddable && (
               <div>
-                {intl.formatMessage(messages.howToChange)}{' '}
-                <AccessMaticMarketHelpModal
-                  className="NetworkMismatch__bottomText"
-                  text="Polygon POS"
-                />
+                {intl.formatMessage(messages.howToChange)} <AccessMaticMarketHelpModal className="NetworkMismatch__bottomText" text="Polygon POS" />
               </div>
             )}
           </div>

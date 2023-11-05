@@ -8,7 +8,8 @@ import { useProtocolDataContext } from '../../protocol-data-provider';
 import { formatEther, formatUnits } from 'ethers/lib/utils';
 
 // interval in which the rpc data is refreshed
-const POLLING_INTERVAL = 30 * 1000;
+// const POLLING_INTERVAL = 3000 * 1000;
+const POLLING_INTERVAL = 3000 * 1000; //default
 
 export interface ReserveDataHumanized2 extends ReserveDataHumanized {
   depositRewardsPerSec?: number;
@@ -54,41 +55,44 @@ export function usePoolData(
       provider,
     });
 
-    const chefIncentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
+    if (!provider) return;
 
     try {
       setLoadingReserves(true);
-      // const reservesResponse = await poolDataProviderContract.getReservesHumanized(
-      //   lendingPoolAddressProvider
-      // );
-
-      const [totalApsValue, globalRewardsPerSecValue, reservesResponse]: [any, any, ReservesDataHumanized] = await Promise.all([
-        chefIncentiveController.totalAllocPoint(),
-        chefIncentiveController.rewardsPerSecond(),
-        poolDataProviderContract.getReservesHumanized(lendingPoolAddressProvider),
-      ]);
-      // console.log('reservesResponse >>>>>', reservesResponse);
-
-      const data = reservesResponse.reservesData;
-      for (let index = 0; index < data.length; index++) {
-        const reserve: ReserveDataHumanized2 = data[index];
-
-        const [aTokenPoolInfo, debtTokenPoolInfo] = await Promise.all([
-          chefIncentiveController.poolInfo(reserve.aTokenAddress),
-          chefIncentiveController.poolInfo(reserve.variableDebtTokenAddress),
+      if (incentiveControllerAddress) {
+        const chefIncentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
+        const [totalApsValue, globalRewardsPerSecValue, reservesResponse]: [any, any, ReservesDataHumanized] = await Promise.all([
+          chefIncentiveController.totalAllocPoint(),
+          chefIncentiveController.rewardsPerSecond(),
+          poolDataProviderContract.getReservesHumanized(lendingPoolAddressProvider),
         ]);
+        // console.log('reservesResponse >>>>>', reservesResponse);
 
-        const totalAps = totalApsValue.toNumber();
-        const globalRewardsPerSec = parseFloat(formatEther(globalRewardsPerSecValue));
-        // reservesResponse.reservesData.forEach((r) => (r.stableBorrowRateEnabled = false));
+        const data = reservesResponse.reservesData;
+        for (let index = 0; index < data.length; index++) {
+          const reserve: ReserveDataHumanized2 = data[index];
 
-        reserve.depositRewardsPerSec = totalAps > 0 ? (aTokenPoolInfo.allocPoint.toNumber() / totalAps) * globalRewardsPerSec : 0;
-        reserve.borrowRewardsPerSec = totalAps > 0 ? (debtTokenPoolInfo.allocPoint.toNumber() / totalAps) * globalRewardsPerSec : 0;
-        reserve.rewardEligableDeposits = formatUnits(aTokenPoolInfo.totalSupply, reserve.decimals);
-        reserve.rewardEligableBorrows = formatUnits(debtTokenPoolInfo.totalSupply, reserve.decimals);
+          const [aTokenPoolInfo, debtTokenPoolInfo] = await Promise.all([
+            chefIncentiveController.poolInfo(reserve.aTokenAddress),
+            chefIncentiveController.poolInfo(reserve.variableDebtTokenAddress),
+          ]);
+
+          const totalAps = totalApsValue.toNumber();
+          const globalRewardsPerSec = parseFloat(formatEther(globalRewardsPerSecValue));
+          // reservesResponse.reservesData.forEach((r) => (r.stableBorrowRateEnabled = false));
+
+          reserve.depositRewardsPerSec = totalAps > 0 ? (aTokenPoolInfo.allocPoint.toNumber() / totalAps) * globalRewardsPerSec : 0;
+          reserve.borrowRewardsPerSec = totalAps > 0 ? (debtTokenPoolInfo.allocPoint.toNumber() / totalAps) * globalRewardsPerSec : 0;
+          reserve.rewardEligableDeposits = formatUnits(aTokenPoolInfo.totalSupply, reserve.decimals);
+          reserve.rewardEligableBorrows = formatUnits(debtTokenPoolInfo.totalSupply, reserve.decimals);
+        }
+
+        setReserves(reservesResponse);
+      } else {
+        const reservesResponse = await poolDataProviderContract.getReservesHumanized(lendingPoolAddressProvider);
+        setReserves(reservesResponse);
       }
 
-      setReserves(reservesResponse);
       setErrorReserves(false);
     } catch (e) {
       console.log('e', e);
@@ -105,6 +109,8 @@ export function usePoolData(
       uiPoolDataProviderAddress: poolDataProviderAddress,
       provider,
     });
+
+    if (!provider) return;
 
     try {
       setLoadingUserReserves(true);

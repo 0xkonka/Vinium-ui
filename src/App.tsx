@@ -22,6 +22,7 @@ import {
   Governance,
   Staking,
   Manage,
+  Sdai,
   AssetSwap,
 } from './modules';
 import SwapBorrowRateModeConfirmation from './modules/swap/SwapBorrowRateModeConfirmation';
@@ -65,44 +66,26 @@ function ModulesWithMenu() {
         <Route path="/borrow" component={Borrow} />
         <Route path={`/repay/${CURRENCY_ROUTE_PARAMS}`} component={Repay} />
 
-        <Route
-          exact={true}
-          path={`/interest-swap/${CURRENCY_ROUTE_PARAMS}/confirmation`}
-          component={SwapBorrowRateModeConfirmation}
-        />
+        <Route exact={true} path={`/interest-swap/${CURRENCY_ROUTE_PARAMS}/confirmation`} component={SwapBorrowRateModeConfirmation} />
 
-        <Route
-          exact={true}
-          path={`/usage-as-collateral/${CURRENCY_ROUTE_PARAMS}/confirmation`}
-          component={SwapUsageAsCollateralModeConfirmation}
-        />
+        <Route exact={true} path={`/usage-as-collateral/${CURRENCY_ROUTE_PARAMS}/confirmation`} component={SwapUsageAsCollateralModeConfirmation} />
 
-        <Route
-          exact={true}
-          path={`/reserve-overview/${CURRENCY_ROUTE_PARAMS}`}
-          component={ReserveOverview}
-        />
+        <Route exact={true} path={`/reserve-overview/${CURRENCY_ROUTE_PARAMS}`} component={ReserveOverview} />
 
-        {!!governanceConfig && [
-          <Route path="/governance" component={Governance} key="Governance" />,
-        ]}
+        {!!governanceConfig && [<Route path="/governance" component={Governance} key="Governance" />]}
         {!!stakeConfig && [<Route path="/staking" component={Staking} key="Staking" />]}
 
         <Route path="/loop" component={Loop} key="Loop" />
         <Route path="/manage" component={Manage} key="Manage" />
 
+        <Route path="/sdai" component={Sdai} key="Sdai" />
+
         <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" />
-        <Route
-          path="/rewards/confirm/:incentivesControllerAddress"
-          component={RewardConfirm}
-          key="Reward confirm"
-        />
+        <Route path="/rewards/confirm/:incentivesControllerAddress" component={RewardConfirm} key="Reward confirm" />
 
         {userId && [<Route exact={true} path="/history" component={History} key="History" />]}
 
-        {isFeatureEnabled.faucet(currentMarketData) && [
-          <Route path="/faucet" component={Faucet} key="Faucet" />,
-        ]}
+        {isFeatureEnabled.faucet(currentMarketData) && [<Route path="/faucet" component={Faucet} key="Faucet" />]}
 
         <Redirect to={isUserHasDeposits ? '/dashboard' : '/markets'} />
       </Switch>

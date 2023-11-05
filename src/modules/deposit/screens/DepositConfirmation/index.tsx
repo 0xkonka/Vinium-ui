@@ -1,36 +1,21 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { calculateHealthFactorFromBalancesBigUnits, valueToBigNumber } from '@aave/protocol-js';
-import { useThemeContext } from '@aave/aave-ui-kit';
-
 import { getAtokenInfo } from '../../../../helpers/get-atoken-info';
 import { useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
 import { getReferralCode } from '../../../../libs/referral-handler';
 import { useTxBuilderContext } from '../../../../libs/tx-provider';
-import routeParamValidationHOC, {
-  ValidationWrapperComponentProps,
-} from '../../../../components/RouteParamsValidationWrapper';
+import routeParamValidationHOC, { ValidationWrapperComponentProps } from '../../../../components/RouteParamsValidationWrapper';
 import NoDataPanel from '../../../../components/NoDataPanel';
-import Row from '../../../../components/basic/Row';
-import Value from '../../../../components/basic/Value';
 import PoolTxConfirmationView from '../../../../components/PoolTxConfirmationView';
-import HealthFactor from '../../../../components/HealthFactor';
 import DepositCurrencyWrapper from '../../components/DepositCurrencyWrapper';
 import { getAssetInfo } from '../../../../helpers/config/assets-config';
 
 import defaultMessages from '../../../../defaultMessages';
 import messages from './messages';
 
-function DepositConfirmation({
-  currencySymbol,
-  poolReserve,
-  amount,
-  user,
-  userReserve,
-  walletBalance,
-}: ValidationWrapperComponentProps) {
+function DepositConfirmation({ currencySymbol, poolReserve, amount, user, userReserve, walletBalance }: ValidationWrapperComponentProps) {
   const intl = useIntl();
-  const { currentTheme } = useThemeContext();
   const { marketRefPriceInUsd } = useStaticPoolDataContext();
   const { lendingPool } = useTxBuilderContext();
   const aTokenData = getAtokenInfo({
@@ -62,9 +47,7 @@ function DepositConfirmation({
 
   const amountIntEth = amount.multipliedBy(poolReserve.priceInMarketReferenceCurrency);
   const amountInUsd = amountIntEth.multipliedBy(marketRefPriceInUsd);
-  const totalCollateralMarketReferenceCurrencyAfter = valueToBigNumber(
-    user.totalCollateralMarketReferenceCurrency
-  ).plus(amountIntEth);
+  const totalCollateralMarketReferenceCurrencyAfter = valueToBigNumber(user.totalCollateralMarketReferenceCurrency).plus(amountIntEth);
 
   const liquidationThresholdAfter = valueToBigNumber(user.totalCollateralMarketReferenceCurrency)
     .multipliedBy(user.currentLiquidationThreshold)
@@ -87,14 +70,11 @@ function DepositConfirmation({
     });
   };
 
-  const notShowHealthFactor =
-    user.totalBorrowsMarketReferenceCurrency !== '0' && poolReserve.usageAsCollateralEnabled;
+  const notShowHealthFactor = user.totalBorrowsMarketReferenceCurrency !== '0' && poolReserve.usageAsCollateralEnabled;
 
   const usageAsCollateralEnabledOnDeposit =
     poolReserve.usageAsCollateralEnabled &&
-    (!userReserve?.underlyingBalance ||
-      userReserve.underlyingBalance === '0' ||
-      userReserve.usageAsCollateralEnabledOnUser);
+    (!userReserve?.underlyingBalance || userReserve.underlyingBalance === '0' || userReserve.usageAsCollateralEnabledOnUser);
 
   return (
     <DepositCurrencyWrapper

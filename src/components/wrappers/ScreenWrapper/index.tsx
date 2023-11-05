@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 
 import { useLanguageContext } from '../../../libs/language-provider';
 import { useProtocolDataContext } from '../../../libs/protocol-data-provider';
-import BridgeBanner from '../../BridgeBanner';
 import DesktopPageTitle from '../../DesktopPageTitle';
 import { useHeaderTitle, useWithDesktopTitle } from '../ScreensWrapper';
 
@@ -66,17 +65,12 @@ export default function ScreenWrapper({
       })}
     >
       {isTitleOnDesktop && (pageTitle || titleComponent) && (
-        <DesktopPageTitle
-          title={!!titleComponent ? titleComponent : pageTitle}
-          subTitle={subTitle}
-        />
+        <DesktopPageTitle title={!!titleComponent ? titleComponent : pageTitle} subTitle={subTitle} />
       )}
       {subTitle && <div className="ScreenWrapper__mobileSubTitle">{subTitle}</div>}
       {DISPLAY_BRIDGE_BANNER_PAGES.includes(location.pathname) && bridge && (
         <>
-          <div className="ScreenWrapper__bannerWrapper">
-            {/*<BridgeBanner networkName={name} {...bridge} />*/}
-          </div>
+          <div className="ScreenWrapper__bannerWrapper">{/*<BridgeBanner networkName={name} {...bridge} />*/}</div>
           <div className="ScreenWrapper__bannerSpacer" />
         </>
       )}
@@ -84,7 +78,7 @@ export default function ScreenWrapper({
       <div className="ScreenWrapper__mobile-bottomBorder">
         <p>i</p>
       </div>
-  
+
       <style jsx={true} global={true}>
         {staticStyles}
       </style>
@@ -92,11 +86,7 @@ export default function ScreenWrapper({
         @import 'src/_mixins/screen-size';
         .ScreenWrapper {
           @include respond-to(sm) {
-            background: ${withMobileGrayBg
-              ? currentTheme.mainBg.hex
-              : isCurrentThemeDark
-              ? 'transparent'
-              : currentTheme.white.hex};
+            background: ${withMobileGrayBg ? currentTheme.mainBg.hex : isCurrentThemeDark ? 'transparent' : currentTheme.white.hex};
           }
 
           &__mobileSubTitle {

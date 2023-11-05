@@ -1,4 +1,4 @@
-import { ChainId } from "../chainID";
+import { ChainId } from '../chainID';
 
 export type ExplorerLinkBuilderProps = {
   tx?: string;
@@ -92,6 +92,7 @@ export type MarketDataType = {
     MULTIFEE_DISTRIBUTION?: string;
     VINIUM_OFT?: string;
     VINIUM_LP?: string;
+    SDAI?: string;
     MULTICALL?: string;
   };
 };

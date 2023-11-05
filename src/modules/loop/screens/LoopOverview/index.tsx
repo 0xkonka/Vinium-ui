@@ -1,13 +1,7 @@
 import React from 'react';
 import { useIntl } from 'react-intl';
-import { useThemeContext } from '@aave/aave-ui-kit';
 import messages from './messages';
-import staticStyles from './style';
-
-import ContentWrapper from '../../../../components/wrappers/ContentWrapper';
 import ScreenWrapper from '../../../../components/wrappers/ScreenWrapper';
-import Row from '../../../../components/basic/Row';
-import Value from '../../../../components/basic/Value';
 import { useWeb3React } from '@web3-react/core';
 import { providers } from 'ethers';
 import { getDefaultChainId, getSupportedChainIds } from '../../../../helpers/config/markets-and-network-config';

@@ -30,8 +30,6 @@ const useViniumLendingPoolRewards = () => {
         .multipliedBy(marketRefPriceInUsd)
         .toNumber();
 
-      console.log('poolReserve', poolReserve);
-
       const totalDeposits = valueToBigNumber(poolReserve.totalLiquidity || 0)
         .multipliedBy(poolReserve.priceInMarketReferenceCurrency)
         .multipliedBy(marketRefPriceInUsd)

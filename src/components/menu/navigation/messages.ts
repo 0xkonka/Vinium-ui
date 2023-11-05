@@ -12,5 +12,6 @@ export default defineMessages({
   swap: 'Swap',
   stake: 'Stake',
   manage: 'Manage',
+  sdai: 'sDai',
   governance: 'Governance',
 });

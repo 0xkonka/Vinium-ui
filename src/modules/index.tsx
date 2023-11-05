@@ -10,20 +10,7 @@ import Dashboard from './dashboard';
 import Governance from './governance';
 import Staking from './staking';
 import Manage from './manage';
+import Sdai from './sdai';
 import AssetSwap from './asset-swap';
 
-export {
-  Markets,
-  ReserveOverview,
-  History,
-  Deposit,
-  Withdraw,
-  Borrow,
-  Repay,
-  Faucet,
-  Dashboard,
-  Governance,
-  Staking,
-  Manage,
-  AssetSwap,
-};
+export { Markets, ReserveOverview, History, Deposit, Withdraw, Borrow, Repay, Faucet, Dashboard, Governance, Staking, Manage, Sdai, AssetSwap };

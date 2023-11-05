@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { usePolling } from '../../hooks/use-polling';
 import { useProtocolDataContext } from '../../protocol-data-provider';
 import { useConnectionStatusContext } from '../../connection-status-provider';
-import { ComputedReserveData, useDynamicPoolDataContext } from '../../pool-data-provider';
+import { useDynamicPoolDataContext } from '../../pool-data-provider';
 import { useUserWalletDataContext } from '../../web3-data-provider';
 import { getProvider } from '../../../helpers/config/markets-and-network-config';
 import { ChefIncentivesControllerFactory } from '../../vinium-protocol-js/contracts/ChefIncentivesControllerFactory';

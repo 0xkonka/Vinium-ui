@@ -24,29 +24,23 @@ const marketToHALAaveVersionUrlParam = (market: CustomMarket): string | undefine
       return 'aaveavalanche';
     case CustomMarket.proto_goerli:
       return 'aavegoerli';
-    // case CustomMarket.proto_mainnet:
-    //   return 'aavev2';
+    case CustomMarket.proto_mainnet:
+      return 'aavev2';
 
     // case CustomMarket.proto_kovan:
     case CustomMarket.proto_mumbai:
       return 'aavemumbai';
     case CustomMarket.proto_fuji:
       return 'aavefuji';
-      // case CustomMarket.amm_kovan:
-      // case CustomMarket.amm_mainnet:
+    // case CustomMarket.amm_kovan:
+    // case CustomMarket.amm_mainnet:
 
     default:
       return exhaustCases(market);
   }
 };
 
-export default function HALNotificationIcon({
-  height,
-  width,
-  containerClassName,
-  containerStyle,
-  iconTheme,
-}: AdditionalItemProps) {
+export default function HALNotificationIcon({ height, width, containerClassName, containerStyle, iconTheme }: AdditionalItemProps) {
   const intl = useIntl();
   const { currentAccount } = useUserWalletDataContext();
   const { currentMarket } = useProtocolDataContext();
@@ -81,17 +75,9 @@ export default function HALNotificationIcon({
       data-tip={true}
       data-for={tooltipId}
     >
-      <img
-        src={iconTheme === 'dark' ? bellGrayDark : iconTheme === 'gray' ? bellGray : bell}
-        alt="Notify Me"
-        height={height + 2}
-        width={width + 2}
-      />
+      <img src={iconTheme === 'dark' ? bellGrayDark : iconTheme === 'gray' ? bellGray : bell} alt="Notify Me" height={height + 2} width={width + 2} />
 
-      <CustomTooltip
-        tooltipId={tooltipId}
-        text={intl.formatMessage(messages.notificationIconTooltipText)}
-      />
+      <CustomTooltip tooltipId={tooltipId} text={intl.formatMessage(messages.notificationIconTooltipText)} />
 
       <style jsx={true}>{staticStyles}</style>
     </a>

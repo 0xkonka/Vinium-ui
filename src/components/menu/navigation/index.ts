@@ -1,5 +1,5 @@
 import { MessageDescriptor } from 'react-intl';
-import { moreMenuExtraItems, moreMenuItems, moreMenuMobileOnlyItems, stakeConfig, governanceConfig } from '../../../ui-config';
+import { moreMenuExtraItems, moreMenuItems } from '../../../ui-config';
 import { MarketDataType } from '../../../helpers/config/types';
 import { isFeatureEnabled } from '../../../helpers/config/markets-and-network-config';
 
@@ -44,6 +44,10 @@ const navigation: Navigation[] = [
   {
     link: '/manage',
     title: messages.manage,
+  },
+  {
+    link: '/sdai',
+    title: messages.sdai,
   },
   {
     link: 'https://vinium-bridge.vercel.app/',

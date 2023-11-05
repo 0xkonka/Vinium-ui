@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { ethers, providers } from 'ethers';
-import { Box, Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Button, Step, StepLabel, Stepper, Typography } from '@mui/material';
 import { SpinLoader, useThemeContext } from '@aave/aave-ui-kit';
 import { useERC20Data } from '../../../libs/erc20/use-erc20-token';
 import { useDynamicPoolDataContext } from '../../../libs/pool-data-provider';
@@ -50,7 +50,7 @@ const LoopAction = ({ assetId, userAssetBal, loopCount }: LoopActionProps) => {
         token: reserves[assetId].underlyingAsset,
         user: currentAccount,
         spender: leveragerAddr,
-        amount: userAssetBal,
+        amount: ethers.utils.parseUnits(userAssetBal, reserves[assetId].decimals).toString(),
       });
       console.log('approved :>> ', approved);
       if (approved) setActiveStep(1);

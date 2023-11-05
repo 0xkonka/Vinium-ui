@@ -15,7 +15,7 @@ interface TableItemProps {
 }
 
 export default function TableItem({ tokenSymbol, color, children, ...rest }: TableItemProps) {
-  const { currentTheme, lg } = useThemeContext();
+  const { lg } = useThemeContext();
   const asset = getAssetInfo(tokenSymbol);
 
   return (

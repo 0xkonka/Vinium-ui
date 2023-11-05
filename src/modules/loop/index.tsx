@@ -2,7 +2,6 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { stakeConfig } from '../../ui-config';
 import ErrorPage from '../../components/ErrorPage';
-import LoopMain from './screens/LoopMain';
 import { StakeDataProvider } from '../../libs/pool-data-provider/hooks/use-stake-data-context';
 import LoopOverview from './screens/LoopOverview';
 
