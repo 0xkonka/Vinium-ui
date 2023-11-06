@@ -93,6 +93,7 @@ export type MarketDataType = {
     VINIUM_OFT?: string;
     VINIUM_LP?: string;
     SDAI?: string;
+    SFRAX?: string;
     MULTICALL?: string;
   };
 };

@@ -22,7 +22,9 @@ import {
   Governance,
   Staking,
   Manage,
+  Loop,
   Sdai,
+  Frax,
   AssetSwap,
 } from './modules';
 import SwapBorrowRateModeConfirmation from './modules/swap/SwapBorrowRateModeConfirmation';
@@ -31,7 +33,6 @@ import { RewardConfirm } from './modules/reward/screens/RewardConfirm';
 import { governanceConfig, stakeConfig } from './ui-config';
 import { useProtocolDataContext } from './libs/protocol-data-provider';
 import { isFeatureEnabled } from './helpers/config/markets-and-network-config';
-import Loop from './modules/loop';
 
 const staticStyles = css.global`
   .App {
@@ -77,8 +78,8 @@ function ModulesWithMenu() {
 
         <Route path="/loop" component={Loop} key="Loop" />
         <Route path="/manage" component={Manage} key="Manage" />
-
         <Route path="/sdai" component={Sdai} key="Sdai" />
+        <Route path="/frax" component={Frax} key="Frax" />
 
         <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" />
         <Route path="/rewards/confirm/:incentivesControllerAddress" component={RewardConfirm} key="Reward confirm" />

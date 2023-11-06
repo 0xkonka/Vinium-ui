@@ -6,12 +6,12 @@ import NoDataPanel from '../../../../components/NoDataPanel';
 import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
 import ContentWrapper from '../../../../components/wrappers/ContentWrapper';
 import { useHistory } from 'react-router-dom';
-import { useSDaiData } from '../../../../libs/erc4626/use-sdai-token';
+import { useSFraxData } from '../../../../libs/erc4626/use-sfrax-token';
 import { ComputedReserveData } from '../../../../libs/pool-data-provider';
 import { formatEther, parseUnits } from 'ethers/lib/utils';
 import { getContract } from '../../../../libs/utils';
 import erc20ABI from '../../../../abi/erc20ABI.json';
-import sDaiABI from '../../../../abi/sDaiABI.json';
+import sFraxABI from '../../../../abi/sFraxABI.json';
 import { useWeb3React } from '@web3-react/core';
 import { ethers, providers } from 'ethers';
 import { ERC20Service } from '@aave/contract-helpers';
@@ -43,25 +43,25 @@ function a11yProps(index: number) {
   };
 }
 
-interface SdaiMainProps {
+interface sFraxMainProps {
   reserves: ComputedReserveData[];
-  sDaiAddr: string;
+  sFraxAddr: string;
 }
 
-export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
+export default function FraxMain({ reserves, sFraxAddr }: sFraxMainProps) {
   const intl = useIntl();
   const history = useHistory();
   const { currentAccount: user } = useUserWalletDataContext();
   const { chainId: currentChainId } = useProtocolDataContext();
   const { library: provider } = useWeb3React<providers.Web3Provider>();
-  // const daiReserve = reserves.find((reserve) => reserve.symbol === 'DAI');
+  // const fraxReserve = reserves.find((reserve) => reserve.symbol === 'frax');
 
-  const daiAddr = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844';
-  const { data, userData, refresh } = useSDaiData(daiAddr, sDaiAddr);
+  const fraxAddr = '0x853d955aCEf822Db058eb8505911ED77F175b99e';
+  const { data, userData, refresh } = useSFraxData(fraxAddr, sFraxAddr);
 
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [daiApproved, setDaiApproved] = useState(false);
+  const [fraxApproved, setfraxApproved] = useState(false);
   const [assetDepositAmount, setAssetDepositAmount] = useState(0);
   const [vaultWithdrawAmount, setVaultWithdrawAmount] = useState(0);
 
@@ -69,37 +69,37 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
     setTab(newValue);
   };
 
-  const checkdaiApproved = async () => {
+  const checkfraxApproved = async () => {
     const erc20Service = new ERC20Service(getProvider(currentChainId));
     const { isApproved } = erc20Service;
 
-    // console.log('daiReserve?.underlyingAsset!', daiReserve?.underlyingAsset!);
+    // console.log('fraxReserve?.underlyingAsset!', fraxReserve?.underlyingAsset!);
     const approved = await isApproved({
-      // token: daiReserve?.underlyingAsset!,
-      token: daiAddr,
+      // token: fraxReserve?.underlyingAsset!,
+      token: fraxAddr,
       user: user,
-      spender: sDaiAddr,
+      spender: sFraxAddr,
       amount: assetDepositAmount.toString(),
     });
 
-    setDaiApproved(approved);
+    setfraxApproved(approved);
   };
 
-  const debdaiApproved = useDebouncedCallback(checkdaiApproved, 400);
+  const debfraxApproved = useDebouncedCallback(checkfraxApproved, 400);
 
   useEffect(() => {
-    const intervalId = setInterval(() => debdaiApproved(), 1000);
+    const intervalId = setInterval(() => debfraxApproved(), 1000);
     return () => clearInterval(intervalId);
-  }, [debdaiApproved]);
+  }, [debfraxApproved]);
 
   const handleAssetApprove = async () => {
     if (!user || !provider) return;
 
     setLoading(true);
     try {
-      // const daiContract = getContract(daiReserve.underlyingAsset, erc20ABI, provider, user);
-      const daiContract = getContract(daiAddr, erc20ABI, provider, user);
-      let tx = await daiContract.approve(sDaiAddr, ethers.constants.MaxInt256);
+      // const fraxContract = getContract(fraxReserve.underlyingAsset, erc20ABI, provider, user);
+      const fraxContract = getContract(fraxAddr, erc20ABI, provider, user);
+      let tx = await fraxContract.approve(sFraxAddr, ethers.constants.MaxInt256);
       await tx.wait();
     } catch (err) {
       console.log('err', err);
@@ -111,8 +111,8 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
     if (!user || !provider) return;
     setLoading(true);
     try {
-      const sDaiContract = getContract(sDaiAddr, sDaiABI, provider, user);
-      let tx = await sDaiContract.deposit(parseUnits(assetDepositAmount.toString(), 18), user);
+      const sFraxContract = getContract(sFraxAddr, sFraxABI, provider, user);
+      let tx = await sFraxContract.deposit(parseUnits(assetDepositAmount.toString(), 18), user);
       await tx.wait();
       await refresh();
     } catch (err) {
@@ -125,8 +125,8 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
     if (!user || !provider) return;
     setLoading(true);
     try {
-      const sDaiContract = getContract(sDaiAddr, sDaiABI, provider, user);
-      let tx = await sDaiContract.redeem(parseUnits(vaultWithdrawAmount.toString(), 18), user, user);
+      const sFraxContract = getContract(sFraxAddr, sFraxABI, provider, user);
+      let tx = await sFraxContract.redeem(parseUnits(vaultWithdrawAmount.toString(), 18), user, user);
       await tx.wait();
       await refresh();
     } catch (err) {
@@ -147,14 +147,14 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
         <>
           <Card>
             <CardContent>
-              <Typography> DAI in DSR: {(data?.daiInRad! / 10 ** 9).toFixed(2)}B DAI</Typography>
-              <Typography> DSR Rate: {(data?.dsr! * 100).toFixed(2)}%</Typography>
-              <Typography> Converation Rate: {data?.convertToAssets!.toFixed(2)} Dai ( per 1 sDai) </Typography>
+              <Typography> sFrax Supply: {(data?.totalSupply! ?? 0).toFixed(2)}</Typography>
+              <Typography> Current APY: {(data?.apy! * 100).toFixed(2)}%</Typography>
+              <Typography> Converation Rate: {data?.convertToAssets!.toFixed(4)} frax ( per 1 sFrax) </Typography>
               <Typography>
-                Dai Balance : {(+formatEther(userData?.userAssetBalance! ?? 0)).toFixed(2)} dai , sDai worth :{' '}
+                Frax Balance : {(+formatEther(userData?.userAssetBalance! ?? 0)).toFixed(2)} frax , sFrax worth :{' '}
                 {(+formatEther(userData?.userAssetBalance! ?? 0) * data?.convertToShares!).toFixed(2)}
               </Typography>
-              <Typography>sDai Balance : {(+formatEther(userData?.userVaultBalance! ?? 0)).toFixed(2)} sDai</Typography>
+              <Typography>sFrax Balance : {(+formatEther(userData?.userVaultBalance! ?? 0)).toFixed(2)} sFrax</Typography>
             </CardContent>
           </Card>
           <ContentWrapper className="CurrencyScreenWrapper__content" withBackButton={true} goBack={() => history.goBack()} withFullHeight>
@@ -168,7 +168,7 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
               <CustomTabPanel value={tab} index={0}>
                 <Grid container sx={{ flexDirection: 'column', alignItems: 'flex-start' }} spacing={3}>
                   <Grid item>
-                    <Typography sx={{ color: 'white' }}>Dai Balance : {+formatEther(userData?.userAssetBalance! ?? 0)} </Typography>
+                    <Typography sx={{ color: 'white' }}>frax Balance : {+formatEther(userData?.userAssetBalance! ?? 0)} </Typography>
                   </Grid>
                   <Grid item>
                     <OutlinedInput
@@ -192,18 +192,18 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
                   <Grid item>
                     {loading ? (
                       <SpinLoader color="white" className="TxTopInfo__spinner" />
-                    ) : daiApproved ? (
+                    ) : fraxApproved ? (
                       <Button onClick={() => handleAssetDeposit()}>Deposit</Button>
                     ) : (
                       <Button onClick={() => handleAssetApprove()}>Approve</Button>
                     )}
                   </Grid>
                   <Grid item>
-                    <Typography sx={{ color: 'white' }}>Current sDai : {+formatEther(userData?.userVaultBalance! ?? 0)} </Typography>
+                    <Typography sx={{ color: 'white' }}>Current sFrax : {+formatEther(userData?.userVaultBalance! ?? 0)} </Typography>
                   </Grid>
                   <Grid item>
                     <Typography sx={{ color: 'white' }}>
-                      Estimated sDai : {+formatEther(userData?.userVaultBalance! ?? 0) + assetDepositAmount * data?.convertToShares!}{' '}
+                      Estimated sFrax : {+formatEther(userData?.userVaultBalance! ?? 0) + assetDepositAmount * data?.convertToShares!}{' '}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -212,7 +212,7 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
               <CustomTabPanel value={tab} index={1}>
                 <Grid container sx={{ flexDirection: 'column', alignItems: 'flex-start' }} spacing={3}>
                   <Grid item>
-                    <Typography sx={{ color: 'white' }}>sDai Balance : {+formatEther(userData?.userVaultBalance! ?? 0)} </Typography>
+                    <Typography sx={{ color: 'white' }}>sFrax Balance : {+formatEther(userData?.userVaultBalance! ?? 0)} </Typography>
                   </Grid>
                   <Grid item>
                     <OutlinedInput
@@ -241,11 +241,11 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
                     )}
                   </Grid>
                   <Grid item>
-                    <Typography sx={{ color: 'white' }}>Current Dai : {+formatEther(userData?.userAssetBalance! ?? 0)} </Typography>
+                    <Typography sx={{ color: 'white' }}>Current frax : {+formatEther(userData?.userAssetBalance! ?? 0)} </Typography>
                   </Grid>
                   <Grid item>
                     <Typography sx={{ color: 'white' }}>
-                      Estimated Dai : {+formatEther(userData?.userAssetBalance! ?? 0) + vaultWithdrawAmount * data?.convertToAssets!}{' '}
+                      Estimated frax : {+formatEther(userData?.userAssetBalance! ?? 0) + vaultWithdrawAmount * data?.convertToAssets!}{' '}
                     </Typography>
                   </Grid>
                 </Grid>

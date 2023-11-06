@@ -1,18 +1,12 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-
 import { StakeDataProvider } from '../../libs/pool-data-provider/hooks/use-stake-data-context';
-
 import StakingWrapper from './components/StakingWrapper';
-import StakingMain from './screens/StakingMain';
-
 import StakingClaimConfirmation from './screens/StakingClaimConfirmation';
 import ActivateCooldownConfirmation from './screens/ActivateCooldownConfirmation';
 import StakeWithApprovalConfirmation from './screens/StakeWithApprovalConfirmation';
-
 import UnstakeAmount from './screens/UnstakeAmount';
 import UnstakeConfirmation from './screens/UnstakeConfirmation';
-
 import StakeAmount from './screens/StakeAmount';
 import StakeDisclaimer from './screens/StakeDisclaimer';
 import { stakeConfig } from '../../ui-config';
@@ -31,35 +25,15 @@ export default function Staking() {
           {/* <Route exact={true} path="/staking" component={StakingMain} /> */}
 
           <Route exact={true} path="/staking" component={StakeAmount} />
-          <Route
-            exact={true}
-            path="/staking/disclaimer"
-            component={StakeDisclaimer}
-          />
-          <Route
-            exact={true}
-            path="/staking/confirmation"
-            component={StakeWithApprovalConfirmation}
-          />
+          <Route exact={true} path="/staking/disclaimer" component={StakeDisclaimer} />
+          <Route exact={true} path="/staking/confirmation" component={StakeWithApprovalConfirmation} />
 
-          <Route
-            exact={true}
-            path="/staking/claim/confirmation"
-            component={StakingClaimConfirmation}
-          />
+          <Route exact={true} path="/staking/claim/confirmation" component={StakingClaimConfirmation} />
 
-          <Route
-            exact={true}
-            path="/staking/activate-cooldown/confirmation"
-            component={ActivateCooldownConfirmation}
-          />
+          <Route exact={true} path="/staking/activate-cooldown/confirmation" component={ActivateCooldownConfirmation} />
 
           <Route exact={true} path="/staking/unstake" component={UnstakeAmount} />
-          <Route
-            exact={true}
-            path="/staking/unstake/confirmation"
-            component={UnstakeConfirmation}
-          />
+          <Route exact={true} path="/staking/unstake/confirmation" component={UnstakeConfirmation} />
         </Switch>
       </StakingWrapper>
     </StakeDataProvider>

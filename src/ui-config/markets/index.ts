@@ -53,6 +53,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       REPAY_WITH_COLLATERAL_ADAPTER: '0x498c5431eb517101582988fbb36431ddaac8f4b1',
       SWAP_COLLATERAL_ADAPTER: '0x135896DE8421be2ec868E0b811006171D9df802A',
       SDAI: '0x83f20f44975d03b1b09e64809b757c47f942beea',
+      SFRAX: '0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32',
     },
   },
   // [CustomMarket.amm_kovan]: {

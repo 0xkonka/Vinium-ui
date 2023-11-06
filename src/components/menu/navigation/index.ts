@@ -50,6 +50,10 @@ const navigation: Navigation[] = [
     title: messages.sdai,
   },
   {
+    link: '/frax',
+    title: messages.frax,
+  },
+  {
     link: 'https://vinium-bridge.vercel.app/',
     title: messages.bridge,
     absolute: true,

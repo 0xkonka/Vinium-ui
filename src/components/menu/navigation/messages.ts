@@ -13,5 +13,6 @@ export default defineMessages({
   stake: 'Stake',
   manage: 'Manage',
   sdai: 'sDai',
+  frax: 'frax',
   governance: 'Governance',
 });
