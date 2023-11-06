@@ -54,10 +54,11 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
   const { currentAccount: user } = useUserWalletDataContext();
   const { chainId: currentChainId } = useProtocolDataContext();
   const { library: provider } = useWeb3React<providers.Web3Provider>();
-  // const daiReserve = reserves.find((reserve) => reserve.symbol === 'DAI');
+  const daiReserve = reserves.find((reserve) => reserve.symbol === 'DAI');
 
-  const daiAddr = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844';
-  const { data, userData, refresh } = useSDaiData(daiAddr, sDaiAddr);
+  // const daiAddr = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844';
+  const daiAddr = daiReserve?.underlyingAsset;
+  const { data, userData, refresh } = useSDaiData(daiAddr!, sDaiAddr);
 
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -70,6 +71,7 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
   };
 
   const checkdaiApproved = async () => {
+    if(!daiAddr) return;
     const erc20Service = new ERC20Service(getProvider(currentChainId));
     const { isApproved } = erc20Service;
 
@@ -93,7 +95,7 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
   }, [debdaiApproved]);
 
   const handleAssetApprove = async () => {
-    if (!user || !provider) return;
+    if (!user || !provider || !daiAddr) return;
 
     setLoading(true);
     try {

@@ -54,10 +54,10 @@ export default function FraxMain({ reserves, sFraxAddr }: sFraxMainProps) {
   const { currentAccount: user } = useUserWalletDataContext();
   const { chainId: currentChainId } = useProtocolDataContext();
   const { library: provider } = useWeb3React<providers.Web3Provider>();
-  // const fraxReserve = reserves.find((reserve) => reserve.symbol === 'frax');
+  const fraxReserve = reserves.find((reserve) => reserve.symbol === 'FRAX');
 
-  const fraxAddr = '0x853d955aCEf822Db058eb8505911ED77F175b99e';
-  const { data, userData, refresh } = useSFraxData(fraxAddr, sFraxAddr);
+  const fraxAddr = fraxReserve?.underlyingAsset!;
+  const { data, userData, refresh } = useSFraxData(fraxAddr!, sFraxAddr);
 
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -70,6 +70,7 @@ export default function FraxMain({ reserves, sFraxAddr }: sFraxMainProps) {
   };
 
   const checkfraxApproved = async () => {
+    if(!fraxAddr) return;
     const erc20Service = new ERC20Service(getProvider(currentChainId));
     const { isApproved } = erc20Service;
 
@@ -93,7 +94,7 @@ export default function FraxMain({ reserves, sFraxAddr }: sFraxMainProps) {
   }, [debfraxApproved]);
 
   const handleAssetApprove = async () => {
-    if (!user || !provider) return;
+    if (!user || !provider || !fraxAddr) return;
 
     setLoading(true);
     try {
