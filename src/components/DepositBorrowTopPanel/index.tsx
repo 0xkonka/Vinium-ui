@@ -333,7 +333,7 @@ export default function DepositBorrowTopPanel() {
           }
 
           &__topPanel-captionWrapper {
-            color: #232323;
+            color: #0b141be8;
           }
         }
       `}</style>
