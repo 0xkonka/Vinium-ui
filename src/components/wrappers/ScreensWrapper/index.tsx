@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { useIntl } from 'react-intl';
 import classNames from 'classnames';
-import { useThemeContext } from '@aave/aave-ui-kit';
 
 // import Footer from '../../Footer';
 import Menu from '../../menu/Menu';
@@ -12,7 +11,6 @@ import staticStyles from './style';
 
 import starBackground from '../../../images/star.svg';
 // import backgroundDark from '../../../images/05.png';
-import { url } from 'inspector';
 
 export interface ScreensWrapperProps {
   children: ReactNode;

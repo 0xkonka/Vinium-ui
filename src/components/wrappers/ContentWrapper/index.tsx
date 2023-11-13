@@ -16,25 +16,13 @@ interface ContentWrapperProps {
   children: ReactNode;
 }
 
-export default function ContentWrapper({
-  className,
-  children,
-  withFullHeight,
-  withBackButton,
-  goBack,
-}: ContentWrapperProps) {
+export default function ContentWrapper({ className, children, withFullHeight, withBackButton, goBack }: ContentWrapperProps) {
   const intl = useIntl();
   const { currentTheme } = useThemeContext();
   const history = useHistory();
 
   return (
-    <div
-      className={classNames(
-        'ContentWrapper',
-        { ContentWrapper__fullHeight: withFullHeight },
-        className
-      )}
-    >
+    <div className={classNames('ContentWrapper', { ContentWrapper__fullHeight: withFullHeight }, className)}>
       {withBackButton && history.length > 1 && (
         <button className="ContentWrapper__back-button" onClick={goBack || history.goBack}>
           <span />
@@ -48,7 +36,7 @@ export default function ContentWrapper({
       <style jsx={true}>{`
         .ContentWrapper {
           color: ${currentTheme.darkBlue.hex};
-          background: #0b141be8;
+          background: #232323;
           border-radius: 15px;
           &__back-button {
             color: ${currentTheme.textDarkBlue.hex};

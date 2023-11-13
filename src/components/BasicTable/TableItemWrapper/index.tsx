@@ -15,23 +15,12 @@ interface TableItemWrapperProps {
   darkOnDarkMode?: boolean;
 }
 
-export default function TableItemWrapper({
-  onClick,
-  disabled,
-  className,
-  children,
-  withGoToTop,
-  darkOnDarkMode,
-}: TableItemWrapperProps) {
+export default function TableItemWrapper({ onClick, disabled, className, children, withGoToTop, darkOnDarkMode }: TableItemWrapperProps) {
   const { currentTheme } = useThemeContext();
 
   return (
     <div
-      className={classNames(
-        'TableItemWrapper',
-        { TableItemWrapper__disabled: disabled },
-        className
-      )}
+      className={classNames('TableItemWrapper', { TableItemWrapper__disabled: disabled }, className)}
       onClick={() => {
         !disabled && onClick();
         withGoToTop && goToTop();
@@ -42,16 +31,18 @@ export default function TableItemWrapper({
       <style jsx={true}>{staticStyles}</style>
       <style jsx={true}>{`
         .TableItemWrapper {
-          background: #0b141be8;
+          background: #232323;
           border: 1px solid #999;
           border-radius: 15px;
           color: ${currentTheme.darkBlue.hex};
           &:hover {
             box-shadow: 0 0 9px 0 #216999;
+            background: #343434;
           }
           &:active {
             box-shadow: none;
             border-color: #216999;
+            background: #343434;
           }
         }
       `}</style>
