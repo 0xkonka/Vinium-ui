@@ -36,6 +36,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
   // },
   [CustomMarket.proto_mainnet]: {
     chainId: ChainId.mainnet,
+    name: 'Mainnet',
     logo: logos.aavev2Logo,
     activeLogo: logos.aavev2ActiveLogo,
     aTokenPrefix: 'A',
@@ -81,6 +82,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
   // },
   [CustomMarket.proto_mumbai]: {
     chainId: ChainId.mumbai,
+    name: 'Mumbai',
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.polygon,
@@ -115,6 +117,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
   // },
   [CustomMarket.proto_fuji]: {
     chainId: ChainId.fuji,
+    name: 'Fuji',
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.avalanche,
@@ -130,11 +133,13 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
       LENDING_POOL_ADDRESS_PROVIDER: '0x595F26E054903B1FD969A2B0e9D9e2ea839BAd0B'.toLowerCase(),
       LENDING_POOL: '0xf517604D8EbE9215bc32b98aA1f2cf60AC8f210b',
       WETH_GATEWAY: '0xa70140E5C2385410063Bd996953156236CA7A9a2',
+      VINIUM_OFT: '0xE988564a40AFF91123B54fEb7554aEA7e37eD7E5',
       FAUCET: '0x90E5BAc5A98fff59617080848959f44eACB4Cd7B',
     },
   },
   [CustomMarket.proto_avalanche]: {
     chainId: ChainId.avalanche,
+    name: 'Avalanche',
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.avalanche,
@@ -152,6 +157,7 @@ export const marketsData: { [key in keyof typeof CustomMarket]: MarketDataType }
   },
   [CustomMarket.proto_goerli]: {
     chainId: ChainId.goerli,
+    name: 'Goerli',
     logo: logos.aaveLogo,
     activeLogo: logos.aaveActiveLogo,
     subLogo: logos.arbitrium,

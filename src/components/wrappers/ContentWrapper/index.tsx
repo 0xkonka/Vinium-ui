@@ -35,7 +35,7 @@ export default function ContentWrapper({ className, children, withFullHeight, wi
       <style jsx={true}>{staticStyles}</style>
       <style jsx={true}>{`
         .ContentWrapper {
-          color: ${currentTheme.darkBlue.hex};
+          // color: ${currentTheme.darkBlue.hex};
           background: #232323;
           border-radius: 15px;
           &__back-button {

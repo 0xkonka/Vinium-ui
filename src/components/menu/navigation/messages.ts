@@ -14,5 +14,6 @@ export default defineMessages({
   manage: 'Manage',
   sdai: 'sDai',
   frax: 'frax',
+  viniumBridge: 'Vinium Bridge',
   governance: 'Governance',
 });

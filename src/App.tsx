@@ -25,6 +25,7 @@ import {
   Loop,
   Sdai,
   Frax,
+  Bridge,
   AssetSwap,
 } from './modules';
 import SwapBorrowRateModeConfirmation from './modules/swap/SwapBorrowRateModeConfirmation';
@@ -81,7 +82,9 @@ function ModulesWithMenu() {
         <Route path="/sdai" component={Sdai} key="Sdai" />
         <Route path="/frax" component={Frax} key="Frax" />
 
-        <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" />
+        <Route path="/vinium-bridge" component={Bridge} key="Vinium-Bridge" />
+
+        {/* <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" /> */}
         <Route path="/rewards/confirm/:incentivesControllerAddress" component={RewardConfirm} key="Reward confirm" />
 
         {userId && [<Route exact={true} path="/history" component={History} key="History" />]}

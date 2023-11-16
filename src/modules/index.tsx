@@ -13,6 +13,7 @@ import Manage from './manage';
 import Loop from './loop';
 import Sdai from './sdai';
 import Frax from './frax';
+import Bridge from './bridge';
 import AssetSwap from './asset-swap';
 
 export {
@@ -31,5 +32,6 @@ export {
   Loop,
   Sdai,
   Frax,
+  Bridge,
   AssetSwap,
 };

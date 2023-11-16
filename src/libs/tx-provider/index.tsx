@@ -51,7 +51,7 @@ export function TxBuilderProvider({ children }: PropsWithChildren<{}>) {
     currentMarketData.addresses.VINIUM_OFT && getContract(currentMarketData.addresses.VINIUM_OFT!, ViniumTokenABI, provider!, currentAccount);
 
   const viniumLPContract =
-    currentMarketData.addresses.VINIUM_OFT && getContract(currentMarketData.addresses.VINIUM_LP!, erc20ABI, provider!, currentAccount);
+    currentMarketData.addresses.VINIUM_LP && getContract(currentMarketData.addresses.VINIUM_LP!, erc20ABI, provider!, currentAccount);
 
   const leveragerContract =
     currentMarketData.addresses.LEVERAGER && getContract(currentMarketData.addresses.LEVERAGER!, LeveragerABI, provider!, currentAccount);

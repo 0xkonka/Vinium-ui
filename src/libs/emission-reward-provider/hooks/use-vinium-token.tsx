@@ -37,13 +37,12 @@ export function useViniumTokenData(): ViniumTokenDataResponse {
 
   let viniumTokenAddress = currentMarketData.addresses.VINIUM_OFT!;
 
-  const viniumTokenContract = getContract(viniumTokenAddress, ViniumTokenABI, provider!, currentAccount);
-
   const fetchUserData = async () => {
     try {
-      if (!provider) return;
+      if (!provider || !viniumTokenAddress) return;
       setLoadingData(true);
 
+      const viniumTokenContract = getContract(viniumTokenAddress, ViniumTokenABI, provider!, currentAccount);
       let balance: BigNumber = await viniumTokenContract.balanceOf(currentAccount);
       let response: ViniumTokenHumanized = {
         balance,

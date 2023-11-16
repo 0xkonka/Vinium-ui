@@ -62,6 +62,7 @@ export type BaseNetworkConfig = Omit<NetworkConfig, 'explorerLinkBuilder'>;
 export type MarketDataType = {
   // the network the market operates on
   chainId: ChainId;
+  name: string;
   // market logo in the topbar
   logo: string;
   // logo for the active market in dropdown

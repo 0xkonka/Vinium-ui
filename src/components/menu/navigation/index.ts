@@ -59,6 +59,10 @@ const navigation: Navigation[] = [
     absolute: true,
     newTab: true,
   },
+  {
+    link: '/vinium-bridge',
+    title: messages.viniumBridge,
+  },
   // {
   //   link: '/staking',
   //   title: messages.stake,
