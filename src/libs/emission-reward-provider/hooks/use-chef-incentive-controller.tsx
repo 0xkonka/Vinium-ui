@@ -21,6 +21,8 @@ export interface ChefIncentiveDataResponse {
   loading: boolean;
   error: boolean;
   data?: ChefIncentiveHumanized[];
+  totalClaimable?: BigNumber;
+  totalRewardTokens?: string[];
   refresh: () => Promise<any>;
 }
 
@@ -37,6 +39,8 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
   const [loadingData, setLoadingData] = useState<boolean>(false);
   const [errorData, setErrorData] = useState<boolean>(false);
   const [data, setData] = useState<ChefIncentiveHumanized[] | undefined>(undefined);
+  const [totalClaimable, setTotalClaimable] = useState<BigNumber>(BigNumber.from('0'));
+  const [totalRewardTokens, setTotalRewardTokens] = useState<string[]>([]);
   const provider = getProvider(chainId);
 
   let incentiveControllerAddress = currentMarketData.addresses.INCENTIVES_CONTROLLER!;
@@ -54,6 +58,8 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
       const incentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
 
       let dataResponse: ChefIncentiveHumanized[] = [];
+      let _totalClaimable: BigNumber = BigNumber.from('0');
+      let _totalRewardTokens = [];
       for (let i = 0; i < reserves.length; i++) {
         let claimableRewards: BigNumber[] = await incentiveController.claimableReward(currentAccount, [
           reserves[i].aTokenAddress,
@@ -68,9 +74,13 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
           rewardTokens: [reserves[i].aTokenAddress, reserves[i].variableDebtTokenAddress],
           // rewardTokens: [reserves[i].aTokenAddress],
         };
+        _totalClaimable = _totalClaimable.add(claimableReward);
+        _totalRewardTokens.push(reserves[i].aTokenAddress);
+        _totalRewardTokens.push(reserves[i].variableDebtTokenAddress);
         dataResponse.push(response);
       }
-
+      setTotalRewardTokens(_totalRewardTokens);
+      setTotalClaimable(_totalClaimable);
       setData(dataResponse);
       setErrorData(false);
     } catch (e) {
@@ -80,7 +90,7 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
     setLoadingData(false);
   };
 
-  usePolling(fetchData, POLLING_INTERVAL, skip, [skip, incentiveControllerAddress, chainId, reserves]);
+  usePolling(fetchData, POLLING_INTERVAL, skip, [skip, chainId, reserves]);
 
   const loading = loadingData;
   const error = errorData;
@@ -88,6 +98,8 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
     loading,
     error,
     data,
+    totalClaimable,
+    totalRewardTokens,
     refresh: () => {
       return Promise.all([fetchData()]);
     },

@@ -159,24 +159,6 @@ export default function BridgeMain() {
                       </Box>
                     </MenuItem>
                   ))}
-                  {/* {availableMarkets.map((market, index) => {
-                    const marketData = marketsData[market];
-                    const config = getNetworkConfig(marketData.chainId);
-                    const currentChainID = getNetworkConfig(chainId);
-                    // console.log('marketData', marketData)
-                    // console.log('config', config)
-                    if (config.isTestnet === currentChainID.isTestnet && marketData.chainId !== chainId)
-                      return (
-                        <MenuItem value={marketData.name} key={index}>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                             <ListItemIcon>
-                              <img src={marketData.logo} alt={market} />
-                            </ListItemIcon> 
-                            <ListItemText primary={marketData.name} onClick={() => setToChainId(CHAIN_ID_TO_NETWORK[marketData.chainId].chainId)} />
-                          </Box>
-                        </MenuItem>
-                      );
-                  })} */}
                 </Select>
               </Grid>
               <Grid item sm={12} md={6}>
