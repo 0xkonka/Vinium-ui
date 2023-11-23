@@ -17,11 +17,11 @@ const steps = ['Approve', 'Approve Delegate', '1-Click Loop', 'Finished'];
 
 interface LoopActionProps {
   assetId: number;
-  userAssetBal: string;
+  loopBal: string;
   loopCount: number;
 }
 
-const LoopAction = ({ assetId, userAssetBal, loopCount }: LoopActionProps) => {
+const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
   const { currentAccount } = useUserWalletDataContext();
   const { reserves } = useDynamicPoolDataContext();
   const { chainId: currentChainId, currentMarketData } = useProtocolDataContext();
@@ -31,62 +31,56 @@ const LoopAction = ({ assetId, userAssetBal, loopCount }: LoopActionProps) => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [IsChecking, setIsChecking] = useState(false);
+
+  console.log('activeStep', activeStep);
 
   const { erc20Contract: AssetContract } = useERC20Data(reserves[assetId].underlyingAsset);
   const leveragerAddr = currentMarketData.addresses.LEVERAGER!;
 
   useEffect(() => {
-    const erc20Service = new ERC20Service(getProvider(currentChainId));
+    if (!provider || !reserves || !currentAccount) return;
+    const erc20Service: ERC20Service = new ERC20Service(getProvider(currentChainId));
     const { isApproved } = erc20Service;
     const check = async () => {
-      setIsChecking(true);
+      setLoading(true);
       console.log('reserves[assetId].underlyingAsset :>> ', reserves[assetId].underlyingAsset);
       console.log(
-        'ethers.utils.parseUnits(userAssetBal, reserves[assetId].decimals ).toString() :>> ',
-        ethers.utils.parseUnits(userAssetBal, reserves[assetId].decimals).toString()
+        'ethers.utils.parseUnits(loopBal, reserves[assetId].decimals ).toString() :>> ',
+        ethers.utils.parseUnits(loopBal, reserves[assetId].decimals).toString()
       );
+
       const approved = await isApproved({
         token: reserves[assetId].underlyingAsset,
         user: currentAccount,
         spender: leveragerAddr,
-        amount: ethers.utils.parseUnits(userAssetBal, reserves[assetId].decimals).toString(),
+        amount: loopBal,
       });
       console.log('approved :>> ', approved);
-      if (approved) setActiveStep(1);
+      if (approved) {
+        setActiveStep(1);
+        const debtTokenContract = getContract(reserves[assetId].variableDebtTokenAddress, VariableDebtTokenABI, provider, currentAccount);
+        const borrowAllowance = await debtTokenContract.borrowAllowance(currentAccount, leveragerAddr);
+        console.log('borrowAllowance', borrowAllowance);
 
-      const debtTokenContract = getContract(reserves[assetId].variableDebtTokenAddress, VariableDebtTokenABI, provider!, currentAccount);
-      const borrowAllowance = await debtTokenContract.borrowAllowance(currentAccount, leveragerAddr);
+        if (+borrowAllowance > +ethers.utils.parseEther(loopBal)) setActiveStep(2);
+      }
 
-      if (+borrowAllowance > +ethers.utils.parseEther(userAssetBal)) setActiveStep(2);
-      setIsChecking(false);
+      setLoading(false);
     };
     check();
-  }, [currentAccount, assetId, currentChainId, leveragerAddr, userAssetBal]);
+  }, [currentAccount, assetId, currentChainId, leveragerAddr, loopBal]);
 
   const renderContent = () => {
-    if (IsChecking) return;
+    if (loading) return <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />;
     if (activeStep === 0) {
       // Approve
-      return loading ? (
-        <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />
-      ) : (
-        <Button onClick={() => handleApprove()}>Approve</Button>
-      );
+      return <Button onClick={() => handleApprove()}>Approve</Button>;
     } else if (activeStep === 1) {
-      // Approve
-      return loading ? (
-        <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />
-      ) : (
-        <Button onClick={() => handleApproveDelegate()}>Approve Delegate</Button>
-      );
+      // ApproveDelegate
+      return <Button onClick={() => handleApproveDelegate()}>Approve Delegate</Button>;
     } else if (activeStep === 2) {
-      // Approve
-      return loading ? (
-        <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />
-      ) : (
-        <Button onClick={() => handleLoop()}>Loop</Button>
-      );
+      // Loop
+      return <Button onClick={() => handleLoop()}>Loop</Button>;
     } else return <Typography>Finished</Typography>;
   };
 
@@ -121,12 +115,14 @@ const LoopAction = ({ assetId, userAssetBal, loopCount }: LoopActionProps) => {
     if (!leveragerAddr || !currentAccount || !AssetContract || !provider || !leveragerContract) return;
     setLoading(true);
     try {
-      let baseLTVasCollateral = +reserves[assetId].baseLTVasCollateral;
+      let baseLTVasCollateral = +reserves[assetId].baseLTVasCollateral * 10000;
       if (baseLTVasCollateral === 0) baseLTVasCollateral = 9000;
+
+      console.log('baseLTVasCollateral', baseLTVasCollateral);
 
       let tx = await leveragerContract.loop(
         reserves[assetId].underlyingAsset,
-        ethers.utils.parseUnits(userAssetBal, reserves[assetId].decimals),
+        ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
         2,
         baseLTVasCollateral,
         loopCount

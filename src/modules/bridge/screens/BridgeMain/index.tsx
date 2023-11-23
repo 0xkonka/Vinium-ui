@@ -146,7 +146,7 @@ export default function BridgeMain() {
                   ).map((item, index) => (
                     <MenuItem value={item.name} key={index}>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: '0' }}>
                           {typeof item.image === 'string' ? <img src={item.image} alt="network-icon" /> : <item.image className="network-icon" />}
                         </ListItemIcon>
                         <ListItemText
