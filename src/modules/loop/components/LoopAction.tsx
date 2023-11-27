@@ -19,9 +19,10 @@ interface LoopActionProps {
   assetId: number;
   loopBal: string;
   loopCount: number;
+  loopType: string;
 }
 
-const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
+const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) => {
   const { currentAccount } = useUserWalletDataContext();
   const { reserves } = useDynamicPoolDataContext();
   const { chainId: currentChainId, currentMarketData } = useProtocolDataContext();
@@ -32,10 +33,30 @@ const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  console.log('activeStep', activeStep);
-
   const { erc20Contract: AssetContract } = useERC20Data(reserves[assetId].underlyingAsset);
   const leveragerAddr = currentMarketData.addresses.LEVERAGER!;
+
+  const getCollateralTokenInfo = () => {
+    let underlyingAssetAddress = '';
+    let variableDebtTokenAddress = '';
+
+    if (loopType === 'single') {
+      underlyingAssetAddress = reserves[assetId].underlyingAsset;
+      variableDebtTokenAddress = reserves[assetId].variableDebtTokenAddress;
+    } else if (loopType === 'vault') {
+      if (reserves[assetId].symbol === 'sDAI') {
+        underlyingAssetAddress = reserves.filter((reserve) => reserve.symbol === 'DAI')[0].underlyingAsset;
+        variableDebtTokenAddress = reserves.filter((reserve) => reserve.symbol === 'DAI')[0].variableDebtTokenAddress;
+      } else if (reserves[assetId].symbol === 'sFRAX') {
+        underlyingAssetAddress = reserves.filter((reserve) => reserve.symbol === 'FRAX')[0].underlyingAsset;
+        variableDebtTokenAddress = reserves.filter((reserve) => reserve.symbol === 'FRAX')[0].variableDebtTokenAddress;
+      } else if (reserves[assetId].symbol === 'stETH') {
+        underlyingAssetAddress = reserves.filter((reserve) => reserve.symbol === 'ETH')[0].underlyingAsset;
+        variableDebtTokenAddress = reserves.filter((reserve) => reserve.symbol === 'ETH')[0].variableDebtTokenAddress;
+      }
+    }
+    return [underlyingAssetAddress, variableDebtTokenAddress];
+  };
 
   useEffect(() => {
     if (!provider || !reserves || !currentAccount) return;
@@ -58,7 +79,9 @@ const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
       console.log('approved :>> ', approved);
       if (approved) {
         setActiveStep(1);
-        const debtTokenContract = getContract(reserves[assetId].variableDebtTokenAddress, VariableDebtTokenABI, provider, currentAccount);
+        const variableDebtTokenAddress = getCollateralTokenInfo()[1];
+        console.log('variableDebtTokenAddress', variableDebtTokenAddress);
+        const debtTokenContract = getContract(variableDebtTokenAddress, VariableDebtTokenABI, provider, currentAccount);
         const borrowAllowance = await debtTokenContract.borrowAllowance(currentAccount, leveragerAddr);
         console.log('borrowAllowance', borrowAllowance);
 
@@ -69,20 +92,6 @@ const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
     };
     check();
   }, [currentAccount, assetId, currentChainId, leveragerAddr, loopBal]);
-
-  const renderContent = () => {
-    if (loading) return <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />;
-    if (activeStep === 0) {
-      // Approve
-      return <Button onClick={() => handleApprove()}>Approve</Button>;
-    } else if (activeStep === 1) {
-      // ApproveDelegate
-      return <Button onClick={() => handleApproveDelegate()}>Approve Delegate</Button>;
-    } else if (activeStep === 2) {
-      // Loop
-      return <Button onClick={() => handleLoop()}>Loop</Button>;
-    } else return <Typography>Finished</Typography>;
-  };
 
   const handleApprove = async () => {
     if (!leveragerAddr || !currentAccount || !AssetContract) return;
@@ -101,7 +110,12 @@ const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
     if (!leveragerAddr || !currentAccount || !AssetContract || !provider) return;
     setLoading(true);
     try {
-      const debtTokenContract = getContract(reserves[assetId].variableDebtTokenAddress, VariableDebtTokenABI, provider!, currentAccount);
+      console.log('loopType', loopType);
+      // need to approve collateral asset's debtToken ex: in case of sDAI, need to approve delegate dai token's dbToken
+
+      const variableDebtTokenAddress = getCollateralTokenInfo()[1];
+      if (variableDebtTokenAddress === '') return;
+      const debtTokenContract = getContract(variableDebtTokenAddress, VariableDebtTokenABI, provider!, currentAccount);
       let tx = await debtTokenContract.approveDelegation(leveragerAddr, ethers.constants.MaxUint256);
       await tx.wait();
       setActiveStep(2);
@@ -118,21 +132,51 @@ const LoopAction = ({ assetId, loopBal, loopCount }: LoopActionProps) => {
       let baseLTVasCollateral = +reserves[assetId].baseLTVasCollateral * 10000;
       if (baseLTVasCollateral === 0) baseLTVasCollateral = 9000;
 
-      console.log('baseLTVasCollateral', baseLTVasCollateral);
+      if (loopType === 'single') {
+        let tx = await leveragerContract.singleLoop(
+          reserves[assetId].underlyingAsset,
+          ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
+          2,
+          baseLTVasCollateral,
+          loopCount
+        );
+        await tx.wait();
+      } else if (loopType === 'vault') {
+        const underlyingAsset = getCollateralTokenInfo()[0];
+        let tx = await leveragerContract.vaultLoop(
+          underlyingAsset,
+          reserves[assetId].underlyingAsset,
+          ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
+          2,
+          baseLTVasCollateral,
+          loopCount
+        );
+        await tx.wait();
+      }
 
-      let tx = await leveragerContract.loop(
-        reserves[assetId].underlyingAsset,
-        ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
-        2,
-        baseLTVasCollateral,
-        loopCount
-      );
-      await tx.wait();
       setActiveStep(3);
     } catch (err) {
       console.log('err :>> ', err);
     }
     setLoading(false);
+  };
+
+  const renderContent = () => {
+    if (loading) return <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />;
+    if (activeStep === 0) {
+      // Approve
+      return <Button onClick={() => handleApprove()}>Approve</Button>;
+    } else if (activeStep === 1) {
+      // ApproveDelegate
+      return <Button onClick={() => handleApproveDelegate()}>Approve Delegate</Button>;
+    } else if (activeStep === 2) {
+      // Loop
+      return (
+        <Button variant="outlined" onClick={() => handleLoop()}>
+          Loop
+        </Button>
+      );
+    } else return <Typography>Finished</Typography>;
   };
 
   return (

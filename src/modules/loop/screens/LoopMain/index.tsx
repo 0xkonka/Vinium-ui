@@ -8,6 +8,8 @@ import {
   Card,
   Divider,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   Grid,
   List,
   ListItem,
@@ -15,6 +17,8 @@ import {
   ListItemText,
   MenuItem,
   OutlinedInput,
+  Radio,
+  RadioGroup,
   Select,
   SelectChangeEvent,
   Slider,
@@ -42,6 +46,7 @@ interface ListData {
   liquidityRate: string;
   LTVasCollateral: number;
   maxLeverage: number;
+  isVault: boolean;
 }
 
 interface LoopMainProps {
@@ -60,9 +65,10 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
   const [listData, setListData] = useState<ListData[]>([]);
   const [assetId, setAssetId] = useState('0');
   const [loopBal, setLoopBal] = useState('1');
-  const [loopStep, setloopStep] = useState(0);
+  const [loopType, setLoopType] = React.useState('single');
   const [leverage, setLeverage] = useState(1.1);
   const [loopCount, setLoopCount] = useState(1);
+  const [loopStep, setloopStep] = useState(0);
 
   const { viniumRewardsDepositApr = 0, viniumRewardsBorrowApr = 0 } = getRewardApr(reserves[+assetId]);
 
@@ -74,8 +80,6 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
     variableBorrowIncentiveAPR: valueToBigNumber(viniumRewardsBorrowApr),
     userSummary: user,
   });
-
-  console.log('reserves', reserves);
 
   useEffect(() => {
     if (reserves) {
@@ -91,6 +95,7 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
           const LTVasCollateral = +reserve.baseLTVasCollateral === 0 ? 0.9 : +reserve.baseLTVasCollateral;
           const maxLeverage = Math.floor((1 / (1 - LTVasCollateral)) * 10) / 10;
 
+          const isVault = reserve.symbol === ('sDAI' || 'sFRAX' || 'stETH') ? true : false;
           // reserve.supplyAPY
 
           const data: ListData = {
@@ -101,7 +106,8 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
             underlyingBalanceInUSD: userReserve ? userReserve.underlyingBalanceUSD : '0',
             liquidityRate: reserve.supplyAPY,
             LTVasCollateral,
-            maxLeverage: maxLeverage,
+            maxLeverage,
+            isVault,
           };
           return data;
         });
@@ -128,19 +134,7 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
     setLoopCount(Math.max(Math.floor(loopCount), 1));
   }, [assetId, listData, leverage, loopBal]);
 
-  const handleAmountChange = (newAmount: string) => {
-    const newAmountValue = valueToBigNumber(newAmount);
-    const maxAmount = Number(listData[+assetId].walletBalance!).toString();
-    if (newAmountValue.gt(listData[+assetId].walletBalance!)) {
-      setLoopBal(maxAmount);
-    } else if (newAmountValue.isNegative()) {
-      setLoopBal('0');
-    } else {
-      setLoopBal(newAmount);
-    }
-  };
-
-  if (!listData) return <div />;
+  if (isEmpty(listData)) return <div />;
 
   return (
     <>
@@ -205,16 +199,27 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
                           }}
                         />
                       </FormControl>
-                      {/* <AmountField
-                        title={'Available to deposit'}
-                        maxAmount={+listData[+assetId]?.walletBalance! > 0 ? +listData[+assetId].walletBalance : 0}
-                        symbol={reserves[+assetId].symbol}
-                        maxDecimals={reserves[+assetId].decimals}
-                        value={loopBal}
-                        onChange={handleAmountChange}
-                        onMaxButtonClick={() => setLoopBal(Number(listData[+assetId].walletBalance!).toString())}
-                      /> */}
                     </Grid>
+                    {listData && listData[+assetId].isVault! && (
+                      <Grid item sm={12}>
+                        <FormControl>
+                          <FormLabel id="demo-controlled-radio-buttons-group">Single loop or Vault loop</FormLabel>
+                          <RadioGroup
+                            row
+                            aria-labelledby="demo-controlled-radio-buttons-group"
+                            name="controlled-radio-buttons-group"
+                            value={loopType}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setLoopType(event.target.value)}
+                          >
+                            <FormControlLabel value="single" control={<Radio />} label="Single" />
+                            <FormControlLabel value="vault" control={<Radio />} label="Vault" />
+                          </RadioGroup>
+                          <FormLabel>
+                            {loopType === 'single' ? 'Loop Single Asset' : 'Loop (Deposit Vault Asset , Borrow Underlying Asset , Mint Vault Asset)'}{' '}
+                          </FormLabel>
+                        </FormControl>
+                      </Grid>
+                    )}
                     {listData && (
                       <Grid item sm={12}>
                         <Typography sx={{ color: 'white', textAlign: 'center' }}>Leverage : {leverage} </Typography>
@@ -266,8 +271,8 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
                         </List>
                       </Card>
                     </Grid>
-                    <Grid item sm={12}>
-                      <Button color="primary" disabled={+loopBal === 0} onClick={() => setloopStep(1)}>
+                    <Grid item sm={12} sx={{ textAlign: 'center' }}>
+                      <Button variant="outlined" color="primary" disabled={+loopBal === 0} onClick={() => setloopStep(1)}>
                         Start Looping
                       </Button>
                     </Grid>
@@ -275,7 +280,7 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
                 </Grid>
               </Grid>
             ) : (
-              <LoopAction assetId={+assetId} loopBal={loopBal} loopCount={loopCount} />
+              <LoopAction assetId={+assetId} loopBal={loopBal} loopCount={loopCount} loopType={loopType} />
             )}
           </Box>
         </ContentWrapper>

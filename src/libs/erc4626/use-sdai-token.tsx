@@ -49,8 +49,6 @@ export function useSDaiData(assetAddr: string, vaultAddress: string): sDaiDataRe
   const [data, setData] = useState<sDaiHumanized | undefined>(undefined);
   const [userData, setUserData] = useState<sDaiUserHumanized | undefined>(undefined);
 
-  // const vaultAddress = '0x83f20f44975d03b1b09e64809b757c47f942beea';
-
   const vaultContract = getContract(vaultAddress, sDaiABI, provider!);
   // const vaultContract = new ethers.Contract(vaultAddress, sDaiABI, provider);
 

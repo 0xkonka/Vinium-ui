@@ -71,7 +71,7 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
   };
 
   const checkdaiApproved = async () => {
-    if(!daiAddr) return;
+    if (!daiAddr) return;
     const erc20Service = new ERC20Service(getProvider(currentChainId));
     const { isApproved } = erc20Service;
 
@@ -149,7 +149,7 @@ export default function SdaiMain({ reserves, sDaiAddr }: SdaiMainProps) {
         <>
           <Card>
             <CardContent>
-              <Typography> DAI in DSR: {(data?.daiInRad! / 10 ** 9).toFixed(2)}B DAI</Typography>
+              <Typography> DAI in DSR: {(data?.daiInRad! / 10 ** 9).toFixed(4)}B DAI</Typography>
               <Typography> DSR Rate: {(data?.dsr! * 100).toFixed(2)}%</Typography>
               <Typography> Converation Rate: {data?.convertToAssets!.toFixed(2)} Dai ( per 1 sDai) </Typography>
               <Typography>

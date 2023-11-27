@@ -42,12 +42,14 @@
   {
     "inputs": [
       { "internalType": "address", "name": "asset", "type": "address" },
+      { "internalType": "address", "name": "shareAsset", "type": "address" },
+      { "internalType": "address", "name": "lidoAddr", "type": "address" },
       { "internalType": "uint256", "name": "amount", "type": "uint256" },
       { "internalType": "uint256", "name": "interestRateMode", "type": "uint256" },
       { "internalType": "uint256", "name": "borrowRatio", "type": "uint256" },
       { "internalType": "uint256", "name": "loopCount", "type": "uint256" }
     ],
-    "name": "loop",
+    "name": "lidoLoop",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -57,6 +59,33 @@
     "name": "ltv",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "asset", "type": "address" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "interestRateMode", "type": "uint256" },
+      { "internalType": "uint256", "name": "borrowRatio", "type": "uint256" },
+      { "internalType": "uint256", "name": "loopCount", "type": "uint256" }
+    ],
+    "name": "singleLoop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "underlyingAsset", "type": "address" },
+      { "internalType": "address", "name": "vaultAsset", "type": "address" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "interestRateMode", "type": "uint256" },
+      { "internalType": "uint256", "name": "borrowRatio", "type": "uint256" },
+      { "internalType": "uint256", "name": "loopCount", "type": "uint256" }
+    ],
+    "name": "vaultLoop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
