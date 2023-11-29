@@ -36,7 +36,6 @@ import { isEmpty } from 'lodash';
 import { estimateLooping } from '../../../../helpers/leverage';
 import useViniumLendingPoolRewards from '../../../../libs/vinium-protocol-js/hooks/use-lending-pool-rewards';
 import { TokenIcon } from '../../../../helpers/config/assets-config';
-import AmountField from '../../../../components/fields/AmountField';
 import { vaultAssetSymbols } from '../../loopHelper';
 
 interface ListData {
