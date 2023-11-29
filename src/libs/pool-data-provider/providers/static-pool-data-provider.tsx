@@ -48,11 +48,7 @@ interface StaticPoolDataProviderProps {
   errorPage: ReactElement;
 }
 
-export function StaticPoolDataProvider({
-  children,
-  loader,
-  errorPage,
-}: StaticPoolDataProviderProps) {
+export function StaticPoolDataProvider({ children, loader, errorPage }: StaticPoolDataProviderProps) {
   const { currentAccount } = useUserWalletDataContext();
   const { chainId: apolloClientChainId } = useApolloConfigContext();
   const { currentMarketData, chainId, networkConfig } = useProtocolDataContext();
@@ -91,47 +87,34 @@ export function StaticPoolDataProvider({
     return errorPage;
   }
 
-  const reserves: ReserveDataHumanized[] | undefined = activeData.reserves?.reservesData.map(
-    (reserve) => ({
-      ...reserve,
-    })
-  );
+  const reserves: ReserveDataHumanized[] | undefined = activeData.reserves?.reservesData.map((reserve) => ({
+    ...reserve,
+  }));
 
   const reservesWithFixedUnderlying: ReserveDataHumanized[] | undefined = reserves
     ?.map((reserve) => {
-      if (reserve.symbol.toUpperCase() === `W${networkConfig.baseAsset}`) {
-        return {
-          ...reserve,
-          symbol: networkConfig.baseAsset,
-          underlyingAsset: API_ETH_MOCK_ADDRESS.toLowerCase(),
-        };
-      }
-      if (
-        reserve.underlyingAsset.toLowerCase() ===
-        '0x50379f632ca68d36e50cfbc8f78fe16bd1499d1e'.toLowerCase()
-      ) {
+      // TODO for testing
+      // if (reserve.symbol.toUpperCase() === `W${networkConfig.baseAsset}`) {
+      //   return {
+      //     ...reserve,
+      //     symbol: networkConfig.baseAsset,
+      //     underlyingAsset: API_ETH_MOCK_ADDRESS.toLowerCase(),
+      //   };
+      // }
+      if (reserve.underlyingAsset.toLowerCase() === '0x50379f632ca68d36e50cfbc8f78fe16bd1499d1e'.toLowerCase()) {
         reserve.symbol = 'GUNIDAIUSDC';
       }
-      if (
-        reserve.underlyingAsset.toLowerCase() ===
-        '0xd2eec91055f07fe24c9ccb25828ecfefd4be0c41'.toLowerCase()
-      ) {
+      if (reserve.underlyingAsset.toLowerCase() === '0xd2eec91055f07fe24c9ccb25828ecfefd4be0c41'.toLowerCase()) {
         reserve.symbol = 'GUNIUSDCUSDT';
       }
       return reserve;
     })
-    .sort(
-      ({ symbol: a }, { symbol: b }) =>
-        assetsOrder.indexOf(a.toUpperCase()) - assetsOrder.indexOf(b.toUpperCase())
-    );
+    .sort(({ symbol: a }, { symbol: b }) => assetsOrder.indexOf(a.toUpperCase()) - assetsOrder.indexOf(b.toUpperCase()));
 
   const userReserves: UserReserveDataExtended[] = [];
   const userReservesWithFixedUnderlying: UserReserveDataExtended[] = [];
   activeData.userReserves?.forEach((userReserve) => {
-    const reserve = reserves?.find(
-      (reserve) =>
-        reserve.underlyingAsset.toLowerCase() === userReserve.underlyingAsset.toLowerCase()
-    );
+    const reserve = reserves?.find((reserve) => reserve.underlyingAsset.toLowerCase() === userReserve.underlyingAsset.toLowerCase());
     if (reserve) {
       const reserveWithBase: UserReserveDataExtended = {
         ...userReserve,
@@ -155,21 +138,17 @@ export function StaticPoolDataProvider({
     }
   });
 
-  const isUserHasDeposits = userReserves.some(
-    (userReserve) => userReserve.scaledATokenBalance !== '0'
-  );
+  const isUserHasDeposits = userReserves.some((userReserve) => userReserve.scaledATokenBalance !== '0');
 
   if (!RPC_ONLY_MODE && isRPCActive && rpcData) {
     console.log('switched to RPC');
   }
 
-  const marketRefPriceInUsd = activeData?.reserves?.baseCurrencyData
-    ?.marketReferenceCurrencyPriceInUsd
+  const marketRefPriceInUsd = activeData?.reserves?.baseCurrencyData?.marketReferenceCurrencyPriceInUsd
     ? activeData.reserves.baseCurrencyData?.marketReferenceCurrencyPriceInUsd
     : '0';
 
-  const marketRefCurrencyDecimals = activeData?.reserves?.baseCurrencyData
-    ?.marketReferenceCurrencyDecimals
+  const marketRefCurrencyDecimals = activeData?.reserves?.baseCurrencyData?.marketReferenceCurrencyDecimals
     ? activeData.reserves.baseCurrencyData?.marketReferenceCurrencyDecimals
     : 18;
   return (
@@ -179,9 +158,7 @@ export function StaticPoolDataProvider({
         chainId,
         networkConfig,
         refresh: isRPCActive ? refresh : async () => {},
-        WrappedBaseNetworkAssetAddress: networkConfig.baseAssetWrappedAddress
-          ? networkConfig.baseAssetWrappedAddress
-          : '', // TO-DO: Replace all instances of this with the value from protocol-data-provider instead
+        WrappedBaseNetworkAssetAddress: networkConfig.baseAssetWrappedAddress ? networkConfig.baseAssetWrappedAddress : '', // TO-DO: Replace all instances of this with the value from protocol-data-provider instead
         rawReserves: reservesWithFixedUnderlying ? reservesWithFixedUnderlying : [],
         rawUserReserves: userReservesWithFixedUnderlying,
         rawReservesWithBase: reserves ? reserves : [],

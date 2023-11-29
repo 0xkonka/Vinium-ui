@@ -12,6 +12,7 @@ import VariableDebtTokenABI from '../libs/VariableDebtTokenABI.json';
 import { ERC20Service } from '@aave/contract-helpers';
 import { getProvider } from '../../../helpers/config/markets-and-network-config';
 import { useTxBuilderContext } from '../../../libs/tx-provider';
+import { vaultAssetSymbols } from '../loopHelper';
 
 const steps = ['Approve', 'Approve Delegate', '1-Click Loop', 'Finished'];
 
@@ -37,25 +38,15 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
   const leveragerAddr = currentMarketData.addresses.LEVERAGER!;
 
   const getCollateralTokenInfo = () => {
-    let underlyingAssetAddress = '';
-    let variableDebtTokenAddress = '';
+    let underlyingAssetReserve;
 
     if (loopType === 'single') {
-      underlyingAssetAddress = reserves[assetId].underlyingAsset;
-      variableDebtTokenAddress = reserves[assetId].variableDebtTokenAddress;
-    } else if (loopType === 'vault') {
-      if (reserves[assetId].symbol === 'sDAI') {
-        underlyingAssetAddress = reserves.filter((reserve) => reserve.symbol === 'DAI')[0].underlyingAsset;
-        variableDebtTokenAddress = reserves.filter((reserve) => reserve.symbol === 'DAI')[0].variableDebtTokenAddress;
-      } else if (reserves[assetId].symbol === 'sFRAX') {
-        underlyingAssetAddress = reserves.filter((reserve) => reserve.symbol === 'FRAX')[0].underlyingAsset;
-        variableDebtTokenAddress = reserves.filter((reserve) => reserve.symbol === 'FRAX')[0].variableDebtTokenAddress;
-      } else if (reserves[assetId].symbol === 'stETH') {
-        underlyingAssetAddress = reserves.filter((reserve) => reserve.symbol === 'ETH')[0].underlyingAsset;
-        variableDebtTokenAddress = reserves.filter((reserve) => reserve.symbol === 'ETH')[0].variableDebtTokenAddress;
-      }
+      underlyingAssetReserve = reserves[assetId];
+    } else {
+      let underlyingAssetInfo = vaultAssetSymbols[reserves[assetId].symbol as any];
+      underlyingAssetReserve = reserves.filter((reserve) => reserve.symbol === underlyingAssetInfo.underlyingAsset)[0];
     }
-    return [underlyingAssetAddress, variableDebtTokenAddress];
+    return underlyingAssetReserve;
   };
 
   useEffect(() => {
@@ -64,11 +55,6 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
     const { isApproved } = erc20Service;
     const check = async () => {
       setLoading(true);
-      console.log('reserves[assetId].underlyingAsset :>> ', reserves[assetId].underlyingAsset);
-      console.log(
-        'ethers.utils.parseUnits(loopBal, reserves[assetId].decimals ).toString() :>> ',
-        ethers.utils.parseUnits(loopBal, reserves[assetId].decimals).toString()
-      );
 
       const approved = await isApproved({
         token: reserves[assetId].underlyingAsset,
@@ -76,16 +62,16 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
         spender: leveragerAddr,
         amount: loopBal,
       });
-      console.log('approved :>> ', approved);
       if (approved) {
         setActiveStep(1);
-        const variableDebtTokenAddress = getCollateralTokenInfo()[1];
-        console.log('variableDebtTokenAddress', variableDebtTokenAddress);
-        const debtTokenContract = getContract(variableDebtTokenAddress, VariableDebtTokenABI, provider, currentAccount);
-        const borrowAllowance = await debtTokenContract.borrowAllowance(currentAccount, leveragerAddr);
-        console.log('borrowAllowance', borrowAllowance);
+        const underlyingAssetReserve = getCollateralTokenInfo();
+        if (underlyingAssetReserve) {
+          const variableDebtTokenAddress = underlyingAssetReserve?.variableDebtTokenAddress!;
+          const debtTokenContract = getContract(variableDebtTokenAddress, VariableDebtTokenABI, provider, currentAccount);
+          const borrowAllowance = await debtTokenContract.borrowAllowance(currentAccount, leveragerAddr);
 
-        if (+borrowAllowance > +ethers.utils.parseEther(loopBal)) setActiveStep(2);
+          if (+borrowAllowance > +ethers.utils.parseEther(loopBal)) setActiveStep(2);
+        }
       }
 
       setLoading(false);
@@ -110,10 +96,11 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
     if (!leveragerAddr || !currentAccount || !AssetContract || !provider) return;
     setLoading(true);
     try {
-      console.log('loopType', loopType);
       // need to approve collateral asset's debtToken ex: in case of sDAI, need to approve delegate dai token's dbToken
 
-      const variableDebtTokenAddress = getCollateralTokenInfo()[1];
+      const underlyingAssetReserve = getCollateralTokenInfo();
+      if (!underlyingAssetReserve) return;
+      const variableDebtTokenAddress = underlyingAssetReserve?.variableDebtTokenAddress!;
       if (variableDebtTokenAddress === '') return;
       const debtTokenContract = getContract(variableDebtTokenAddress, VariableDebtTokenABI, provider!, currentAccount);
       let tx = await debtTokenContract.approveDelegation(leveragerAddr, ethers.constants.MaxUint256);
@@ -133,7 +120,7 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
       if (baseLTVasCollateral === 0) baseLTVasCollateral = 9000;
 
       if (loopType === 'single') {
-        let tx = await leveragerContract.singleLoop(
+        let tx = await leveragerContract.singleTokenLoop(
           reserves[assetId].underlyingAsset,
           ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
           2,
@@ -142,16 +129,34 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
         );
         await tx.wait();
       } else if (loopType === 'vault') {
-        const underlyingAsset = getCollateralTokenInfo()[0];
-        let tx = await leveragerContract.vaultLoop(
-          underlyingAsset,
-          reserves[assetId].underlyingAsset,
-          ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
-          2,
-          baseLTVasCollateral,
-          loopCount
-        );
-        await tx.wait();
+        const underlyingAssetReserve = getCollateralTokenInfo();
+        if (!underlyingAssetReserve) return;
+        const underlyingAsset = underlyingAssetReserve?.underlyingAsset!;
+
+        let underlyingAssetInfo = vaultAssetSymbols[reserves[assetId].symbol as any];
+        if (underlyingAssetInfo.type === 'vault') {
+          await (
+            await leveragerContract.vaultTokenLoop(
+              underlyingAsset,
+              reserves[assetId].underlyingAsset,
+              ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
+              2,
+              baseLTVasCollateral,
+              loopCount
+            )
+          ).wait();
+        } else if (underlyingAssetInfo.type === 'liquidStaking') {
+          await (
+            await leveragerContract.liquidStakingTokenLoop(
+              underlyingAsset,
+              reserves[assetId].underlyingAsset,
+              ethers.utils.parseUnits('0.001'),
+              2,
+              5000,
+              1
+            )
+          ).wait();
+        }
       }
 
       setActiveStep(3);

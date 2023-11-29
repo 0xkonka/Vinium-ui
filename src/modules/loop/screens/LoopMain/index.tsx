@@ -37,7 +37,7 @@ import { estimateLooping } from '../../../../helpers/leverage';
 import useViniumLendingPoolRewards from '../../../../libs/vinium-protocol-js/hooks/use-lending-pool-rewards';
 import { TokenIcon } from '../../../../helpers/config/assets-config';
 import AmountField from '../../../../components/fields/AmountField';
-import { vaultAssetSymbols } from '../../helper';
+import { vaultAssetSymbols } from '../../loopHelper';
 
 interface ListData {
   walletBalance: BigNumber;
@@ -96,7 +96,7 @@ export default function LoopMain({ currentAccount, reserves, user }: LoopMainPro
           const LTVasCollateral = +reserve.baseLTVasCollateral === 0 ? 0.9 : +reserve.baseLTVasCollateral;
           const maxLeverage = Math.floor((1 / (1 - LTVasCollateral)) * 10) / 10;
 
-          const isVault = vaultAssetSymbols.includes(reserve.symbol);
+          const isVault = Object.keys(vaultAssetSymbols).includes(reserve.symbol);
 
           const data: ListData = {
             // ...reserve,

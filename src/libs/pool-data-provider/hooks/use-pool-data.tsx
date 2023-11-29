@@ -66,8 +66,6 @@ export function usePoolData(
           chefIncentiveController.rewardsPerSecond(),
           poolDataProviderContract.getReservesHumanized(lendingPoolAddressProvider),
         ]);
-        // console.log('reservesResponse >>>>>', reservesResponse);
-
         const data = reservesResponse.reservesData;
         for (let index = 0; index < data.length; index++) {
           const reserve: ReserveDataHumanized2 = data[index];
