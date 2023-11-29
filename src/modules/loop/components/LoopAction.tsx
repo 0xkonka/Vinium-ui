@@ -150,10 +150,10 @@ const LoopAction = ({ assetId, loopBal, loopCount, loopType }: LoopActionProps) 
             await leveragerContract.liquidStakingTokenLoop(
               underlyingAsset,
               reserves[assetId].underlyingAsset,
-              ethers.utils.parseUnits('0.001'),
+              ethers.utils.parseUnits(loopBal, reserves[assetId].decimals),
               2,
-              5000,
-              1
+              baseLTVasCollateral,
+              loopCount
             )
           ).wait();
         }
