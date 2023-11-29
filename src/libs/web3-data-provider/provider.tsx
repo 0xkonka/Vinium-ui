@@ -13,15 +13,11 @@ import {
   getWeb3Connector,
   LedgerDerivationPath,
 } from './web3-providers/connectors';
-import {
-  getReferralCode,
-  getReferralCodeFromUrl,
-  removeReferralCode,
-  storeReferralCode,
-} from '../referral-handler';
+import { getReferralCode, getReferralCodeFromUrl, removeReferralCode, storeReferralCode } from '../referral-handler';
 
 import messages from './messages';
 import { ChainId } from '../../helpers/chainID';
+import { useProtocolDataContext } from '../protocol-data-provider';
 
 declare global {
   interface Window {
@@ -39,11 +35,7 @@ interface UserWalletData {
   handleNetworkChange: (network: ChainId) => void;
 }
 
-const formattingError = (
-  error: Error | undefined,
-  supportedChainIds: ChainId[],
-  intl: IntlShape
-) => {
+const formattingError = (error: Error | undefined, supportedChainIds: ChainId[], intl: IntlShape) => {
   if (!error || !error.message) {
     return;
   }
@@ -74,15 +66,9 @@ const ledgerConfigDefaults = {
 };
 
 const ledgerConfigStoredDefaults = {
-  ledgerBaseDerivationPath:
-    (localStorage.getItem('ledgerPath') as LedgerDerivationPath) ||
-    ledgerConfigDefaults.ledgerBaseDerivationPath,
-  accountsOffset: parseInt(
-    localStorage.getItem('ledgerAccountsOffset') || ledgerConfigDefaults.accountsOffset.toString()
-  ),
-  accountsLength: parseInt(
-    localStorage.getItem('ledgerAccountsLength') || ledgerConfigDefaults.accountsLength.toString()
-  ),
+  ledgerBaseDerivationPath: (localStorage.getItem('ledgerPath') as LedgerDerivationPath) || ledgerConfigDefaults.ledgerBaseDerivationPath,
+  accountsOffset: parseInt(localStorage.getItem('ledgerAccountsOffset') || ledgerConfigDefaults.accountsOffset.toString()),
+  accountsLength: parseInt(localStorage.getItem('ledgerAccountsLength') || ledgerConfigDefaults.accountsLength.toString()),
 };
 
 export const useUserWalletDataContext = () => useContext(UserWalletDataContext);
@@ -124,15 +110,12 @@ export function Web3Provider({
   connectWalletModal: ConnectWalletModal,
 }: PropsWithChildren<Web3ProviderProps>) {
   const intl = useIntl();
-  const { library, account, activate, error, deactivate } =
-    useWeb3React<ethers.providers.Web3Provider>();
+  const { library, account, activate, error, deactivate } = useWeb3React<ethers.providers.Web3Provider>();
 
-  const [currentProviderName, setCurrentProviderName] = useState<
-    AvailableWeb3Connectors | undefined
-  >();
-  const [preferredNetwork, setPreferredNetwork] = useState(
-    (Number(localStorage.getItem('preferredChainId')) || defaultChainId) as ChainId
-  );
+  const { chainId: currentMarketChainId } = useProtocolDataContext();
+
+  const [currentProviderName, setCurrentProviderName] = useState<AvailableWeb3Connectors | undefined>();
+  const [preferredNetwork, setPreferredNetwork] = useState((Number(localStorage.getItem('preferredChainId')) || defaultChainId) as ChainId);
   const [activating, setActivation] = useState(true);
   const [isSelectWalletModalVisible, setSelectWalletModalVisible] = useState(false);
   const [isErrorDetected, setErrorDetected] = useState(false);
@@ -145,9 +128,7 @@ export function Web3Provider({
   const [mockWalletAddress, setMockWalletAddress] = useState('');
 
   const [isAvailableAccountsLoading, setIsAvailableAccountsLoading] = useState(false);
-  const [connectorOptionalConfig, setConnectorOptionalConfig] = useState<ConnectorOptionalConfig>(
-    ledgerConfigStoredDefaults
-  );
+  const [connectorOptionalConfig, setConnectorOptionalConfig] = useState<ConnectorOptionalConfig>(ledgerConfigStoredDefaults);
   // TODO: most probably useless, check it and remove
   const [showLedgerBanner, setLedgerBanner] = useState(false);
 
@@ -156,7 +137,7 @@ export function Web3Provider({
 
     return provider.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x' + ChainId.avalanche.toString(16) }],
+      params: [{ chainId: '0x' + currentMarketChainId.toString(16) }],
     });
   };
 
@@ -194,24 +175,16 @@ export function Web3Provider({
     //TODO: maybe next line is useless
     localStorage.setItem('preferredChainId', network as unknown as string);
     try {
-      await activate(
-        getWeb3Connector(connectorName, network, availableNetworks, connectorConfig),
-        () => {},
-        true
-      );
+      await activate(getWeb3Connector(connectorName, network, availableNetworks, connectorConfig), () => {}, true);
       setCurrentProviderName(connectorName);
       isSuccessful = true;
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
         // switch network
-        const connector = getWeb3Connector(
-          connectorName,
-          network,
-          availableNetworks,
-          connectorConfig
-        );
+        const connector = getWeb3Connector(connectorName, network, availableNetworks, connectorConfig);
         const chainId = await connector?.getChainId();
-        if (chainId !== '0x' + ChainId.avalanche.toString(16)) {
+
+        if (supportedChainIds.filter((supportedChainId) => chainId === '0x' + supportedChainId.toString(16)).length === 0) {
           await switchNetwork(connector);
         }
       }
@@ -228,21 +201,11 @@ export function Web3Provider({
     console.log('currentProviderName :>> ', currentProviderName);
     console.log('library :>> ', library);
     if (currentProviderName && library) {
-      return await handleActivation(
-        currentProviderName,
-        network,
-        supportedChainIds,
-        connectorOptionalConfig
-      );
+      return await handleActivation(currentProviderName, network, supportedChainIds, connectorOptionalConfig);
     }
   };
   const handleUnlockWallet = useCallback(
-    async (
-      connectorName: AvailableWeb3Connectors,
-      chainId: ChainId,
-      availableChainIds: ChainId[],
-      connectorConfig: ConnectorOptionalConfig
-    ) => {
+    async (connectorName: AvailableWeb3Connectors, chainId: ChainId, availableChainIds: ChainId[], connectorConfig: ConnectorOptionalConfig) => {
       if (await handleActivation(connectorName, chainId, availableChainIds, connectorConfig)) {
         setSelectWalletModalVisible(false);
       }
@@ -251,10 +214,7 @@ export function Web3Provider({
     []
   );
 
-  const handleAccountsListLoading = async (
-    provider?: ethers.providers.Web3Provider,
-    retries = 0
-  ) => {
+  const handleAccountsListLoading = async (provider?: ethers.providers.Web3Provider, retries = 0) => {
     // Implement a retry system to prevent users to infinitely load Aave page during a connection issue.
     if (retries <= 0) {
       const error = new Error(
@@ -288,10 +248,7 @@ export function Web3Provider({
       const storedAccount = localStorage.getItem('selectedAccount');
       setAvailableAccounts(accounts);
       // TODO: most probably lower case useless, keeping it just in case
-      if (
-        storedAccount &&
-        accounts.map((acc) => acc.toLowerCase()).includes(storedAccount.toLowerCase())
-      ) {
+      if (storedAccount && accounts.map((acc) => acc.toLowerCase()).includes(storedAccount.toLowerCase())) {
         // If loaded account and local storage account matches, set the account
         handleSetCurrentAccount(storedAccount);
       } else if (currentProviderName === 'ledger' && accounts.length > 1) {
@@ -331,12 +288,7 @@ export function Web3Provider({
             accountsOffset: 0,
           };
           if (reloadAccounts && currentProviderName) {
-            handleActivation(
-              currentProviderName,
-              preferredNetwork,
-              supportedChainIds,
-              updatedConfig
-            );
+            handleActivation(currentProviderName, preferredNetwork, supportedChainIds, updatedConfig);
           }
           return updatedConfig;
         });
@@ -377,9 +329,7 @@ export function Web3Provider({
     const safeAppConnector = new SafeAppConnector();
 
     safeAppConnector.isSafeApp().then((isSafeApp) => {
-      let storedProviderName = localStorage.getItem('currentProvider') as
-        | AvailableWeb3Connectors
-        | undefined;
+      let storedProviderName = localStorage.getItem('currentProvider') as AvailableWeb3Connectors | undefined;
       if (isSafeApp) {
         storedProviderName = 'gnosis-safe';
       } else if (storedProviderName === 'gnosis-safe') {
@@ -388,12 +338,7 @@ export function Web3Provider({
       if (storedProviderName) {
         console.log('storedProviderName', storedProviderName);
         setCurrentProviderName(storedProviderName);
-        handleUnlockWallet(
-          storedProviderName,
-          preferredNetwork,
-          supportedChainIds,
-          connectorOptionalConfig
-        );
+        handleUnlockWallet(storedProviderName, preferredNetwork, supportedChainIds, connectorOptionalConfig);
       } else {
         setCurrentAccount('');
         setActivation(false);
@@ -476,9 +421,7 @@ export function Web3Provider({
           setDisplaySwitchAccountModal(val);
         }}
         onBackdropPress={
-          !account || !library || (availableAccounts.length > 1 && !currentAccount)
-            ? disconnectWallet
-            : () => setDisplaySwitchAccountModal(false)
+          !account || !library || (availableAccounts.length > 1 && !currentAccount) ? disconnectWallet : () => setDisplaySwitchAccountModal(false)
         }
         activeAddress={currentAccount}
         availableAddresses={availableAccounts}

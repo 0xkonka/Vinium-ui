@@ -11,7 +11,7 @@ import staticStyles from './style';
 import errorImage from './images/errorImage.svg';
 import mobileErrorImage from './images/mobileErrorImage.svg';
 import backgroundDark from '../../images/backgroundDark.svg';
-import background from '../../images/background.svg';
+import background from '../../images/star.svg';
 
 type ErrorPageProps = {
   title?: string;
@@ -21,13 +21,7 @@ type ErrorPageProps = {
   image?: boolean;
 };
 
-export default function ErrorPage({
-  image,
-  title,
-  description,
-  buttonType,
-  children,
-}: ErrorPageProps) {
+export default function ErrorPage({ image, title, description, buttonType, children }: ErrorPageProps) {
   const intl = useIntl();
   const history = useHistory();
   const { currentTheme, sm, isCurrentThemeDark } = useThemeContext();
@@ -49,27 +43,13 @@ export default function ErrorPage({
 
         <div className="ErrorPage__buttons-inner">
           {buttonType === 'reload' && (
-            <DefaultButton
-              title={intl.formatMessage(messages.buttonReload)}
-              onClick={() => window.location.reload()}
-              size="big"
-            />
+            <DefaultButton title={intl.formatMessage(messages.buttonReload)} onClick={() => window.location.reload()} size="big" />
           )}
-          {buttonType === 'back' && (
-            <DefaultButton
-              title={intl.formatMessage(messages.buttonBack)}
-              onClick={history.goBack}
-              size="big"
-            />
-          )}
+          {buttonType === 'back' && <DefaultButton title={intl.formatMessage(messages.buttonBack)} onClick={history.goBack} size="big" />}
         </div>
       </div>
 
-      <img
-        className="ErrorPage__background"
-        src={isCurrentThemeDark ? backgroundDark : background}
-        alt=""
-      />
+      <img style={{ height: '100%' }} className="ErrorPage__background" src={background} alt="" />
 
       <style jsx={true} global={true}>
         {staticStyles}

@@ -32,13 +32,7 @@ interface UserInformationProps {
   walletBalance: BigNumber;
 }
 
-export default function UserInformation({
-  user,
-  userReserve,
-  poolReserve,
-  symbol,
-  walletBalance,
-}: UserInformationProps) {
+export default function UserInformation({ user, userReserve, poolReserve, symbol, walletBalance }: UserInformationProps) {
   const intl = useIntl();
   const { currentTheme, xl, sm } = useThemeContext();
   const history = useHistory();
@@ -55,9 +49,7 @@ export default function UserInformation({
   const totalBorrows = valueToBigNumber(userReserve?.totalBorrows || '0').toNumber();
   const underlyingBalance = valueToBigNumber(userReserve?.underlyingBalance || '0').toNumber();
 
-  const availableBorrowsMarketReferenceCurrency = valueToBigNumber(
-    user?.availableBorrowsMarketReferenceCurrency || 0
-  );
+  const availableBorrowsMarketReferenceCurrency = valueToBigNumber(user?.availableBorrowsMarketReferenceCurrency || 0);
   const availableBorrows = availableBorrowsMarketReferenceCurrency.gt(0)
     ? BigNumber.min(
         availableBorrowsMarketReferenceCurrency
@@ -74,10 +66,7 @@ export default function UserInformation({
 
   return (
     <div className="UserInformation">
-      <div
-        className="UserInformation__mobile-caption"
-        onClick={() => setContentVisibility(!contentVisible)}
-      >
+      <div className="UserInformation__mobile-caption" onClick={() => setContentVisibility(!contentVisible)}>
         <h2>{intl.formatMessage(messages.yourInformation)}</h2>
       </div>
 
@@ -91,11 +80,7 @@ export default function UserInformation({
             <h3>
               <span>{intl.formatMessage(messages.deposits)}</span>{' '}
               <div className="UserInformation__caption-buttons">
-                <Link
-                  to={`/deposit/${poolReserve.underlyingAsset}-${poolReserve.id}`}
-                  className="ButtonLink"
-                  disabled={poolReserve.isFrozen}
-                >
+                <Link to={`/deposit/${poolReserve.underlyingAsset}-${poolReserve.id}`} className="ButtonLink" disabled={poolReserve.isFrozen}>
                   <DefaultButton
                     className="UserInformation__button"
                     title={intl.formatMessage(defaultMessages.deposit)}
@@ -110,66 +95,30 @@ export default function UserInformation({
                   to={`/withdraw/${poolReserve.underlyingAsset}-${poolReserve.id}`}
                   disabled={!underlyingBalance}
                 >
-                  <span className="UserInformation__button UserInformation__button-noBorder">
-                    {intl.formatMessage(defaultMessages.withdraw)}
-                  </span>
+                  <span className="UserInformation__button UserInformation__button-noBorder">{intl.formatMessage(defaultMessages.withdraw)}</span>
                 </Link>
               </div>
             </h3>
 
             <div className="UserInformation__info-inner">
-              <Row
-                title={intl.formatMessage(messages.yourWalletBalance)}
-                withMargin={true}
-                weight={rowWeight}
-                color={elementsColor}
-              >
-                <Value
-                  value={walletBalance.toString()}
-                  symbol={symbol}
-                  minimumValueDecimals={2}
-                  maximumValueDecimals={2}
-                  color={elementsColor}
-                />
+              <Row title={intl.formatMessage(messages.yourWalletBalance)} withMargin={true} weight={rowWeight} color={elementsColor}>
+                <Value value={walletBalance.toString()} symbol={symbol} minimumValueDecimals={2} maximumValueDecimals={2} color={elementsColor} />
               </Row>
-              <Row
-                title={intl.formatMessage(messages.youAlreadyDeposited)}
-                withMargin={!!underlyingBalance}
-                weight={rowWeight}
-                color={elementsColor}
-              >
-                <Value
-                  value={underlyingBalance}
-                  symbol={symbol}
-                  minimumValueDecimals={2}
-                  maximumValueDecimals={2}
-                  color={elementsColor}
-                />
+              <Row title={intl.formatMessage(messages.youAlreadyDeposited)} withMargin={!!underlyingBalance} weight={rowWeight} color={elementsColor}>
+                <Value value={underlyingBalance} symbol={symbol} minimumValueDecimals={2} maximumValueDecimals={2} color={elementsColor} />
               </Row>
 
               {!!underlyingBalance && (
                 <div className="UserInformation__row">
-                  <CollateralHelpModal
-                    text={intl.formatMessage(messages.collateral)}
-                    color={elementsColor}
-                    lightWeight={sm}
-                  />
+                  <CollateralHelpModal text={intl.formatMessage(messages.collateral)} color={elementsColor} lightWeight={sm} />
                   <CustomSwitch
-                    value={
-                      userReserve?.usageAsCollateralEnabledOnUser &&
-                      poolReserve.usageAsCollateralEnabled
-                    }
+                    value={userReserve?.usageAsCollateralEnabledOnUser && poolReserve.usageAsCollateralEnabled}
                     offLabel={intl.formatMessage(messages.depositOffLabel)}
                     onLabel={intl.formatMessage(messages.depositOnLabel)}
                     onColor={currentTheme.green.hex}
                     offColor={currentTheme.red.hex}
                     onSwitch={() =>
-                      toggleUseAsCollateral(
-                        history,
-                        poolReserve.id,
-                        !userReserve?.usageAsCollateralEnabledOnUser,
-                        poolReserve.underlyingAsset
-                      )
+                      toggleUseAsCollateral(history, poolReserve.id, !userReserve?.usageAsCollateralEnabledOnUser, poolReserve.underlyingAsset)
                     }
                     disabled={!poolReserve.usageAsCollateralEnabled}
                     swiperHeight={switcherHeight}
@@ -189,17 +138,13 @@ export default function UserInformation({
                   <Link
                     to={`/borrow/${poolReserve.underlyingAsset}-${poolReserve.id}`}
                     className="ButtonLink"
-                    disabled={
-                      !availableBorrows || !poolReserve.borrowingEnabled || poolReserve.isFrozen
-                    }
+                    disabled={!availableBorrows || !poolReserve.borrowingEnabled || poolReserve.isFrozen}
                   >
                     <DefaultButton
                       className="UserInformation__button"
                       title={intl.formatMessage(defaultMessages.borrow)}
                       color={elementsColor}
-                      disabled={
-                        !availableBorrows || !poolReserve.borrowingEnabled || poolReserve.isFrozen
-                      }
+                      disabled={!availableBorrows || !poolReserve.borrowingEnabled || poolReserve.isFrozen}
                     />
                   </Link>
                 </div>
@@ -207,51 +152,20 @@ export default function UserInformation({
             </h3>
 
             <div className="UserInformation__info-inner">
-              <Row
-                title={intl.formatMessage(messages.borrowed)}
-                withMargin={true}
-                weight={rowWeight}
-                color={elementsColor}
-              >
+              <Row title={intl.formatMessage(messages.borrowed)} withMargin={true} weight={rowWeight} color={elementsColor}>
                 {poolReserve.borrowingEnabled ? (
-                  <Value
-                    value={totalBorrows || 0}
-                    symbol={symbol}
-                    minimumValueDecimals={2}
-                    maximumValueDecimals={2}
-                    color={elementsColor}
-                  />
+                  <Value value={totalBorrows || 0} symbol={symbol} minimumValueDecimals={2} maximumValueDecimals={2} color={elementsColor} />
                 ) : (
                   <span className="UserInformation__noData">—</span>
                 )}
               </Row>
-              <HealthFactor
-                value={user?.healthFactor || '-1'}
-                titleColor={elementsColor}
-                titleLightWeight={sm}
-                withHALLink={true}
-              />
-              <Row
-                title={intl.formatMessage(messages.loanToValue)}
-                withMargin={true}
-                weight={rowWeight}
-                color={elementsColor}
-              >
+              <HealthFactor value={user?.healthFactor || '-1'} titleColor={elementsColor} titleLightWeight={sm} withHALLink={true} />
+              <Row title={intl.formatMessage(messages.loanToValue)} withMargin={true} weight={rowWeight} color={elementsColor}>
                 <ValuePercent value={user?.currentLoanToValue || 0} color={elementsColor} />
               </Row>
-              <Row
-                title={intl.formatMessage(messages.availableToYou)}
-                weight={rowWeight}
-                color={elementsColor}
-              >
+              <Row title={intl.formatMessage(messages.availableToYou)} weight={rowWeight} color={elementsColor}>
                 {poolReserve.borrowingEnabled ? (
-                  <Value
-                    value={availableBorrows}
-                    symbol={symbol}
-                    minimumValueDecimals={2}
-                    maximumValueDecimals={2}
-                    color={elementsColor}
-                  />
+                  <Value value={availableBorrows} symbol={symbol} minimumValueDecimals={2} maximumValueDecimals={2} color={elementsColor} />
                 ) : (
                   <span className="UserInformation__noData">—</span>
                 )}
@@ -325,11 +239,12 @@ export default function UserInformation({
           }
 
           &__info-wrapper {
-            background: #0b141be8;
+            background: #232323;
             border: 1px solid #999;
             border-radius: 15px;
             &:after {
               background: ${currentTheme.white.hex};
+              background: #343434;
             }
 
             h3 {

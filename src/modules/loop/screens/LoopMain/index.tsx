@@ -1,62 +1,140 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import messages from './messages';
 import { valueToBigNumber } from '@aave/protocol-js';
-import { Box, Button, Grid, MenuItem, OutlinedInput, Select, SelectChangeEvent, Slider, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectChangeEvent,
+  Slider,
+  Typography,
+} from '@mui/material';
 import NoDataPanel from '../../../../components/NoDataPanel';
-import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
-import { ComputedReserveData, useDynamicPoolDataContext, useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
+import { ComputedReserveData, UserSummary, useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
 import { useWalletBalanceProviderContext } from '../../../../libs/wallet-balance-provider/WalletBalanceProvider';
 import LoopAction from '../../components/LoopAction';
 import ContentWrapper from '../../../../components/wrappers/ContentWrapper';
 import { useHistory } from 'react-router-dom';
+import BigNumber from 'bignumber.js';
+import { isEmpty } from 'lodash';
 
-export default function LoopMain() {
+import { estimateLooping } from '../../../../helpers/leverage';
+import useViniumLendingPoolRewards from '../../../../libs/vinium-protocol-js/hooks/use-lending-pool-rewards';
+import { TokenIcon } from '../../../../helpers/config/assets-config';
+import AmountField from '../../../../components/fields/AmountField';
+import { vaultAssetSymbols } from '../../loopHelper';
+
+interface ListData {
+  walletBalance: BigNumber;
+  walletBalanceInUSD: string;
+  underlyingBalance: string;
+  underlyingBalanceInUSD: string;
+  liquidityRate: string;
+  LTVasCollateral: number;
+  maxLeverage: number;
+  isVault: boolean;
+}
+
+interface LoopMainProps {
+  reserves: ComputedReserveData[];
+  user?: UserSummary;
+  currentAccount: string;
+}
+
+export default function LoopMain({ currentAccount, reserves, user }: LoopMainProps) {
   const intl = useIntl();
   const history = useHistory();
-  const { currentAccount } = useUserWalletDataContext();
   const { walletData } = useWalletBalanceProviderContext();
-  const { reserves, user } = useDynamicPoolDataContext();
   const { marketRefPriceInUsd } = useStaticPoolDataContext();
+  const { getRewardApr } = useViniumLendingPoolRewards();
 
-  const [assetId, setAssetId] = React.useState('0');
-  const [userAssetBal, setUserAssetBal] = useState('0');
-  const [loopCount, setLoopCount] = React.useState(2);
-
+  const [listData, setListData] = useState<ListData[]>([]);
+  const [assetId, setAssetId] = useState('0');
+  const [loopBal, setLoopBal] = useState('1');
+  const [loopType, setLoopType] = React.useState('single');
+  const [leverage, setLeverage] = useState(1.1);
+  const [loopCount, setLoopCount] = useState(1);
   const [loopStep, setloopStep] = useState(0);
 
-  const listData = (withFilter: boolean) => {
-    const data = (reserves: ComputedReserveData[]) =>
-      reserves.map((reserve) => {
-        const userReserve = user?.userReservesData.find((userRes) => userRes.reserve.symbol === reserve.symbol);
-        const walletBalance =
-          walletData[reserve.underlyingAsset] === '0'
-            ? valueToBigNumber('0')
-            : valueToBigNumber(walletData[reserve.underlyingAsset] || '0').dividedBy(valueToBigNumber('10').pow(reserve.decimals));
-        const walletBalanceInUSD = walletBalance.multipliedBy(reserve.priceInMarketReferenceCurrency).multipliedBy(marketRefPriceInUsd).toString();
-        return {
-          ...reserve,
-          walletBalance,
-          walletBalanceInUSD,
-          underlyingBalance: userReserve ? userReserve.underlyingBalance : '0',
-          underlyingBalanceInUSD: userReserve ? userReserve.underlyingBalanceUSD : '0',
-          liquidityRate: reserve.supplyAPY,
-          avg30DaysLiquidityRate: Number(reserve.avg30DaysLiquidityRate),
-          borrowingEnabled: reserve.borrowingEnabled,
-          interestHistory: [],
-        };
-      });
+  const { viniumRewardsDepositApr = 0, viniumRewardsBorrowApr = 0 } = getRewardApr(reserves[+assetId]);
 
-    return data(reserves);
-  };
+  const { depositAPY, borrowAPY, rewardAPR, netAPY, healthFactor } = estimateLooping({
+    amount: valueToBigNumber(loopBal),
+    asset: reserves[+assetId]!,
+    leverage: valueToBigNumber(leverage),
+    depositIncentiveAPR: valueToBigNumber(viniumRewardsDepositApr),
+    variableBorrowIncentiveAPR: valueToBigNumber(viniumRewardsBorrowApr),
+    userSummary: user,
+  });
 
-  const handleChange = (event: SelectChangeEvent) => {
+  useEffect(() => {
+    if (reserves) {
+      const data = (reserves: ComputedReserveData[]) => {
+        return reserves.map((reserve) => {
+          const userReserve = user?.userReservesData.find((userRes) => userRes.reserve.symbol === reserve.symbol);
+          const walletBalance =
+            walletData[reserve.underlyingAsset] === '0'
+              ? valueToBigNumber('0')
+              : valueToBigNumber(walletData[reserve.underlyingAsset] || '0').dividedBy(valueToBigNumber('10').pow(reserve.decimals));
+          const walletBalanceInUSD = walletBalance.multipliedBy(reserve.priceInMarketReferenceCurrency).multipliedBy(marketRefPriceInUsd).toString();
+
+          const LTVasCollateral = +reserve.baseLTVasCollateral === 0 ? 0.9 : +reserve.baseLTVasCollateral;
+          const maxLeverage = Math.floor((1 / (1 - LTVasCollateral)) * 10) / 10;
+
+          const isVault = Object.keys(vaultAssetSymbols).includes(reserve.symbol);
+
+          const data: ListData = {
+            // ...reserve,
+            walletBalance,
+            walletBalanceInUSD,
+            underlyingBalance: userReserve ? userReserve.underlyingBalance : '0',
+            underlyingBalanceInUSD: userReserve ? userReserve.underlyingBalanceUSD : '0',
+            liquidityRate: reserve.supplyAPY,
+            LTVasCollateral,
+            maxLeverage,
+            isVault,
+          };
+          return data;
+        });
+      };
+      setListData(data(reserves));
+    }
+  }, [reserves, marketRefPriceInUsd, user, walletData]);
+
+  const handleAssetChange = (event: SelectChangeEvent) => {
     setAssetId(event.target.value);
+    setLeverage(1.1);
   };
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setLoopCount(newValue as number);
+    setLeverage(newValue as number);
   };
+
+  useEffect(() => {
+    if (isEmpty(listData)) return;
+    const ltv = listData[+assetId].LTVasCollateral;
+
+    let loopCount = Math.log(1 - (1 - ltv) * leverage) / Math.log(ltv) - 1;
+
+    setLoopCount(Math.max(Math.floor(loopCount), 1));
+  }, [assetId, listData, leverage, loopBal]);
+
+  if (isEmpty(listData)) return <div />;
 
   return (
     <>
@@ -77,53 +155,124 @@ export default function LoopMain() {
             {!loopStep ? (
               <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Grid item sm={12} md={6}>
-                  <Grid container spacing={2} sx={{ textAlign: 'center' }}>
+                  <Grid container spacing={2}>
                     <Grid item sm={12}>
-                      <Typography>1-Click Loop</Typography>
+                      <Typography sx={{ color: 'white', fontSize: '1.5rem', textAlign: 'center' }}>1-Click Loop</Typography>
                     </Grid>
                     <Grid item sm={12}>
-                      <Select value={assetId} onChange={handleChange} inputProps={{ 'aria-label': 'Without label' }} sx={{ width: '100%' }}>
+                      <Select value={assetId} onChange={handleAssetChange} inputProps={{ 'aria-label': 'Without label' }} sx={{ width: '100%' }}>
                         {reserves.map((reserve, index) => (
                           <MenuItem value={index} key={index}>
-                            {reserve.symbol}
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <ListItemIcon sx={{ minWidth: '0' }}>
+                                <TokenIcon
+                                  tokenSymbol={reserve.symbol}
+                                  height={26}
+                                  width={26}
+                                  className="TableItem__token"
+                                  tooltipId={reserve.symbol}
+                                />
+                              </ListItemIcon>
+                              <ListItemText primary={reserve.symbol} />
+                            </Box>
                           </MenuItem>
                         ))}
                       </Select>
                     </Grid>
                     <Grid item sm={12}>
-                      <OutlinedInput
-                        id="outlined-adornment-weight"
-                        type="number"
-                        value={userAssetBal}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                          setUserAssetBal(event.target.value);
-                        }}
-                        endAdornment={
-                          <Button size="small" onClick={() => setUserAssetBal(Number(listData(false)[+assetId].walletBalance!).toString())}>
-                            Max
-                          </Button>
-                        }
-                        aria-describedby="outlined-weight-helper-text"
-                        inputProps={{
-                          'aria-label': 'weight',
-                        }}
-                        sx={{ width: '100%' }}
-                      />
+                      <FormControl variant="filled" sx={{ width: '100%' }}>
+                        <OutlinedInput
+                          id="outlined-adornment-weight"
+                          type="number"
+                          value={loopBal}
+                          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setLoopBal(event.target.value);
+                          }}
+                          endAdornment={
+                            <Button size="small" onClick={() => setLoopBal(Number(listData[+assetId].walletBalance!).toString())}>
+                              Max
+                            </Button>
+                          }
+                          aria-describedby="outlined-weight-helper-text"
+                          inputProps={{
+                            'aria-label': 'weight',
+                          }}
+                        />
+                      </FormControl>
                     </Grid>
+                    {listData && listData[+assetId].isVault! && (
+                      <Grid item sm={12}>
+                        <FormControl>
+                          <FormLabel id="demo-controlled-radio-buttons-group">Single loop or Vault loop</FormLabel>
+                          <RadioGroup
+                            row
+                            aria-labelledby="demo-controlled-radio-buttons-group"
+                            name="controlled-radio-buttons-group"
+                            value={loopType}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => setLoopType(event.target.value)}
+                          >
+                            <FormControlLabel value="single" control={<Radio />} label="Single" />
+                            <FormControlLabel value="vault" control={<Radio />} label="Vault" />
+                          </RadioGroup>
+                          <FormLabel>
+                            {loopType === 'single' ? 'Loop Single Asset' : 'Loop (Deposit Vault Asset , Borrow Underlying Asset , Mint Vault Asset)'}{' '}
+                          </FormLabel>
+                        </FormControl>
+                      </Grid>
+                    )}
+                    {listData && (
+                      <Grid item sm={12}>
+                        <Typography sx={{ color: 'white', textAlign: 'center' }}>Leverage : {leverage} </Typography>
+
+                        <Slider
+                          valueLabelDisplay="auto"
+                          size="medium"
+                          step={0.1}
+                          min={1.1}
+                          max={listData[+assetId]?.maxLeverage! - 0.1 ?? 10}
+                          value={leverage}
+                          onChange={handleSliderChange}
+                          aria-labelledby="input-slider"
+                        />
+                      </Grid>
+                    )}
                     <Grid item sm={12}>
-                      <Slider
-                        valueLabelDisplay="auto"
-                        size="medium"
-                        step={1}
-                        min={2}
-                        max={10}
-                        value={loopCount}
-                        onChange={handleSliderChange}
-                        aria-labelledby="input-slider"
-                      />
+                      <Card variant="outlined" sx={{ backgroundColor: 'transparent', borderRadius: '10px' }}>
+                        <List sx={{ width: '100%' }} component="nav" aria-label="mailbox folders">
+                          {/* <ListItem>
+                            <ListItemText primary="Asset LTV:" />
+                            <ListItemText primary={listData[+assetId].LTVasCollateral} sx={{ textAlign: 'right' }} />
+                          </ListItem> */}
+                          <Divider />
+                          <ListItem>
+                            <ListItemText primary="EstimatedNet APY:" />
+                            <ListItemText primary={`${(+netAPY * 100).toFixed(2)} %`} sx={{ textAlign: 'right' }} />
+                          </ListItem>
+                          <Divider />
+                          <ListItem divider>
+                            <ListItemText primary="Vinium" />
+                            <ListItemText primary={`${(+rewardAPR * 100).toFixed(2)} %`} sx={{ textAlign: 'right' }} />
+                          </ListItem>
+                          <Divider />
+                          <ListItem divider>
+                            <ListItemText primary="Base APY:" />
+                            <ListItemText primary={`${((+depositAPY - +borrowAPY) * 100).toFixed(2)} %`} sx={{ textAlign: 'right' }} />
+                          </ListItem>
+                          <Divider />
+
+                          <ListItem divider>
+                            <ListItemText primary="Health Factor:" />
+                            <ListItemText primary={`${(+healthFactor! ?? 0).toFixed(2)} %`} sx={{ textAlign: 'right' }} />
+                          </ListItem>
+                          <ListItem divider>
+                            <ListItemText primary="Loop Count:" />
+                            <ListItemText primary={loopCount} sx={{ textAlign: 'right' }} />
+                          </ListItem>
+                        </List>
+                      </Card>
                     </Grid>
-                    <Grid item sm={12}>
-                      <Button color="primary" disabled={+userAssetBal === 0} onClick={() => setloopStep(1)}>
+                    <Grid item sm={12} sx={{ textAlign: 'center' }}>
+                      <Button variant="outlined" color="primary" disabled={+loopBal === 0} onClick={() => setloopStep(1)}>
                         Start Looping
                       </Button>
                     </Grid>
@@ -131,7 +280,7 @@ export default function LoopMain() {
                 </Grid>
               </Grid>
             ) : (
-              <LoopAction assetId={+assetId} userAssetBal={userAssetBal} loopCount={loopCount} />
+              <LoopAction assetId={+assetId} loopBal={loopBal} loopCount={loopCount} loopType={loopType} />
             )}
           </Box>
         </ContentWrapper>

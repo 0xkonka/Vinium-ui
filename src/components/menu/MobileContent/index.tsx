@@ -8,11 +8,7 @@ import { useProtocolDataContext } from '../../../libs/protocol-data-provider';
 import { useMenuContext } from '../../../libs/menu';
 import goToTop from '../../../helpers/goToTop';
 import Link from '../../basic/Link';
-import ConnectionModeSwitcher from '../ConnectionModeSwitcher';
-import LangSwitcher from '../../basic/LangSwitcher';
-import MarketSwitcher from '../../market/MarketSwitcher';
 import AddressInfo from '../AddressInfo';
-import DarkModeSwitcher from '../DarkModeSwitcher';
 
 import { mobileNavigation } from '../navigation';
 import { moreMenuExtraItems, socialIcons } from '../../../ui-config';
@@ -27,8 +23,7 @@ interface MobileContentProps {
 export default function MobileContent({ isActive, currentAccount }: MobileContentProps) {
   const intl = useIntl();
   const { currentTheme, md } = useThemeContext();
-  const { openMobileMenu, closeMobileMenu, mobileMenuVisible, setMobileMenuVisible } =
-    useMenuContext();
+  const { openMobileMenu, closeMobileMenu, mobileMenuVisible, setMobileMenuVisible } = useMenuContext();
   const { currentMarketData } = useProtocolDataContext();
 
   useEffect(() => {
@@ -87,8 +82,7 @@ export default function MobileContent({ isActive, currentAccount }: MobileConten
                 <li
                   className={classNames('MobileContent__link-wrapper', {
                     MobileContent__linkHidden:
-                      (!currentAccount && link.hiddenWithoutWallet) ||
-                      (link.isVisible && !link.isVisible(currentMarketData)),
+                      (!currentAccount && link.hiddenWithoutWallet) || (link.isVisible && !link.isVisible(currentMarketData)),
                   })}
                   key={index}
                 >
@@ -106,10 +100,7 @@ export default function MobileContent({ isActive, currentAccount }: MobileConten
                       <span>{intl.formatMessage(link.title)}</span>
                     </Link>
                   ) : (
-                    <div
-                      className="MobileContent__link MobileContent__link-chat"
-                      onClick={link.onClick}
-                    >
+                    <div className="MobileContent__link MobileContent__link-chat" onClick={link.onClick}>
                       <span>{intl.formatMessage(link.title)}</span>
                     </div>
                   )}
@@ -128,26 +119,14 @@ export default function MobileContent({ isActive, currentAccount }: MobileConten
             <ul className="MobileContent__bottom-links">
               {moreMenuExtraItems.map((link, index) => (
                 <li className="MobileContent__bottom-linkInner" key={index}>
-                  <Link
-                    className="MobileContent__link"
-                    to={link.link}
-                    absolute={link.absolute}
-                    inNewWindow={link.absolute}
-                    color="white"
-                  >
+                  <Link className="MobileContent__link" to={link.link} absolute={link.absolute} inNewWindow={link.absolute} color="white">
                     <span>{intl.formatMessage(link.title)}</span>
                   </Link>
                 </li>
               ))}
             </ul>
 
-            <SocialIcons
-              icons={socialIcons}
-              className="MobileContent__social-icons"
-              iconHeight={40}
-              iconWidth={40}
-              white={true}
-            />
+            <SocialIcons icons={socialIcons} className="MobileContent__social-icons" iconHeight={40} iconWidth={40} white={true} />
           </div>
         </div>
       </DropdownWrapper>

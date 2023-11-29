@@ -37,7 +37,7 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
     addresses: {
       walletBalanceProvider: '0x8E8dAd5409E0263a51C0aB5055dA66Be28cFF922',
       uiPoolDataProvider: '0x47e300dDd1d25447482E2F7e5a5a967EA2DA8634',
-      uiIncentiveDataProvider: '0xd9F1e5F70B14b8Fd577Df84be7D75afB8a3A0186',
+      // uiIncentiveDataProvider: '0xd9F1e5F70B14b8Fd577Df84be7D75afB8a3A0186',
       chainlinkFeedRegistry: '0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf',
     },
     cachingServerUrl: 'https://cache-api-mainnet.aave.com/graphql',
@@ -61,10 +61,9 @@ export const networkConfigs: Record<string, BaseNetworkConfig> = {
       'https://ethereum-goerli.publicnode.com',
       'https://goerli.blockpi.network/v1/rpc/public',
     ],
-    publicJsonRPCWSUrl:
-      'wss://goerli.infura.io/ws/v3/42a6af90b424d4e083c87620551311f0d39d784f8a91223893d2fba5d6dbdaa7',
+    publicJsonRPCWSUrl: 'wss://goerli.infura.io/ws/v3/42a6af90b424d4e083c87620551311f0d39d784f8a91223893d2fba5d6dbdaa7',
     addresses: {
-      walletBalanceProvider: '0x435CE0F5Ec9c3b18eaCC63d7f54c2d7582F31b52',
+      walletBalanceProvider: '0x8a689aC6F227e17104953e720D48414454ce53c3',
       uiPoolDataProvider: '0x84A63CDC0aa7e851373C9DD1CB824E2c6e7d4f49',
       // uiIncentiveDataProvider: '0xC20bda162d06431ab8891C9810a37F5585EA5147',
     },

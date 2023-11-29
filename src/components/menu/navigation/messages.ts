@@ -12,5 +12,8 @@ export default defineMessages({
   swap: 'Swap',
   stake: 'Stake',
   manage: 'Manage',
+  sdai: 'sDai',
+  frax: 'frax',
+  viniumBridge: 'Vinium Bridge',
   governance: 'Governance',
 });

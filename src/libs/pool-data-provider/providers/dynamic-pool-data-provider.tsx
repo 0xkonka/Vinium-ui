@@ -2,13 +2,7 @@ import React, { PropsWithChildren, useContext, useEffect, useState } from 'react
 
 import { useCurrentTimestamp } from '../hooks/use-current-timestamp';
 import { useStaticPoolDataContext } from './static-pool-data-provider';
-import {
-  formatReserve,
-  FormatReserveResponse,
-  formatUserSummary,
-  FormatUserSummaryResponse,
-  normalize,
-} from '@aave/math-utils';
+import { formatReserve, FormatReserveResponse, formatUserSummary, FormatUserSummaryResponse, normalize } from '@aave/math-utils';
 
 export interface ComputedReserveData extends FormatReserveResponse {
   id: string;
@@ -27,6 +21,10 @@ export interface ComputedReserveData extends FormatReserveResponse {
   priceInMarketReferenceCurrency: string;
   avg30DaysLiquidityRate?: string;
   avg30DaysVariableBorrowRate?: string;
+  depositRewardsPerSec?: number;
+  borrowRewardsPerSec?: number;
+  rewardEligableDeposits?: string;
+  rewardEligableBorrows?: string;
 }
 
 export interface UserSummary extends FormatUserSummaryResponse {
@@ -41,8 +39,7 @@ export interface DynamicPoolDataContextData {
 const DynamicPoolDataContext = React.createContext({} as DynamicPoolDataContextData);
 
 export function DynamicPoolDataProvider({ children }: PropsWithChildren<{}>) {
-  const { rawReserves, rawUserReserves, userId, marketRefCurrencyDecimals, marketRefPriceInUsd } =
-    useStaticPoolDataContext();
+  const { rawReserves, rawUserReserves, userId, marketRefCurrencyDecimals, marketRefPriceInUsd } = useStaticPoolDataContext();
   const currentTimestamp = useCurrentTimestamp(1);
   const [lastAvgRatesUpdateTimestamp, setLastAvgRatesUpdateTimestamp] = useState(currentTimestamp);
 
@@ -69,10 +66,7 @@ export function DynamicPoolDataProvider({ children }: PropsWithChildren<{}>) {
     const fullReserve: ComputedReserveData = {
       ...reserve,
       ...formattedReserve,
-      priceInMarketReferenceCurrency: normalize(
-        reserve.priceInMarketReferenceCurrency,
-        marketRefCurrencyDecimals
-      ),
+      priceInMarketReferenceCurrency: normalize(reserve.priceInMarketReferenceCurrency, marketRefCurrencyDecimals),
     };
     return fullReserve;
   });

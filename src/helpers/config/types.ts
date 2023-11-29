@@ -1,4 +1,4 @@
-import { ChainId } from "../chainID";
+import { ChainId } from '../chainID';
 
 export type ExplorerLinkBuilderProps = {
   tx?: string;
@@ -62,6 +62,7 @@ export type BaseNetworkConfig = Omit<NetworkConfig, 'explorerLinkBuilder'>;
 export type MarketDataType = {
   // the network the market operates on
   chainId: ChainId;
+  name: string;
   // market logo in the topbar
   logo: string;
   // logo for the active market in dropdown
@@ -92,6 +93,8 @@ export type MarketDataType = {
     MULTIFEE_DISTRIBUTION?: string;
     VINIUM_OFT?: string;
     VINIUM_LP?: string;
+    SDAI?: string;
+    SFRAX?: string;
     MULTICALL?: string;
   };
 };

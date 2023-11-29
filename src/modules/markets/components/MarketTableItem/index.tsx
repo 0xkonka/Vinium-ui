@@ -72,10 +72,10 @@ export default function MarketTableItem({
   const { currentAccount, currentProviderName } = useUserWalletDataContext();
   const { chefIncentiveController } = useTxBuilderContext();
   const { currentTheme } = useThemeContext();
-  
-  const { library: provider, chainId } = useWeb3React<providers.Web3Provider>();
-  const { chainId: currentMarketChainId, networkConfig } = useProtocolDataContext();
-  const { refresh, chainId: txChainId } = useStaticPoolDataContext();
+
+  const { chainId } = useWeb3React<providers.Web3Provider>();
+  const { chainId: currentMarketChainId } = useProtocolDataContext();
+  const { chainId: txChainId } = useStaticPoolDataContext();
   const currentWalletChainId = chainId as number;
   const asset = getAssetInfo(currencySymbol);
 

@@ -14,13 +14,7 @@ interface ContentWrapperWithTopLineProps {
   withDropdown?: boolean;
 }
 
-export default function ContentWrapperWithTopLine({
-  className,
-  title,
-  topRightInfo,
-  children,
-  withDropdown,
-}: ContentWrapperWithTopLineProps) {
+export default function ContentWrapperWithTopLine({ className, title, topRightInfo, children, withDropdown }: ContentWrapperWithTopLineProps) {
   const intl = useIntl();
   const { currentTheme, sm, isCurrentThemeDark } = useThemeContext();
 
@@ -34,13 +28,7 @@ export default function ContentWrapperWithTopLine({
   }, [sm]);
 
   return (
-    <div
-      className={classNames(
-        'ContentWrapperWithTopLine',
-        { ContentWrapperWithTopLine__withDropdown: withDropdown },
-        className
-      )}
-    >
+    <div className={classNames('ContentWrapperWithTopLine', { ContentWrapperWithTopLine__withDropdown: withDropdown }, className)}>
       <div
         className={classNames('ContentWrapperWithTopLine__top-line', {
           ContentWrapperWithTopLine__topLineActive: visible,
@@ -48,9 +36,7 @@ export default function ContentWrapperWithTopLine({
         onClick={() => withDropdown && setVisible(!visible)}
       >
         <p>{title}</p>
-        {topRightInfo && (
-          <div className="ContentWrapperWithTopLine__topRightInfo">{topRightInfo}</div>
-        )}
+        {topRightInfo && <div className="ContentWrapperWithTopLine__topRightInfo">{topRightInfo}</div>}
         {withDropdown && (
           <div className="ContentWrapperWithTopLine__arrow-inner">
             <span>{intl.formatMessage(visible ? messages.collapse : messages.expand)}</span>
@@ -84,7 +70,7 @@ export default function ContentWrapperWithTopLine({
           }
 
           &__content {
-            background: #0b141be8;
+            background: #232323;
             border: 1px solid #999;
             border-radius: 15px;
           }

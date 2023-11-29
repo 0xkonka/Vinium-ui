@@ -240,7 +240,7 @@ const staticStyles = css.global`
     }
 
     &__borrow-table {
-      background: #0b141be8;
+      background: #232323;
       border: 1px solid #999;
       position: relative;
       @include respond-to(md) {

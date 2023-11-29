@@ -22,6 +22,10 @@ import {
   Governance,
   Staking,
   Manage,
+  Loop,
+  Sdai,
+  Frax,
+  Bridge,
   AssetSwap,
 } from './modules';
 import SwapBorrowRateModeConfirmation from './modules/swap/SwapBorrowRateModeConfirmation';
@@ -30,7 +34,6 @@ import { RewardConfirm } from './modules/reward/screens/RewardConfirm';
 import { governanceConfig, stakeConfig } from './ui-config';
 import { useProtocolDataContext } from './libs/protocol-data-provider';
 import { isFeatureEnabled } from './helpers/config/markets-and-network-config';
-import Loop from './modules/loop';
 
 const staticStyles = css.global`
   .App {
@@ -65,44 +68,28 @@ function ModulesWithMenu() {
         <Route path="/borrow" component={Borrow} />
         <Route path={`/repay/${CURRENCY_ROUTE_PARAMS}`} component={Repay} />
 
-        <Route
-          exact={true}
-          path={`/interest-swap/${CURRENCY_ROUTE_PARAMS}/confirmation`}
-          component={SwapBorrowRateModeConfirmation}
-        />
+        <Route exact={true} path={`/interest-swap/${CURRENCY_ROUTE_PARAMS}/confirmation`} component={SwapBorrowRateModeConfirmation} />
 
-        <Route
-          exact={true}
-          path={`/usage-as-collateral/${CURRENCY_ROUTE_PARAMS}/confirmation`}
-          component={SwapUsageAsCollateralModeConfirmation}
-        />
+        <Route exact={true} path={`/usage-as-collateral/${CURRENCY_ROUTE_PARAMS}/confirmation`} component={SwapUsageAsCollateralModeConfirmation} />
 
-        <Route
-          exact={true}
-          path={`/reserve-overview/${CURRENCY_ROUTE_PARAMS}`}
-          component={ReserveOverview}
-        />
+        <Route exact={true} path={`/reserve-overview/${CURRENCY_ROUTE_PARAMS}`} component={ReserveOverview} />
 
-        {!!governanceConfig && [
-          <Route path="/governance" component={Governance} key="Governance" />,
-        ]}
+        {!!governanceConfig && [<Route path="/governance" component={Governance} key="Governance" />]}
         {!!stakeConfig && [<Route path="/staking" component={Staking} key="Staking" />]}
 
         <Route path="/loop" component={Loop} key="Loop" />
         <Route path="/manage" component={Manage} key="Manage" />
+        <Route path="/sdai" component={Sdai} key="Sdai" />
+        <Route path="/frax" component={Frax} key="Frax" />
 
-        <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" />
-        <Route
-          path="/rewards/confirm/:incentivesControllerAddress"
-          component={RewardConfirm}
-          key="Reward confirm"
-        />
+        <Route path="/vinium-bridge" component={Bridge} key="Vinium-Bridge" />
+
+        {/* <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" /> */}
+        <Route path="/rewards/confirm/:incentivesControllerAddress" component={RewardConfirm} key="Reward confirm" />
 
         {userId && [<Route exact={true} path="/history" component={History} key="History" />]}
 
-        {isFeatureEnabled.faucet(currentMarketData) && [
-          <Route path="/faucet" component={Faucet} key="Faucet" />,
-        ]}
+        {isFeatureEnabled.faucet(currentMarketData) && [<Route path="/faucet" component={Faucet} key="Faucet" />]}
 
         <Redirect to={isUserHasDeposits ? '/dashboard' : '/markets'} />
       </Switch>

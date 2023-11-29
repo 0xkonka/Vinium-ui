@@ -1,17 +1,16 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 import { useIntl } from 'react-intl';
 import classNames from 'classnames';
-import { useThemeContext } from '@aave/aave-ui-kit';
 
-import Footer from '../../Footer';
+// import Footer from '../../Footer';
 import Menu from '../../menu/Menu';
 import { BottomDisclaimer, TopDisclaimer } from '../../../ui-config';
 
 import messages from './messages';
 import staticStyles from './style';
 
-import background from '../../../images/background.svg';
-import backgroundDark from '../../../images/05.png';
+import starBackground from '../../../images/star.svg';
+// import backgroundDark from '../../../images/05.png';
 
 export interface ScreensWrapperProps {
   children: ReactNode;
@@ -39,12 +38,10 @@ export function useWithDesktopTitle() {
 
 export default function ScreensWrapper({ children }: ScreensWrapperProps) {
   const intl = useIntl();
-  const { currentTheme, isCurrentThemeDark } = useThemeContext();
+  // const { currentTheme, isCurrentThemeDark } = useThemeContext();
 
   const [title, setTitle] = useState(intl.formatMessage(messages.pageTitle));
-  const [isTopPanelSmall, setTopPanelSmall] = useState(
-    localStorage.getItem('isTopPanelSmall') === 'true' || false
-  );
+  const [isTopPanelSmall, setTopPanelSmall] = useState(localStorage.getItem('isTopPanelSmall') === 'true' || false);
 
   return (
     <div
@@ -61,24 +58,17 @@ export default function ScreensWrapper({ children }: ScreensWrapperProps) {
         <div className="ScreensWrapper__top-contentWrapper" />
 
         <TitleContext.Provider value={{ title, setTitle }}>
-          <TopPanelSmallContext.Provider value={{ isTopPanelSmall, setTopPanelSmall }}>
-            {children}
-          </TopPanelSmallContext.Provider>
+          <TopPanelSmallContext.Provider value={{ isTopPanelSmall, setTopPanelSmall }}>{children}</TopPanelSmallContext.Provider>
         </TitleContext.Provider>
       </main>
 
-      <Footer inside={true} />
-      <img
-        style={{ opacity: 0.5 }}
-        className="ScreensWrapper__background"
-        src={isCurrentThemeDark ? backgroundDark : background}
-        alt=""
-      />
+      {/* <Footer inside={true} /> */}
+      <img style={{ opacity: 0.5, height: '100%' }} className="ScreensWrapper__background" src={starBackground} alt="" />
 
       <style jsx={true} global={true}>
         {staticStyles}
       </style>
-      <style jsx={true} global={true}>{`
+      {/* <style jsx={true} global={true}>{`
         @import 'src/_mixins/screen-size';
 
         .ScreensWrapper {
@@ -92,7 +82,7 @@ export default function ScreensWrapper({ children }: ScreensWrapperProps) {
             // }
           }
         }
-      `}</style>
+      `}</style> */}
     </div>
   );
 }

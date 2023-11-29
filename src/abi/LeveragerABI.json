@@ -4,6 +4,7 @@
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
+  { "stateMutability": "payable", "type": "fallback" },
   {
     "inputs": [],
     "name": "BORROW_RATIO_DECIMALS",
@@ -41,13 +42,14 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "asset", "type": "address" },
+      { "internalType": "address", "name": "weth", "type": "address" },
+      { "internalType": "address", "name": "liquidStakingAsset", "type": "address" },
       { "internalType": "uint256", "name": "amount", "type": "uint256" },
       { "internalType": "uint256", "name": "interestRateMode", "type": "uint256" },
       { "internalType": "uint256", "name": "borrowRatio", "type": "uint256" },
       { "internalType": "uint256", "name": "loopCount", "type": "uint256" }
     ],
-    "name": "loop",
+    "name": "liquidStakingTokenLoop",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -58,5 +60,33 @@
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
-  }
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "asset", "type": "address" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "interestRateMode", "type": "uint256" },
+      { "internalType": "uint256", "name": "borrowRatio", "type": "uint256" },
+      { "internalType": "uint256", "name": "loopCount", "type": "uint256" }
+    ],
+    "name": "singleTokenLoop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "underlyingAsset", "type": "address" },
+      { "internalType": "address", "name": "vaultAsset", "type": "address" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "interestRateMode", "type": "uint256" },
+      { "internalType": "uint256", "name": "borrowRatio", "type": "uint256" },
+      { "internalType": "uint256", "name": "loopCount", "type": "uint256" }
+    ],
+    "name": "vaultTokenLoop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  { "stateMutability": "payable", "type": "receive" }
 ]

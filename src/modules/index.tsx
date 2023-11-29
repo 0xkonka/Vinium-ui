@@ -10,6 +10,10 @@ import Dashboard from './dashboard';
 import Governance from './governance';
 import Staking from './staking';
 import Manage from './manage';
+import Loop from './loop';
+import Sdai from './sdai';
+import Frax from './frax';
+import Bridge from './bridge';
 import AssetSwap from './asset-swap';
 
 export {
@@ -25,5 +29,9 @@ export {
   Governance,
   Staking,
   Manage,
+  Loop,
+  Sdai,
+  Frax,
+  Bridge,
   AssetSwap,
 };

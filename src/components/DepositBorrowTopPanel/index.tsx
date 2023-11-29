@@ -15,9 +15,7 @@ import ValuePercent from '../basic/ValuePercent';
 import HealthFactor from '../HealthFactor';
 import DefaultButton from '../basic/DefaultButton';
 import NoData from '../basic/NoData';
-import CircleCompositionBar, {
-  CircleCompositionBarItem,
-} from '../compositionBars/CircleCompositionBar';
+import CircleCompositionBar, { CircleCompositionBarItem } from '../compositionBars/CircleCompositionBar';
 import CircleCollateralCompositionBar from '../compositionBars/CircleCollateralCompositionBar';
 import LTVInfoModal from '../LTVInfoModal';
 import ApproximateBalanceHelpModal from '../HelpModal/ApproximateBalanceHelpModal';
@@ -31,9 +29,7 @@ export default function DepositBorrowTopPanel() {
   const { currentTheme } = useThemeContext();
   const { user, reserves } = useDynamicPoolDataContext();
 
-  const [isCollapse, setIsCollapse] = useState(
-    localStorage.getItem('borrowDepositTopPanelIsCollapse') === 'true'
-  );
+  const [isCollapse, setIsCollapse] = useState(localStorage.getItem('borrowDepositTopPanelIsCollapse') === 'true');
   const [isLTVModalVisible, setLTVModalVisible] = useState(false);
 
   const maxBorrowAmount = valueToBigNumber(user?.totalBorrowsMarketReferenceCurrency || '0').plus(
@@ -78,30 +74,20 @@ export default function DepositBorrowTopPanel() {
       if (userReserve.totalBorrows !== '0') {
         borrowCompositionData.push({
           label: `${getAssetInfo(userReserve.reserve.symbol).formattedName}  ${intl.formatNumber(
-            valueToBigNumber(userReserve.totalBorrowsMarketReferenceCurrency)
-              .dividedBy(maxBorrowAmount)
-              .multipliedBy(100)
-              .toNumber(),
+            valueToBigNumber(userReserve.totalBorrowsMarketReferenceCurrency).dividedBy(maxBorrowAmount).multipliedBy(100).toNumber(),
             { maximumFractionDigits: 2 }
           )}%`,
           value: Number(userReserve.totalBorrowsMarketReferenceCurrency),
           color: getAssetColor(userReserve.reserve.symbol),
         });
 
-        const availableBorrowPower = borrowCompositionData
-          .reduce((acc, slice) => acc.minus(slice.value), maxBorrowAmount)
-          .toNumber();
-        const usedBorrowPower = borrowCompositionData
-          .reduce((acc, slice) => acc.plus(slice.value), new BigNumber(0))
-          .toNumber();
+        const availableBorrowPower = borrowCompositionData.reduce((acc, slice) => acc.minus(slice.value), maxBorrowAmount).toNumber();
+        const usedBorrowPower = borrowCompositionData.reduce((acc, slice) => acc.plus(slice.value), new BigNumber(0)).toNumber();
 
         borrowCompositionData.push({
           value: availableBorrowPower,
           label: `${intl.formatMessage(messages.borrowingPowerAvailable)}: ${intl.formatNumber(
-            new BigNumber(1)
-              .minus(valueToBigNumber(usedBorrowPower).dividedBy(maxBorrowAmount))
-              .multipliedBy(100)
-              .toNumber(),
+            new BigNumber(1).minus(valueToBigNumber(usedBorrowPower).dividedBy(maxBorrowAmount)).multipliedBy(100).toNumber(),
             {
               maximumFractionDigits: 2,
             }
@@ -119,9 +105,7 @@ export default function DepositBorrowTopPanel() {
           DepositBorrowTopPanel__topPanelTransparent: user,
         })}
         isCollapse={isCollapse}
-        setIsCollapse={() =>
-          toggleLocalStorageClick(isCollapse, setIsCollapse, 'borrowDepositTopPanelIsCollapse')
-        }
+        setIsCollapse={() => toggleLocalStorageClick(isCollapse, setIsCollapse, 'borrowDepositTopPanelIsCollapse')}
         withoutCollapseButton={!user}
       >
         <div className="DepositBorrowTopPanel__topPanel-captionWrapper">
@@ -130,23 +114,15 @@ export default function DepositBorrowTopPanel() {
               <>
                 <p
                   className={classNames({
-                    DepositBorrowTopPanel__topPanelCaptionFull:
-                      !depositCompositionData.length && !borrowCompositionData.length,
+                    DepositBorrowTopPanel__topPanelCaptionFull: !depositCompositionData.length && !borrowCompositionData.length,
                   })}
                 >
-                  <i>
-                    {intl.formatMessage(
-                      !depositCompositionData.length
-                        ? messages.noDeposits
-                        : messages.depositInformation
-                    )}
-                  </i>
+                  <i>{intl.formatMessage(!depositCompositionData.length ? messages.noDeposits : messages.depositInformation)}</i>
                   <GradientLine height={2} />
                 </p>
                 {!!depositCompositionData.length && (
                   <p>
-                    <i>{intl.formatMessage(messages.borrowInformation)}</i>{' '}
-                    <GradientLine height={2} />
+                    <i>{intl.formatMessage(messages.borrowInformation)}</i> <GradientLine height={2} />
                   </p>
                 )}
               </>
@@ -177,25 +153,13 @@ export default function DepositBorrowTopPanel() {
               >
                 <div className="DepositBorrowTopPanel__topPanel-values">
                   <Row
-                    title={
-                      <ApproximateBalanceHelpModal
-                        text={intl.formatMessage(messages.approximateBalance)}
-                        color="white"
-                        lightWeight={true}
-                      />
-                    }
+                    title={<ApproximateBalanceHelpModal text={intl.formatMessage(messages.approximateBalance)} color="white" lightWeight={true} />}
                     color="white"
                     weight="light"
                     isColumn={true}
                   >
                     {user && user.totalLiquidityUSD !== '0' ? (
-                      <Value
-                        value={user.totalLiquidityUSD}
-                        symbol="USD"
-                        tokenIcon={true}
-                        withSmallDecimals={true}
-                        color="white"
-                      />
+                      <Value value={user.totalLiquidityUSD} symbol="USD" tokenIcon={true} withSmallDecimals={true} color="white" />
                     ) : (
                       <NoData />
                     )}
@@ -225,12 +189,7 @@ export default function DepositBorrowTopPanel() {
                         DepositBorrowTopPanel__topPanelValuesInnerCollapse: isCollapse,
                       })}
                     >
-                      <Row
-                        title={intl.formatMessage(messages.youBorrowed)}
-                        color="white"
-                        weight="light"
-                        isColumn={true}
-                      >
+                      <Row title={intl.formatMessage(messages.youBorrowed)} color="white" weight="light" isColumn={true}>
                         {user && user.totalBorrowsUSD !== '0' ? (
                           <Value
                             value={user.totalBorrowsUSD}
@@ -246,12 +205,7 @@ export default function DepositBorrowTopPanel() {
                       </Row>
 
                       {isCollapse && (
-                        <Row
-                          title={intl.formatMessage(messages.yourCollateral)}
-                          color="white"
-                          weight="light"
-                          isColumn={true}
-                        >
+                        <Row title={intl.formatMessage(messages.yourCollateral)} color="white" weight="light" isColumn={true}>
                           {user && user.totalCollateralUSD !== '0' ? (
                             <Value
                               value={user.totalCollateralUSD}
@@ -282,12 +236,7 @@ export default function DepositBorrowTopPanel() {
                       })}
                     >
                       {!isCollapse && (
-                        <Row
-                          title={intl.formatMessage(messages.yourCollateral)}
-                          color="white"
-                          weight="light"
-                          isColumn={true}
-                        >
+                        <Row title={intl.formatMessage(messages.yourCollateral)} color="white" weight="light" isColumn={true}>
                           {user && user.totalCollateralUSD !== '0' ? (
                             <Value
                               value={user.totalCollateralUSD}
@@ -304,17 +253,8 @@ export default function DepositBorrowTopPanel() {
                       )}
 
                       {!isCollapse && (
-                        <Row
-                          title={intl.formatMessage(messages.borrowingPowerUsed)}
-                          color="white"
-                          weight="light"
-                          isColumn={true}
-                        >
-                          {user && collateralUsagePercent !== '0' ? (
-                            <ValuePercent value={collateralUsagePercent} color="white" />
-                          ) : (
-                            <NoData />
-                          )}
+                        <Row title={intl.formatMessage(messages.borrowingPowerUsed)} color="white" weight="light" isColumn={true}>
+                          {user && collateralUsagePercent !== '0' ? <ValuePercent value={collateralUsagePercent} color="white" /> : <NoData />}
                         </Row>
                       )}
                     </div>
@@ -326,22 +266,12 @@ export default function DepositBorrowTopPanel() {
                     >
                       {!isCollapse && (
                         <Row
-                          title={
-                            <MaxLTVHelpModal
-                              text={intl.formatMessage(messages.currentLTV)}
-                              color="white"
-                              lightWeight={true}
-                            />
-                          }
+                          title={<MaxLTVHelpModal text={intl.formatMessage(messages.currentLTV)} color="white" lightWeight={true} />}
                           color="white"
                           weight="light"
                           isColumn={true}
                         >
-                          {user && loanToValue !== '0' ? (
-                            <ValuePercent value={loanToValue} color="white" />
-                          ) : (
-                            <NoData />
-                          )}
+                          {user && loanToValue !== '0' ? <ValuePercent value={loanToValue} color="white" /> : <NoData />}
                         </Row>
                       )}
 
@@ -380,9 +310,7 @@ export default function DepositBorrowTopPanel() {
         </div>
       </TopPanelWrapper>
 
-      {loanToValue !== '0' && (
-        <LTVInfoModal visible={isLTVModalVisible} setVisible={setLTVModalVisible} />
-      )}
+      {loanToValue !== '0' && <LTVInfoModal visible={isLTVModalVisible} setVisible={setLTVModalVisible} />}
 
       <style jsx={true} global={true}>
         {staticStyles}
@@ -396,7 +324,7 @@ export default function DepositBorrowTopPanel() {
           }
 
           &__topPanel-inner {
-            background: #0b141be8;
+            background: #232323;
             border-bottom: 1px solid #999;
             border-left: 1px solid #999;
             border-right: 1px solid #999;
