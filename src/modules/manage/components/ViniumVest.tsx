@@ -1,11 +1,11 @@
 import { Box, Button, Card, CardContent, Tab, Tabs, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { useMultiFeeDistributionData } from '../../../libs/emission-reward-provider/hooks/use-multifee-distribution';
+import { useMultiFeeDistributionData } from '../../../libs/vinium-protocol-js/hooks/use-multifee-distribution';
 import { ethers } from 'ethers';
 import { useUserWalletDataContext } from '../../../libs/web3-data-provider';
 import { useTxBuilderContext } from '../../../libs/tx-provider';
 import { SpinLoader, useThemeContext } from '@aave/aave-ui-kit';
-import { useChefIncentiveData } from '../../../libs/emission-reward-provider/hooks/use-chef-incentive-controller';
+import { useChefIncentiveData } from '../../../libs/vinium-protocol-js/hooks/use-chef-incentive-controller';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -60,6 +60,7 @@ const ViniumVest = () => {
       const tx = await chefIncentiveController.claim(currentAccount, totalRewardTokens);
       await tx.wait();
       await refreshIncentive();
+      await refreshMultiFee();
     } catch (e) {
       console.log(e);
     }
@@ -71,7 +72,7 @@ const ViniumVest = () => {
     if (!multiFeeDistribution || !currentAccount) return;
     setEarlyExitLoading(true);
     try {
-      const tx = await multiFeeDistribution.exitEarly(currentAccount);
+      const tx = await multiFeeDistribution.exitEarly(currentAccount, { value: withdrawableBalance.penaltyETHAmount });
       await tx.wait();
       await refreshMultiFee();
     } catch (e) {
@@ -129,8 +130,9 @@ const ViniumVest = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <Typography>
-              Withdrawable Balance : {(+ethers.utils.formatEther(withdrawableBalance?.amount ?? 0)).toFixed(2)} <br /> Penalty Amount:
-              {(+ethers.utils.formatEther(withdrawableBalance?.penaltyAmount.add(withdrawableBalance?.treausryAmount) ?? 0)).toFixed(2)}
+              Withdrawable Balance : {(+ethers.utils.formatEther(withdrawableBalance?.earned ?? 0)).toFixed(2)} <br />
+              To vest Vinium token instantly, need to pay a 60% tax in ETH. <br />
+              Tax Amount: {+ethers.utils.formatEther(withdrawableBalance?.penaltyETHAmount ?? 0)} ETH
             </Typography>
             {earlyExitLoading ? (
               <SpinLoader color={currentTheme.lightBlue.hex} className="TxTopInfo__spinner" />

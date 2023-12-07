@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { useMultiFeeDistributionData } from '../../../libs/emission-reward-provider/hooks/use-multifee-distribution';
+import { useMultiFeeDistributionData } from '../../../libs/vinium-protocol-js/hooks/use-multifee-distribution';
 import { useDynamicPoolDataContext } from '../../../libs/pool-data-provider';
 import { useProtocolDataContext } from '../../../libs/protocol-data-provider';
 import { useTxBuilderContext } from '../../../libs/tx-provider';

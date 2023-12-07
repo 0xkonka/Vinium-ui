@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { ethers } from 'ethers';
 import React, { useState } from 'react';
-import { useMultiFeeDistributionData } from '../../../libs/emission-reward-provider/hooks/use-multifee-distribution';
+import { useMultiFeeDistributionData } from '../../../libs/vinium-protocol-js/hooks/use-multifee-distribution';
 import { useTxBuilderContext } from '../../../libs/tx-provider';
 import { useUserWalletDataContext } from '../../../libs/web3-data-provider';
 import { SpinLoader, useThemeContext } from '@aave/aave-ui-kit';
@@ -28,7 +28,7 @@ const ViniumClaim = () => {
   const { currentTheme } = useThemeContext();
 
   const _vestingBalance = userData?.earnedBalances.total;
-  const _stakedBalance = userData?.withdrawableBalance.amount.add(userData?.withdrawableBalance.penaltyAmount).sub(_vestingBalance!);
+  const _stakedBalance = userData?.withdrawableBalance.earned.sub(_vestingBalance!);
   const _withdrawableBalance = userData?.withdrawableBalance;
   const _unlockedableBalance = userData?.lockedBalances.unlockable;
 
@@ -115,7 +115,7 @@ const ViniumClaim = () => {
             </Typography>
           </Box>
           <Divider />
-          <Box>
+          {/* <Box>
             <Typography sx={{ fontSize: 18 }} gutterBottom>
               Claim all of the above
             </Typography>
@@ -129,7 +129,7 @@ const ViniumClaim = () => {
                 Claim All
               </Button>
             )}
-          </Box>
+          </Box> */}
           <Divider />
           <Box>
             <Typography sx={{ fontSize: 18 }} gutterBottom>

@@ -6,7 +6,7 @@ import { useUserWalletDataContext } from '../../../libs/web3-data-provider';
 import { SpinLoader, useThemeContext } from '@aave/aave-ui-kit';
 import { useProtocolDataContext } from '../../../libs/protocol-data-provider';
 import { useERC20Data } from '../../../libs/erc20/use-erc20-token';
-import { useMultiFeeDistributionData } from '../../../libs/emission-reward-provider/hooks/use-multifee-distribution';
+import { useMultiFeeDistributionData } from '../../../libs/vinium-protocol-js/hooks/use-multifee-distribution';
 
 const LockLP = () => {
   const { currentAccount } = useUserWalletDataContext();

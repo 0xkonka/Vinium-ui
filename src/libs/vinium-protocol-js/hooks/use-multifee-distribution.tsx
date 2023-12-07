@@ -3,14 +3,13 @@ import { BigNumber, providers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 import { usePolling } from '../../hooks/use-polling';
 import { getContract } from '../../utils';
-import MultiFeeDistributionABI from '../../../abi/MultiFeeDistributionABI.json';
 import MulticallABI from '../../../abi/Multicall.json';
 import { UserDataHumanized } from '../types';
 import { useProtocolDataContext } from '../../protocol-data-provider';
 import { useConnectionStatusContext } from '../../connection-status-provider';
 import multicall from '../../multicall';
 import { useUserWalletDataContext } from '../../web3-data-provider';
-import { MultiFeeDistributionFactory } from '../../vinium-protocol-js/contracts/MultiFeeDistributionFactory';
+import MultiFeeDistributionABI from '../../../abi/MultiFeeDistributionABI.json';
 
 // interval in which the rpc data is refreshed
 const POLLING_INTERVAL = 30 * 1000;
@@ -80,10 +79,8 @@ export function useMultiFeeDistributionData(): MultiFeeDistributionResponse {
       //   getRewardForDuration: getRewardForDuration[0],
       // };
 
-      // const incentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
-
-      const multiFeeDistributionContract = await MultiFeeDistributionFactory.connect(multifeeDistributionAddress, provider);
-      const lastTimeRewardApplicable: BigNumber = await multiFeeDistributionContract.lastTimeRewardApplicable(rewardTokenAddress);
+      // const multiFeeDistribution = await MultiFeeDistributionFactory.connect(multifeeDistributionAddress, provider);
+      const lastTimeRewardApplicable: BigNumber = await multiFeeDistribution.lastTimeRewardApplicable(rewardTokenAddress);
 
       setData(lastTimeRewardApplicable);
       setErrorData(false);
@@ -134,10 +131,9 @@ export function useMultiFeeDistributionData(): MultiFeeDistributionResponse {
         },
         earnedBalances: { total: earnedBalances.total, earningsData: earnedBalances.earningsData },
         withdrawableBalance: {
-          amount: withdrawableBalance.amount,
-          penaltyAmount: withdrawableBalance.penaltyAmount,
-          treausryAmount: withdrawableBalance.treausryAmount,
+          earned: withdrawableBalance.earned,
           amountWithoutPenalty: withdrawableBalance.amountWithoutPenalty,
+          penaltyETHAmount: withdrawableBalance.penaltyETHAmount,
         },
         claimableRewards: claimableRewards.rewards,
       };

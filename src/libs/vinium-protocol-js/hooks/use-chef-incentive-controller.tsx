@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { BigNumber } from 'ethers';
+import { BigNumber, providers } from 'ethers';
+import { useWeb3React } from '@web3-react/core';
 import { usePolling } from '../../hooks/use-polling';
 import { useProtocolDataContext } from '../../protocol-data-provider';
 import { useConnectionStatusContext } from '../../connection-status-provider';
 import { useDynamicPoolDataContext } from '../../pool-data-provider';
 import { useUserWalletDataContext } from '../../web3-data-provider';
-import { getProvider } from '../../../helpers/config/markets-and-network-config';
-import { ChefIncentivesControllerFactory } from '../../vinium-protocol-js/contracts/ChefIncentivesControllerFactory';
+import { getContract } from '../../utils';
+import ChefIncentivesControllerABI from '../../../abi/ChefIncentivesControllerABI.json';
 
 // interval in which the rpc data is refreshed
 const POLLING_INTERVAL = 30 * 1000;
@@ -29,7 +30,7 @@ export interface ChefIncentiveDataResponse {
 // Fetch reserve and user incentive data from UiIncentiveDataProvider
 export function useChefIncentiveData(): ChefIncentiveDataResponse {
   const { currentAccount } = useUserWalletDataContext();
-  // const { library: provider } = useWeb3React<providers.Web3Provider>();
+  const { library: provider } = useWeb3React<providers.Web3Provider>();
   const { currentMarketData, chainId } = useProtocolDataContext();
   const { isRPCActive } = useConnectionStatusContext();
   const { reserves } = useDynamicPoolDataContext();
@@ -41,7 +42,7 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
   const [data, setData] = useState<ChefIncentiveHumanized[] | undefined>(undefined);
   const [totalClaimable, setTotalClaimable] = useState<BigNumber>(BigNumber.from('0'));
   const [totalRewardTokens, setTotalRewardTokens] = useState<string[]>([]);
-  const provider = getProvider(chainId);
+  // const provider = getProvider(chainId);
 
   let incentiveControllerAddress = currentMarketData.addresses.INCENTIVES_CONTROLLER!;
 
@@ -55,13 +56,15 @@ export function useChefIncentiveData(): ChefIncentiveDataResponse {
       if (reserves.length === 0) return;
       setLoadingData(true);
 
-      const incentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
+      const chefIncentiveController = getContract(incentiveControllerAddress, ChefIncentivesControllerABI, provider!);
+
+      // const incentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
 
       let dataResponse: ChefIncentiveHumanized[] = [];
       let _totalClaimable: BigNumber = BigNumber.from('0');
       let _totalRewardTokens = [];
       for (let i = 0; i < reserves.length; i++) {
-        let claimableRewards: BigNumber[] = await incentiveController.claimableReward(currentAccount, [
+        let claimableRewards: BigNumber[] = await chefIncentiveController.claimableReward(currentAccount, [
           reserves[i].aTokenAddress,
           reserves[i].stableDebtTokenAddress,
           reserves[i].variableDebtTokenAddress,

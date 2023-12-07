@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography } from '@mui/material';
 import React from 'react';
-import { useMultiFeeDistributionData } from '../../../libs/emission-reward-provider/hooks/use-multifee-distribution';
+import { useMultiFeeDistributionData } from '../../../libs/vinium-protocol-js/hooks/use-multifee-distribution';
 import { ethers } from 'ethers';
 
 const StatInfo = () => {

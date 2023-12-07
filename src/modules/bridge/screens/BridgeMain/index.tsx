@@ -6,7 +6,7 @@ import NoDataPanel from '../../../../components/NoDataPanel';
 import ContentWrapper from '../../../../components/wrappers/ContentWrapper';
 import { useHistory } from 'react-router-dom';
 import { useUserWalletDataContext } from '../../../../libs/web3-data-provider';
-import { useViniumTokenData } from '../../../../libs/emission-reward-provider/hooks/use-vinium-token';
+import { useViniumTokenData } from '../../../../libs/vinium-protocol-js/hooks/use-vinium-token';
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils';
 import { getNetworkConfig } from '../../../../helpers/config/markets-and-network-config';
 import { useProtocolDataContext } from '../../../../libs/protocol-data-provider';

@@ -36,8 +36,7 @@ export interface LockedBalances {
 }
 
 export interface WithdrawableBalance {
-  amount: BigNumber;
-  penaltyAmount: BigNumber;
-  treausryAmount: BigNumber;
+  earned: BigNumber;
   amountWithoutPenalty: BigNumber;
+  penaltyETHAmount: BigNumber;
 }

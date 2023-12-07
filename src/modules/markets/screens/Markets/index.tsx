@@ -17,7 +17,7 @@ import MarketMobileCard from '../../components/MarketMobileCard';
 import messages from './messages';
 import staticStyles from './style';
 import { useIncentivesDataContext } from '../../../../libs/pool-data-provider/hooks/use-incentives-data-context';
-import { useChefIncentiveData } from '../../../../libs/emission-reward-provider/hooks/use-chef-incentive-controller';
+import { useChefIncentiveData } from '../../../../libs/vinium-protocol-js/hooks/use-chef-incentive-controller';
 
 export default function Markets() {
   const intl = useIntl();
@@ -70,7 +70,7 @@ export default function Markets() {
         aincentivesAPR: reserveIncentiveData ? reserveIncentiveData.aIncentives.incentiveAPR : '0',
         vincentivesAPR: reserveIncentiveData ? reserveIncentiveData.vIncentives.incentiveAPR : '0',
         sincentivesAPR: reserveIncentiveData ? reserveIncentiveData.sIncentives.incentiveAPR : '0',
-        viniumIncentive: incentiveData?.filter(data => data.id === reserve.id)[0]
+        viniumIncentive: incentiveData?.filter((data) => data.id === reserve.id)[0],
       };
     });
 

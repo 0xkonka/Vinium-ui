@@ -2,175 +2,1649 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Signer } from 'ethers';
-import { Provider, TransactionRequest } from '@ethersproject/providers';
-import { Contract, ContractFactory, Overrides } from '@ethersproject/contracts';
+import { ethers, EventFilter, Signer, BigNumber, BigNumberish, PopulatedTransaction } from 'ethers';
+import { Contract, ContractTransaction, Overrides, PayableOverrides, CallOverrides } from '@ethersproject/contracts';
+import { BytesLike } from '@ethersproject/bytes';
+import { Listener, Provider } from '@ethersproject/providers';
+import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi';
 
-import type { Multicall } from './Multicall';
+interface MultiFeeDistributionInterface extends ethers.utils.Interface {
+  functions: {
+    'addReward(address)': FunctionFragment;
+    'claimableRewards(address)': FunctionFragment;
+    'delegateExit(address)': FunctionFragment;
+    'earnedBalances(address)': FunctionFragment;
+    'exitDelegatee(address)': FunctionFragment;
+    'exitEarly(address)': FunctionFragment;
+    'exitEarlyTax()': FunctionFragment;
+    'getMinters()': FunctionFragment;
+    'getReward(address[])': FunctionFragment;
+    'incentivesController()': FunctionFragment;
+    'initialize(address,address)': FunctionFragment;
+    'lastTimeRewardApplicable(address)': FunctionFragment;
+    'lock(uint256,address)': FunctionFragment;
+    'lockDuration()': FunctionFragment;
+    'lockedBalances(address)': FunctionFragment;
+    'lockedSupply()': FunctionFragment;
+    'lpPoolAddr()': FunctionFragment;
+    'mint(address,uint256)': FunctionFragment;
+    'owner()': FunctionFragment;
+    'pause()': FunctionFragment;
+    'paused()': FunctionFragment;
+    'publicExit()': FunctionFragment;
+    'publicExitAreSet()': FunctionFragment;
+    'renounceOwnership()': FunctionFragment;
+    'rewardData(address)': FunctionFragment;
+    'rewardLookback()': FunctionFragment;
+    'rewardToken()': FunctionFragment;
+    'rewardTokens(uint256)': FunctionFragment;
+    'rewards(address,address)': FunctionFragment;
+    'rewardsDuration()': FunctionFragment;
+    'setIncentivesController(address)': FunctionFragment;
+    'setMinters(address[])': FunctionFragment;
+    'setTeamRewardFee(uint256)': FunctionFragment;
+    'setTeamRewardVault(address)': FunctionFragment;
+    'setTreasury(address)': FunctionFragment;
+    'stakingToken()': FunctionFragment;
+    'teamRewardFee()': FunctionFragment;
+    'teamRewardVault()': FunctionFragment;
+    'transferOwnership(address)': FunctionFragment;
+    'treasury()': FunctionFragment;
+    'unpause()': FunctionFragment;
+    'userRewardPerTokenPaid(address,address)': FunctionFragment;
+    'vestingDuration()': FunctionFragment;
+    'withdraw()': FunctionFragment;
+    'withdrawExpiredLocks()': FunctionFragment;
+    'withdrawableBalance(address)': FunctionFragment;
+  };
 
-export class MulticallFactory extends ContractFactory {
-  constructor(signer?: Signer) {
-    super(_abi, _bytecode, signer);
-  }
+  encodeFunctionData(functionFragment: 'addReward', values: [string]): string;
+  encodeFunctionData(functionFragment: 'claimableRewards', values: [string]): string;
+  encodeFunctionData(functionFragment: 'delegateExit', values: [string]): string;
+  encodeFunctionData(functionFragment: 'earnedBalances', values: [string]): string;
+  encodeFunctionData(functionFragment: 'exitDelegatee', values: [string]): string;
+  encodeFunctionData(functionFragment: 'exitEarly', values: [string]): string;
+  encodeFunctionData(functionFragment: 'exitEarlyTax', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'getMinters', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'getReward', values: [string[]]): string;
+  encodeFunctionData(functionFragment: 'incentivesController', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'initialize', values: [string, string]): string;
+  encodeFunctionData(functionFragment: 'lastTimeRewardApplicable', values: [string]): string;
+  encodeFunctionData(functionFragment: 'lock', values: [BigNumberish, string]): string;
+  encodeFunctionData(functionFragment: 'lockDuration', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'lockedBalances', values: [string]): string;
+  encodeFunctionData(functionFragment: 'lockedSupply', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'lpPoolAddr', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'mint', values: [string, BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'owner', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'pause', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'paused', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'publicExit', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'publicExitAreSet', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'rewardData', values: [string]): string;
+  encodeFunctionData(functionFragment: 'rewardLookback', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'rewardToken', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'rewardTokens', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'rewards', values: [string, string]): string;
+  encodeFunctionData(functionFragment: 'rewardsDuration', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'setIncentivesController', values: [string]): string;
+  encodeFunctionData(functionFragment: 'setMinters', values: [string[]]): string;
+  encodeFunctionData(functionFragment: 'setTeamRewardFee', values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: 'setTeamRewardVault', values: [string]): string;
+  encodeFunctionData(functionFragment: 'setTreasury', values: [string]): string;
+  encodeFunctionData(functionFragment: 'stakingToken', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'teamRewardFee', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'teamRewardVault', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string;
+  encodeFunctionData(functionFragment: 'treasury', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'unpause', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'userRewardPerTokenPaid', values: [string, string]): string;
+  encodeFunctionData(functionFragment: 'vestingDuration', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'withdraw', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'withdrawExpiredLocks', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'withdrawableBalance', values: [string]): string;
 
-  deploy(overrides?: Overrides): Promise<Multicall> {
-    return super.deploy(overrides || {}) as Promise<Multicall>;
-  }
-  getDeployTransaction(overrides?: Overrides): TransactionRequest {
-    return super.getDeployTransaction(overrides || {});
-  }
-  attach(address: string): Multicall {
-    return super.attach(address) as Multicall;
-  }
-  connect(signer: Signer): MulticallFactory {
-    return super.connect(signer) as MulticallFactory;
-  }
-  static connect(address: string, signerOrProvider: Signer | Provider): Multicall {
-    return new Contract(address, _abi, signerOrProvider) as Multicall;
-  }
+  decodeFunctionResult(functionFragment: 'addReward', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'claimableRewards', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'delegateExit', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'earnedBalances', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'exitDelegatee', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'exitEarly', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'exitEarlyTax', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getMinters', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getReward', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'incentivesController', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'initialize', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lastTimeRewardApplicable', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lock', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lockDuration', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lockedBalances', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lockedSupply', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'lpPoolAddr', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'mint', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'pause', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'paused', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'publicExit', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'publicExitAreSet', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'rewardData', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'rewardLookback', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'rewardToken', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'rewardTokens', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'rewards', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'rewardsDuration', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setIncentivesController', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setMinters', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setTeamRewardFee', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setTeamRewardVault', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'setTreasury', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'stakingToken', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'teamRewardFee', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'teamRewardVault', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'treasury', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'userRewardPerTokenPaid', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'vestingDuration', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'withdraw', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'withdrawExpiredLocks', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'withdrawableBalance', data: BytesLike): Result;
+
+  events: {
+    'ExitedEarly(address,uint256)': EventFragment;
+    'Initialized(uint8)': EventFragment;
+    'Locked(address,uint256)': EventFragment;
+    'Minted(address,uint256)': EventFragment;
+    'OwnershipTransferred(address,address)': EventFragment;
+    'Paused(address)': EventFragment;
+    'PublicExit()': EventFragment;
+    'RewardPaid(address,address,uint256)': EventFragment;
+    'Unpaused(address)': EventFragment;
+    'Withdrawn(address,uint256)': EventFragment;
+    'WithdrawnExpiredLocks(address,uint256)': EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: 'ExitedEarly'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Initialized'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Locked'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Minted'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'PublicExit'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'RewardPaid'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'Withdrawn'): EventFragment;
+  getEvent(nameOrSignatureOrTopic: 'WithdrawnExpiredLocks'): EventFragment;
 }
 
-const _abi = [
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'target',
-            type: 'address',
-          },
-          {
-            internalType: 'bytes',
-            name: 'callData',
-            type: 'bytes',
-          },
-        ],
-        internalType: 'struct Multicall.Call[]',
-        name: 'calls',
-        type: 'tuple[]',
-      },
-    ],
-    name: 'aggregate',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'blockNumber',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes[]',
-        name: 'returnData',
-        type: 'bytes[]',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'blockNumber',
-        type: 'uint256',
-      },
-    ],
-    name: 'getBlockHash',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: 'blockHash',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getCurrentBlockCoinbase',
-    outputs: [
-      {
-        internalType: 'address',
-        name: 'coinbase',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getCurrentBlockDifficulty',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'difficulty',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getCurrentBlockGasLimit',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'gaslimit',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getCurrentBlockTimestamp',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'timestamp',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
-      },
-    ],
-    name: 'getEthBalance',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'balance',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getLastBlockHash',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: 'blockHash',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-];
+export class MultiFeeDistribution extends Contract {
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-const _bytecode =
-  '0x608060405234801561001057600080fd5b506105ec806100206000396000f3fe608060405234801561001057600080fd5b50600436106100885760003560e01c806372425d9d1161005b57806372425d9d146100e657806386d516e8146100ec578063a8b0574e146100f2578063ee82ac5e1461010057600080fd5b80630f28c97d1461008d578063252dba42146100a257806327e86d6e146100c35780634d2301cc146100cb575b600080fd5b425b6040519081526020015b60405180910390f35b6100b56100b03660046102f1565b610112565b60405161009992919061047f565b61008f610252565b61008f6100d9366004610501565b6001600160a01b03163190565b4461008f565b4561008f565b604051418152602001610099565b61008f61010e366004610523565b4090565b8051439060609067ffffffffffffffff81111561013157610131610265565b60405190808252806020026020018201604052801561016457816020015b606081526020019060019003908161014f5790505b50905060005b835181101561024c576000808583815181106101885761018861053c565b6020026020010151600001516001600160a01b03168684815181106101af576101af61053c565b6020026020010151602001516040516101c89190610552565b6000604051808303816000865af19150503d8060008114610205576040519150601f19603f3d011682016040523d82523d6000602084013e61020a565b606091505b50915091508161021957600080fd5b8084848151811061022c5761022c61053c565b60200260200101819052505050808061024490610584565b91505061016a565b50915091565b600061025f60014361059f565b40905090565b634e487b7160e01b600052604160045260246000fd5b6040805190810167ffffffffffffffff8111828210171561029e5761029e610265565b60405290565b604051601f8201601f1916810167ffffffffffffffff811182821017156102cd576102cd610265565b604052919050565b80356001600160a01b03811681146102ec57600080fd5b919050565b6000602080838503121561030457600080fd5b823567ffffffffffffffff8082111561031c57600080fd5b818501915085601f83011261033057600080fd5b81358181111561034257610342610265565b8060051b6103518582016102a4565b918252838101850191858101908984111561036b57600080fd5b86860192505b83831015610442578235858111156103895760008081fd5b86016040601f19828d0381018213156103a25760008081fd5b6103aa61027b565b6103b58b85016102d5565b815282840135898111156103c95760008081fd5b8085019450508d603f8501126103df5760008081fd5b8a840135898111156103f3576103f3610265565b6104038c84601f840116016102a4565b92508083528e8482870101111561041a5760008081fd5b808486018d85013760009083018c0152808b0191909152845250509186019190860190610371565b9998505050505050505050565b60005b8381101561046a578181015183820152602001610452565b83811115610479576000848401525b50505050565b600060408201848352602060408185015281855180845260608601915060608160051b870101935082870160005b828110156104f357878603605f19018452815180518088526104d481888a0189850161044f565b601f01601f1916969096018501955092840192908401906001016104ad565b509398975050505050505050565b60006020828403121561051357600080fd5b61051c826102d5565b9392505050565b60006020828403121561053557600080fd5b5035919050565b634e487b7160e01b600052603260045260246000fd5b6000825161056481846020870161044f565b9190910192915050565b634e487b7160e01b600052601160045260246000fd5b60006000198214156105985761059861056e565b5060010190565b6000828210156105b1576105b161056e565b50039056fea2646970667358221220fb6be8302774729b761c9b1915a9e1345ed6b98d1b0f1341ac00826790f0b10f64736f6c634300080c0033';
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
+
+  interface: MultiFeeDistributionInterface;
+
+  functions: {
+    addReward(_rewardsToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'addReward(address)'(_rewardsToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    claimableRewards(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: { token: string; amount: BigNumber; 0: string; 1: BigNumber }[];
+    }>;
+
+    'claimableRewards(address)'(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: { token: string; amount: BigNumber; 0: string; 1: BigNumber }[];
+    }>;
+
+    delegateExit(delegatee: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'delegateExit(address)'(delegatee: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    earnedBalances(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      earningsData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    'earnedBalances(address)'(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      earningsData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    exitDelegatee(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    'exitDelegatee(address)'(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    exitEarly(onBehalfOf: string, overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+    'exitEarly(address)'(onBehalfOf: string, overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+    exitEarlyTax(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'exitEarlyTax()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    getMinters(overrides?: CallOverrides): Promise<{
+      0: string[];
+    }>;
+
+    'getMinters()'(overrides?: CallOverrides): Promise<{
+      0: string[];
+    }>;
+
+    getReward(_rewardTokens: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+    'getReward(address[])'(_rewardTokens: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+    incentivesController(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'incentivesController()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    initialize(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'initialize(address,address)'(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    lastTimeRewardApplicable(
+      _rewardsToken: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    'lastTimeRewardApplicable(address)'(
+      _rewardsToken: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    lock(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'lock(uint256,address)'(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    lockDuration(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'lockDuration()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    lockedBalances(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      unlockable: BigNumber;
+      locked: BigNumber;
+      lockData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    'lockedBalances(address)'(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      unlockable: BigNumber;
+      locked: BigNumber;
+      lockData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    lockedSupply(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'lockedSupply()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    lpPoolAddr(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'lpPoolAddr()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    mint(user: string, amount: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'mint(address,uint256)'(user: string, amount: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'owner()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'pause()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
+
+    'paused()'(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
+
+    publicExit(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'publicExit()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+    publicExitAreSet(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
+
+    'publicExitAreSet()'(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
+
+    renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'renounceOwnership()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+    rewardData(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      periodFinish: BigNumber;
+      rewardRate: BigNumber;
+      lastUpdateTime: BigNumber;
+      rewardPerTokenStored: BigNumber;
+      balance: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    'rewardData(address)'(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      periodFinish: BigNumber;
+      rewardRate: BigNumber;
+      lastUpdateTime: BigNumber;
+      rewardPerTokenStored: BigNumber;
+      balance: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    rewardLookback(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'rewardLookback()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    rewardToken(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'rewardToken()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    rewardTokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    'rewardTokens(uint256)'(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    rewards(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    'rewards(address,address)'(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    rewardsDuration(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'rewardsDuration()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    setIncentivesController(_controller: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'setIncentivesController(address)'(_controller: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    setMinters(_minters: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+    'setMinters(address[])'(_minters: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+    setTeamRewardFee(fee: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'setTeamRewardFee(uint256)'(fee: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+    setTeamRewardVault(vault: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'setTeamRewardVault(address)'(vault: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    setTreasury(_treasury: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'setTreasury(address)'(_treasury: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    stakingToken(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'stakingToken()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    teamRewardFee(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'teamRewardFee()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    teamRewardVault(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'teamRewardVault()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    transferOwnership(newOwner: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    'transferOwnership(address)'(newOwner: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+    treasury(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    'treasury()'(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'unpause()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+    userRewardPerTokenPaid(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    'userRewardPerTokenPaid(address,address)'(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    vestingDuration(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    'vestingDuration()'(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    withdraw(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'withdraw()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+    withdrawExpiredLocks(overrides?: Overrides): Promise<ContractTransaction>;
+
+    'withdrawExpiredLocks()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+    withdrawableBalance(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      earned: BigNumber;
+      amountWithoutPenalty: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+
+    'withdrawableBalance(address)'(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      earned: BigNumber;
+      amountWithoutPenalty: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+  };
+
+  addReward(_rewardsToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'addReward(address)'(_rewardsToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  claimableRewards(account: string, overrides?: CallOverrides): Promise<{ token: string; amount: BigNumber; 0: string; 1: BigNumber }[]>;
+
+  'claimableRewards(address)'(account: string, overrides?: CallOverrides): Promise<{ token: string; amount: BigNumber; 0: string; 1: BigNumber }[]>;
+
+  delegateExit(delegatee: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'delegateExit(address)'(delegatee: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  earnedBalances(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    total: BigNumber;
+    earningsData: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+    0: BigNumber;
+    1: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+  }>;
+
+  'earnedBalances(address)'(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    total: BigNumber;
+    earningsData: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+    0: BigNumber;
+    1: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+  }>;
+
+  exitDelegatee(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+  'exitDelegatee(address)'(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+  exitEarly(onBehalfOf: string, overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+  'exitEarly(address)'(onBehalfOf: string, overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+  exitEarlyTax(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'exitEarlyTax()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getMinters(overrides?: CallOverrides): Promise<string[]>;
+
+  'getMinters()'(overrides?: CallOverrides): Promise<string[]>;
+
+  getReward(_rewardTokens: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+  'getReward(address[])'(_rewardTokens: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+  incentivesController(overrides?: CallOverrides): Promise<string>;
+
+  'incentivesController()'(overrides?: CallOverrides): Promise<string>;
+
+  initialize(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'initialize(address,address)'(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  lastTimeRewardApplicable(_rewardsToken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  'lastTimeRewardApplicable(address)'(_rewardsToken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  lock(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'lock(uint256,address)'(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  lockDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'lockDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  lockedBalances(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    total: BigNumber;
+    unlockable: BigNumber;
+    locked: BigNumber;
+    lockData: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+  }>;
+
+  'lockedBalances(address)'(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    total: BigNumber;
+    unlockable: BigNumber;
+    locked: BigNumber;
+    lockData: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: {
+      amount: BigNumber;
+      unlockTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }[];
+  }>;
+
+  lockedSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'lockedSupply()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  lpPoolAddr(overrides?: CallOverrides): Promise<string>;
+
+  'lpPoolAddr()'(overrides?: CallOverrides): Promise<string>;
+
+  mint(user: string, amount: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'mint(address,uint256)'(user: string, amount: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  'owner()'(overrides?: CallOverrides): Promise<string>;
+
+  pause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'pause()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
+  'paused()'(overrides?: CallOverrides): Promise<boolean>;
+
+  publicExit(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'publicExit()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+  publicExitAreSet(overrides?: CallOverrides): Promise<boolean>;
+
+  'publicExitAreSet()'(overrides?: CallOverrides): Promise<boolean>;
+
+  renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'renounceOwnership()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+  rewardData(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    periodFinish: BigNumber;
+    rewardRate: BigNumber;
+    lastUpdateTime: BigNumber;
+    rewardPerTokenStored: BigNumber;
+    balance: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
+
+  'rewardData(address)'(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    periodFinish: BigNumber;
+    rewardRate: BigNumber;
+    lastUpdateTime: BigNumber;
+    rewardPerTokenStored: BigNumber;
+    balance: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
+
+  rewardLookback(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'rewardLookback()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  rewardToken(overrides?: CallOverrides): Promise<string>;
+
+  'rewardToken()'(overrides?: CallOverrides): Promise<string>;
+
+  rewardTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  'rewardTokens(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  rewards(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  'rewards(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'rewardsDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  setIncentivesController(_controller: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'setIncentivesController(address)'(_controller: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  setMinters(_minters: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+  'setMinters(address[])'(_minters: string[], overrides?: Overrides): Promise<ContractTransaction>;
+
+  setTeamRewardFee(fee: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'setTeamRewardFee(uint256)'(fee: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>;
+
+  setTeamRewardVault(vault: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'setTeamRewardVault(address)'(vault: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  setTreasury(_treasury: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'setTreasury(address)'(_treasury: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  stakingToken(overrides?: CallOverrides): Promise<string>;
+
+  'stakingToken()'(overrides?: CallOverrides): Promise<string>;
+
+  teamRewardFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'teamRewardFee()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  teamRewardVault(overrides?: CallOverrides): Promise<string>;
+
+  'teamRewardVault()'(overrides?: CallOverrides): Promise<string>;
+
+  transferOwnership(newOwner: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  'transferOwnership(address)'(newOwner: string, overrides?: Overrides): Promise<ContractTransaction>;
+
+  treasury(overrides?: CallOverrides): Promise<string>;
+
+  'treasury()'(overrides?: CallOverrides): Promise<string>;
+
+  unpause(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'unpause()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+  userRewardPerTokenPaid(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  'userRewardPerTokenPaid(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  vestingDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+  'vestingDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+  withdraw(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'withdraw()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+  withdrawExpiredLocks(overrides?: Overrides): Promise<ContractTransaction>;
+
+  'withdrawExpiredLocks()'(overrides?: Overrides): Promise<ContractTransaction>;
+
+  withdrawableBalance(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    earned: BigNumber;
+    amountWithoutPenalty: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
+
+  'withdrawableBalance(address)'(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<{
+    earned: BigNumber;
+    amountWithoutPenalty: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
+
+  callStatic: {
+    addReward(_rewardsToken: string, overrides?: CallOverrides): Promise<void>;
+
+    'addReward(address)'(_rewardsToken: string, overrides?: CallOverrides): Promise<void>;
+
+    claimableRewards(account: string, overrides?: CallOverrides): Promise<{ token: string; amount: BigNumber; 0: string; 1: BigNumber }[]>;
+
+    'claimableRewards(address)'(account: string, overrides?: CallOverrides): Promise<{ token: string; amount: BigNumber; 0: string; 1: BigNumber }[]>;
+
+    delegateExit(delegatee: string, overrides?: CallOverrides): Promise<void>;
+
+    'delegateExit(address)'(delegatee: string, overrides?: CallOverrides): Promise<void>;
+
+    earnedBalances(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      earningsData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    'earnedBalances(address)'(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      earningsData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    exitDelegatee(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+    'exitDelegatee(address)'(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+    exitEarly(onBehalfOf: string, overrides?: CallOverrides): Promise<void>;
+
+    'exitEarly(address)'(onBehalfOf: string, overrides?: CallOverrides): Promise<void>;
+
+    exitEarlyTax(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'exitEarlyTax()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMinters(overrides?: CallOverrides): Promise<string[]>;
+
+    'getMinters()'(overrides?: CallOverrides): Promise<string[]>;
+
+    getReward(_rewardTokens: string[], overrides?: CallOverrides): Promise<void>;
+
+    'getReward(address[])'(_rewardTokens: string[], overrides?: CallOverrides): Promise<void>;
+
+    incentivesController(overrides?: CallOverrides): Promise<string>;
+
+    'incentivesController()'(overrides?: CallOverrides): Promise<string>;
+
+    initialize(_stakingToken: string, _rewardToken: string, overrides?: CallOverrides): Promise<void>;
+
+    'initialize(address,address)'(_stakingToken: string, _rewardToken: string, overrides?: CallOverrides): Promise<void>;
+
+    lastTimeRewardApplicable(_rewardsToken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lastTimeRewardApplicable(address)'(_rewardsToken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    lock(amount: BigNumberish, onBehalfOf: string, overrides?: CallOverrides): Promise<void>;
+
+    'lock(uint256,address)'(amount: BigNumberish, onBehalfOf: string, overrides?: CallOverrides): Promise<void>;
+
+    lockDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lockDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lockedBalances(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      unlockable: BigNumber;
+      locked: BigNumber;
+      lockData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    'lockedBalances(address)'(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      total: BigNumber;
+      unlockable: BigNumber;
+      locked: BigNumber;
+      lockData: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: {
+        amount: BigNumber;
+        unlockTime: BigNumber;
+        0: BigNumber;
+        1: BigNumber;
+      }[];
+    }>;
+
+    lockedSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lockedSupply()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lpPoolAddr(overrides?: CallOverrides): Promise<string>;
+
+    'lpPoolAddr()'(overrides?: CallOverrides): Promise<string>;
+
+    mint(user: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    'mint(address,uint256)'(user: string, amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    'owner()'(overrides?: CallOverrides): Promise<string>;
+
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    'pause()'(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
+    'paused()'(overrides?: CallOverrides): Promise<boolean>;
+
+    publicExit(overrides?: CallOverrides): Promise<void>;
+
+    'publicExit()'(overrides?: CallOverrides): Promise<void>;
+
+    publicExitAreSet(overrides?: CallOverrides): Promise<boolean>;
+
+    'publicExitAreSet()'(overrides?: CallOverrides): Promise<boolean>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    'renounceOwnership()'(overrides?: CallOverrides): Promise<void>;
+
+    rewardData(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      periodFinish: BigNumber;
+      rewardRate: BigNumber;
+      lastUpdateTime: BigNumber;
+      rewardPerTokenStored: BigNumber;
+      balance: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    'rewardData(address)'(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      periodFinish: BigNumber;
+      rewardRate: BigNumber;
+      lastUpdateTime: BigNumber;
+      rewardPerTokenStored: BigNumber;
+      balance: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
+
+    rewardLookback(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardLookback()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardToken(overrides?: CallOverrides): Promise<string>;
+
+    'rewardToken()'(overrides?: CallOverrides): Promise<string>;
+
+    rewardTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    'rewardTokens(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    rewards(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewards(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardsDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setIncentivesController(_controller: string, overrides?: CallOverrides): Promise<void>;
+
+    'setIncentivesController(address)'(_controller: string, overrides?: CallOverrides): Promise<void>;
+
+    setMinters(_minters: string[], overrides?: CallOverrides): Promise<void>;
+
+    'setMinters(address[])'(_minters: string[], overrides?: CallOverrides): Promise<void>;
+
+    setTeamRewardFee(fee: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    'setTeamRewardFee(uint256)'(fee: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    setTeamRewardVault(vault: string, overrides?: CallOverrides): Promise<void>;
+
+    'setTeamRewardVault(address)'(vault: string, overrides?: CallOverrides): Promise<void>;
+
+    setTreasury(_treasury: string, overrides?: CallOverrides): Promise<void>;
+
+    'setTreasury(address)'(_treasury: string, overrides?: CallOverrides): Promise<void>;
+
+    stakingToken(overrides?: CallOverrides): Promise<string>;
+
+    'stakingToken()'(overrides?: CallOverrides): Promise<string>;
+
+    teamRewardFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'teamRewardFee()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    teamRewardVault(overrides?: CallOverrides): Promise<string>;
+
+    'teamRewardVault()'(overrides?: CallOverrides): Promise<string>;
+
+    transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>;
+
+    'transferOwnership(address)'(newOwner: string, overrides?: CallOverrides): Promise<void>;
+
+    treasury(overrides?: CallOverrides): Promise<string>;
+
+    'treasury()'(overrides?: CallOverrides): Promise<string>;
+
+    unpause(overrides?: CallOverrides): Promise<void>;
+
+    'unpause()'(overrides?: CallOverrides): Promise<void>;
+
+    userRewardPerTokenPaid(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'userRewardPerTokenPaid(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    vestingDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'vestingDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    withdraw(overrides?: CallOverrides): Promise<void>;
+
+    'withdraw()'(overrides?: CallOverrides): Promise<void>;
+
+    withdrawExpiredLocks(overrides?: CallOverrides): Promise<void>;
+
+    'withdrawExpiredLocks()'(overrides?: CallOverrides): Promise<void>;
+
+    withdrawableBalance(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      earned: BigNumber;
+      amountWithoutPenalty: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+
+    'withdrawableBalance(address)'(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      earned: BigNumber;
+      amountWithoutPenalty: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
+  };
+
+  filters: {
+    ExitedEarly(user: string | null, amount: null): EventFilter;
+
+    Initialized(version: null): EventFilter;
+
+    Locked(user: string | null, amount: null): EventFilter;
+
+    Minted(user: string | null, amount: null): EventFilter;
+
+    OwnershipTransferred(previousOwner: string | null, newOwner: string | null): EventFilter;
+
+    Paused(account: null): EventFilter;
+
+    PublicExit(): EventFilter;
+
+    RewardPaid(user: string | null, rewardsToken: string | null, reward: null): EventFilter;
+
+    Unpaused(account: null): EventFilter;
+
+    Withdrawn(user: string | null, amount: null): EventFilter;
+
+    WithdrawnExpiredLocks(user: string | null, amount: null): EventFilter;
+  };
+
+  estimateGas: {
+    addReward(_rewardsToken: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'addReward(address)'(_rewardsToken: string, overrides?: Overrides): Promise<BigNumber>;
+
+    claimableRewards(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'claimableRewards(address)'(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    delegateExit(delegatee: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'delegateExit(address)'(delegatee: string, overrides?: Overrides): Promise<BigNumber>;
+
+    earnedBalances(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'earnedBalances(address)'(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    exitDelegatee(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'exitDelegatee(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    exitEarly(onBehalfOf: string, overrides?: PayableOverrides): Promise<BigNumber>;
+
+    'exitEarly(address)'(onBehalfOf: string, overrides?: PayableOverrides): Promise<BigNumber>;
+
+    exitEarlyTax(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'exitEarlyTax()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMinters(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'getMinters()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getReward(_rewardTokens: string[], overrides?: Overrides): Promise<BigNumber>;
+
+    'getReward(address[])'(_rewardTokens: string[], overrides?: Overrides): Promise<BigNumber>;
+
+    incentivesController(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'incentivesController()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'initialize(address,address)'(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<BigNumber>;
+
+    lastTimeRewardApplicable(_rewardsToken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lastTimeRewardApplicable(address)'(_rewardsToken: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    lock(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'lock(uint256,address)'(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<BigNumber>;
+
+    lockDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lockDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lockedBalances(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lockedBalances(address)'(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    lockedSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lockedSupply()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lpPoolAddr(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'lpPoolAddr()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mint(user: string, amount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    'mint(address,uint256)'(user: string, amount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'owner()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pause(overrides?: Overrides): Promise<BigNumber>;
+
+    'pause()'(overrides?: Overrides): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'paused()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    publicExit(overrides?: Overrides): Promise<BigNumber>;
+
+    'publicExit()'(overrides?: Overrides): Promise<BigNumber>;
+
+    publicExitAreSet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'publicExitAreSet()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
+
+    'renounceOwnership()'(overrides?: Overrides): Promise<BigNumber>;
+
+    rewardData(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardData(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardLookback(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardLookback()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardToken()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardTokens(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewards(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewards(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'rewardsDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setIncentivesController(_controller: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'setIncentivesController(address)'(_controller: string, overrides?: Overrides): Promise<BigNumber>;
+
+    setMinters(_minters: string[], overrides?: Overrides): Promise<BigNumber>;
+
+    'setMinters(address[])'(_minters: string[], overrides?: Overrides): Promise<BigNumber>;
+
+    setTeamRewardFee(fee: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    'setTeamRewardFee(uint256)'(fee: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    setTeamRewardVault(vault: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'setTeamRewardVault(address)'(vault: string, overrides?: Overrides): Promise<BigNumber>;
+
+    setTreasury(_treasury: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'setTreasury(address)'(_treasury: string, overrides?: Overrides): Promise<BigNumber>;
+
+    stakingToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'stakingToken()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    teamRewardFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'teamRewardFee()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    teamRewardVault(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'teamRewardVault()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferOwnership(newOwner: string, overrides?: Overrides): Promise<BigNumber>;
+
+    'transferOwnership(address)'(newOwner: string, overrides?: Overrides): Promise<BigNumber>;
+
+    treasury(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'treasury()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unpause(overrides?: Overrides): Promise<BigNumber>;
+
+    'unpause()'(overrides?: Overrides): Promise<BigNumber>;
+
+    userRewardPerTokenPaid(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'userRewardPerTokenPaid(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    vestingDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    'vestingDuration()'(overrides?: CallOverrides): Promise<BigNumber>;
+
+    withdraw(overrides?: Overrides): Promise<BigNumber>;
+
+    'withdraw()'(overrides?: Overrides): Promise<BigNumber>;
+
+    withdrawExpiredLocks(overrides?: Overrides): Promise<BigNumber>;
+
+    'withdrawExpiredLocks()'(overrides?: Overrides): Promise<BigNumber>;
+
+    withdrawableBalance(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    'withdrawableBalance(address)'(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    addReward(_rewardsToken: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'addReward(address)'(_rewardsToken: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    claimableRewards(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'claimableRewards(address)'(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    delegateExit(delegatee: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'delegateExit(address)'(delegatee: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    earnedBalances(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'earnedBalances(address)'(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    exitDelegatee(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'exitDelegatee(address)'(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    exitEarly(onBehalfOf: string, overrides?: PayableOverrides): Promise<PopulatedTransaction>;
+
+    'exitEarly(address)'(onBehalfOf: string, overrides?: PayableOverrides): Promise<PopulatedTransaction>;
+
+    exitEarlyTax(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'exitEarlyTax()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMinters(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'getMinters()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getReward(_rewardTokens: string[], overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'getReward(address[])'(_rewardTokens: string[], overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    incentivesController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'incentivesController()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    initialize(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'initialize(address,address)'(_stakingToken: string, _rewardToken: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    lastTimeRewardApplicable(_rewardsToken: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'lastTimeRewardApplicable(address)'(_rewardsToken: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lock(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'lock(uint256,address)'(amount: BigNumberish, onBehalfOf: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    lockDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'lockDuration()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lockedBalances(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'lockedBalances(address)'(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lockedSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'lockedSupply()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lpPoolAddr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'lpPoolAddr()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mint(user: string, amount: BigNumberish, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'mint(address,uint256)'(user: string, amount: BigNumberish, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'owner()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'pause()'(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'paused()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    publicExit(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'publicExit()'(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    publicExitAreSet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'publicExitAreSet()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'renounceOwnership()'(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    rewardData(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'rewardData(address)'(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewardLookback(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'rewardLookback()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'rewardToken()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewardTokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'rewardTokens(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewards(arg0: string, arg1: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'rewards(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    rewardsDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'rewardsDuration()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setIncentivesController(_controller: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'setIncentivesController(address)'(_controller: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setMinters(_minters: string[], overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'setMinters(address[])'(_minters: string[], overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setTeamRewardFee(fee: BigNumberish, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'setTeamRewardFee(uint256)'(fee: BigNumberish, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setTeamRewardVault(vault: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'setTeamRewardVault(address)'(vault: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setTreasury(_treasury: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'setTreasury(address)'(_treasury: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    stakingToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'stakingToken()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    teamRewardFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'teamRewardFee()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    teamRewardVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'teamRewardVault()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transferOwnership(newOwner: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'transferOwnership(address)'(newOwner: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    treasury(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'treasury()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    unpause(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'unpause()'(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    userRewardPerTokenPaid(arg0: string, arg1: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'userRewardPerTokenPaid(address,address)'(arg0: string, arg1: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    vestingDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'vestingDuration()'(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    withdraw(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'withdraw()'(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    withdrawExpiredLocks(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    'withdrawExpiredLocks()'(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    withdrawableBalance(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    'withdrawableBalance(address)'(user: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+  };
+}

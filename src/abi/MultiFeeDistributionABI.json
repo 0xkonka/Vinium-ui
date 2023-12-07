@@ -3,8 +3,7 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "penaltyAmount", "type": "uint256" }
+      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "ExitedEarly",
     "type": "event"
@@ -143,7 +142,14 @@
     "inputs": [{ "internalType": "address", "name": "onBehalfOf", "type": "address" }],
     "name": "exitEarly",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "exitEarlyTax",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -349,6 +355,13 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "address", "name": "_twapOracleAddr", "type": "address" }],
+    "name": "setTwapPriceOracle",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "stakingToken",
     "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
@@ -383,6 +396,13 @@
     "stateMutability": "view",
     "type": "function"
   },
+  {
+    "inputs": [],
+    "name": "twapOracleAddr",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
   { "inputs": [], "name": "unpause", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
     "inputs": [
@@ -401,16 +421,22 @@
     "stateMutability": "view",
     "type": "function"
   },
+  {
+    "inputs": [],
+    "name": "weth",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
   { "inputs": [], "name": "withdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   { "inputs": [], "name": "withdrawExpiredLocks", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
   {
     "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
     "name": "withdrawableBalance",
     "outputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" },
-      { "internalType": "uint256", "name": "penaltyAmount", "type": "uint256" },
-      { "internalType": "uint256", "name": "treausryAmount", "type": "uint256" },
-      { "internalType": "uint256", "name": "amountWithoutPenalty", "type": "uint256" }
+      { "internalType": "uint256", "name": "earned", "type": "uint256" },
+      { "internalType": "uint256", "name": "amountWithoutPenalty", "type": "uint256" },
+      { "internalType": "uint256", "name": "penaltyETHAmount", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"

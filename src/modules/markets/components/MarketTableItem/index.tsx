@@ -10,7 +10,7 @@ import LiquidityMiningCard from '../../../../components/liquidityMining/Liquidit
 import { getAssetInfo, TokenIcon } from '../../../../helpers/config/assets-config';
 
 import staticStyles from './style';
-import { ChefIncentiveHumanized } from '../../../../libs/emission-reward-provider/hooks/use-chef-incentive-controller';
+import { ChefIncentiveHumanized, useChefIncentiveData } from '../../../../libs/vinium-protocol-js/hooks/use-chef-incentive-controller';
 import { Box, Button, Typography } from '@mui/material';
 import { ethers, providers } from 'ethers';
 import { useTxBuilderContext } from '../../../../libs/tx-provider';
@@ -71,6 +71,7 @@ export default function MarketTableItem({
   const history = useHistory();
   const { currentAccount, currentProviderName } = useUserWalletDataContext();
   const { chefIncentiveController } = useTxBuilderContext();
+  const { refresh: refreshIncentive } = useChefIncentiveData();
   const { currentTheme } = useThemeContext();
 
   const { chainId } = useWeb3React<providers.Web3Provider>();
@@ -104,10 +105,10 @@ export default function MarketTableItem({
     try {
       const tx = await chefIncentiveController.claim(currentAccount, viniumIncentive.rewardTokens);
       await tx.wait();
+      await refreshIncentive();
     } catch (e) {
       console.log(e);
     }
-
     setLoading(false);
   };
 

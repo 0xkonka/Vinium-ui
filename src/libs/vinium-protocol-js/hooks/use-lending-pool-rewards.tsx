@@ -2,9 +2,7 @@ import { useCallback } from 'react';
 import { valueToBigNumber } from '@aave/protocol-js';
 import { ComputedUserReserve } from '@aave/math-utils';
 import BigNumber from 'bignumber.js';
-
 import { ComputedReserveData, useStaticPoolDataContext } from '../../pool-data-provider';
-// import { useViniumPrices } from 'libs/aave-protocol-js/hooks/use-vinium-prices';
 import { BN_ONE, calculateLoopingAPR } from '../../../helpers/leverage';
 
 const useViniumLendingPoolRewards = () => {
