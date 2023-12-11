@@ -121,20 +121,20 @@ export function StaticPoolDataProvider({ children, loader, errorPage }: StaticPo
         reserve,
       };
       userReserves.push(reserveWithBase);
-      if (reserve.symbol.toUpperCase() === `W${networkConfig.baseAsset}`) {
-        const userReserveFixed: UserReserveDataExtended = {
-          ...userReserve,
-          underlyingAsset: API_ETH_MOCK_ADDRESS.toLowerCase(),
-          reserve: {
-            ...reserve,
-            symbol: networkConfig.baseAsset,
-            underlyingAsset: API_ETH_MOCK_ADDRESS.toLowerCase(),
-          },
-        };
-        userReservesWithFixedUnderlying.push(userReserveFixed);
-      } else {
-        userReservesWithFixedUnderlying.push(reserveWithBase);
-      }
+      // if (reserve.symbol.toUpperCase() === `W${networkConfig.baseAsset}`) {
+      //   const userReserveFixed: UserReserveDataExtended = {
+      //     ...userReserve,
+      //     underlyingAsset: API_ETH_MOCK_ADDRESS.toLowerCase(),
+      //     reserve: {
+      //       ...reserve,
+      //       symbol: networkConfig.baseAsset,
+      //       underlyingAsset: API_ETH_MOCK_ADDRESS.toLowerCase(),
+      //     },
+      //   };
+      //   userReservesWithFixedUnderlying.push(userReserveFixed);
+      // } else {
+      userReservesWithFixedUnderlying.push(reserveWithBase);
+      // }
     }
   });
 
