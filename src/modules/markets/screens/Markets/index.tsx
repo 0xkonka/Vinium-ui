@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { valueToBigNumber } from '@aave/protocol-js';
 import { useThemeContext } from '@aave/aave-ui-kit';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useDynamicPoolDataContext, useStaticPoolDataContext } from '../../../../libs/pool-data-provider';
 import toggleLocalStorageClick from '../../../../helpers/toggle-local-storage-click';
@@ -18,6 +19,7 @@ import messages from './messages';
 import staticStyles from './style';
 import { useIncentivesDataContext } from '../../../../libs/pool-data-provider/hooks/use-incentives-data-context';
 import { useChefIncentiveData } from '../../../../libs/vinium-protocol-js/hooks/use-chef-incentive-controller';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 
 export default function Markets() {
   const intl = useIntl();
@@ -28,6 +30,16 @@ export default function Markets() {
   const [isPriceInUSD, setIsPriceInUSD] = useState(localStorage.getItem('marketsIsPriceInUSD') === 'true');
 
   const { data: incentiveData } = useChefIncentiveData();
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const [sortName, setSortName] = useState('');
   const [sortDesc, setSortDesc] = useState(false);
@@ -111,6 +123,33 @@ export default function Markets() {
           onToggle={() => toggleLocalStorageClick(isPriceInUSD, setIsPriceInUSD, 'marketsIsPriceInUSD')}
         />
       </div>
+
+      <div>
+        <Button variant="outlined" onClick={handleClickOpen}>
+          Cross Chain Deposit
+        </Button>
+      </div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Deposit</DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent>
+          {/* <DialogContentText>
+            To subscribe to this website, please enter your email address here. We will send updates occasionally.
+          </DialogContentText> */}
+        </DialogContent>
+        <DialogActions>{/* <Button onClick={handleClose}>Cancel</Button> */}</DialogActions>
+      </Dialog>
 
       <MarketTable sortName={sortName} setSortName={setSortName} sortDesc={sortDesc} setSortDesc={setSortDesc}>
         {sortedData.map((item, index) => (

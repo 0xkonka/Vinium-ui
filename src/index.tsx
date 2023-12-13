@@ -3,6 +3,7 @@ import '@aave/aave-ui-kit/dist/aave-ui-kit.cjs.development.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import Modal from 'react-modal';
 import { Web3ReactProvider } from '@web3-react/core';
@@ -31,10 +32,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import globalStyle from './globalStyle';
 import { WalletBalanceProvider } from './libs/wallet-balance-provider/WalletBalanceProvider';
 import { IPFS_MODE } from './helpers/config/misc-config';
-import {
-  getDefaultChainId,
-  getSupportedChainIds,
-} from './helpers/config/markets-and-network-config';
+import { getDefaultChainId, getSupportedChainIds } from './helpers/config/markets-and-network-config';
 import { UnlockWalletPreloader } from './components/UnlockWalletPreloader';
 import ConnectWalletModal from './components/ConnectWalletModal';
 import { PermissionProvider } from './libs/use-permissions/usePermissions';
@@ -62,6 +60,10 @@ function getWeb3Library(provider: any): ethers.providers.Web3Provider {
 
 const Router = ({ children }: React.PropsWithChildren<{}>) =>
   IPFS_MODE ? <HashRouter>{children}</HashRouter> : <BrowserRouter>{children}</BrowserRouter>;
+
+// const container = document.getElementById('root');
+// if (!container) throw new Error('Failed to find the root element');
+// const root = createRoot(container);
 
 ReactDOM.render(
   <div className="Main">

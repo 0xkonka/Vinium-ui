@@ -13,6 +13,7 @@ import Manage from './manage';
 import Loop from './loop';
 import Sdai from './sdai';
 import Frax from './frax';
+import LifiBridge from './lifi-bridge';
 import Bridge from './bridge';
 import AssetSwap from './asset-swap';
 
@@ -32,6 +33,7 @@ export {
   Loop,
   Sdai,
   Frax,
+  LifiBridge,
   Bridge,
   AssetSwap,
 };

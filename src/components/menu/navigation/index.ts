@@ -54,11 +54,15 @@ const navigation: Navigation[] = [
     title: messages.frax,
   },
   {
-    link: 'https://vinium-bridge.vercel.app/',
+    link: '/bridge',
     title: messages.bridge,
-    absolute: true,
-    newTab: true,
   },
+  // {
+  //   link: 'https://vinium-bridge.vercel.app/',
+  //   title: messages.bridge,
+  //   absolute: true,
+  //   newTab: true,
+  // },
   {
     link: '/vinium-bridge',
     title: messages.viniumBridge,
@@ -74,11 +78,11 @@ const navigation: Navigation[] = [
     absolute: true,
     newTab: true,
   },
-  {
-    link: '/asset-swap',
-    title: messages.swap,
-    isVisible: isFeatureEnabled.liquiditySwap,
-  },
+  // {
+  //   link: '/asset-swap',
+  //   title: messages.swap,
+  //   isVisible: isFeatureEnabled.liquiditySwap,
+  // },
 ];
 
 export const moreNavigation: Navigation[] = [...moreMenuItems, ...moreMenuExtraItems];

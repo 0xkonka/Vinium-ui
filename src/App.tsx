@@ -25,6 +25,7 @@ import {
   Loop,
   Sdai,
   Frax,
+  LifiBridge,
   Bridge,
   AssetSwap,
 } from './modules';
@@ -82,6 +83,7 @@ function ModulesWithMenu() {
         <Route path="/sdai" component={Sdai} key="Sdai" />
         <Route path="/frax" component={Frax} key="Frax" />
 
+        <Route path="/bridge" component={LifiBridge} key="LifiBridge" />
         <Route path="/vinium-bridge" component={Bridge} key="Vinium-Bridge" />
 
         {/* <Route path="/asset-swap" component={AssetSwap} key="AssetSwap" /> */}
