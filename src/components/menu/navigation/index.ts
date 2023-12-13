@@ -53,16 +53,16 @@ const navigation: Navigation[] = [
     link: '/frax',
     title: messages.frax,
   },
-  {
-    link: '/bridge',
-    title: messages.bridge,
-  },
   // {
-  //   link: 'https://vinium-bridge.vercel.app/',
+  //   link: '/bridge',
   //   title: messages.bridge,
-  //   absolute: true,
-  //   newTab: true,
   // },
+  {
+    link: 'https://vinium-bridge.vercel.app/',
+    title: messages.bridge,
+    absolute: true,
+    newTab: true,
+  },
   {
     link: '/vinium-bridge',
     title: messages.viniumBridge,
