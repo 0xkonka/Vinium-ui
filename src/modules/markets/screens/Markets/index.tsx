@@ -13,11 +13,12 @@ import MarketTableItem from '../../components/MarketTableItem';
 import TotalMarketsSize from '../../components/TotalMarketsSize';
 import LabeledSwitcher from '../../../../components/basic/LabeledSwitcher';
 import MarketMobileCard from '../../components/MarketMobileCard';
-
 import messages from './messages';
 import staticStyles from './style';
 import { useIncentivesDataContext } from '../../../../libs/pool-data-provider/hooks/use-incentives-data-context';
 import { useChefIncentiveData } from '../../../../libs/vinium-protocol-js/hooks/use-chef-incentive-controller';
+
+import CrossDepositButton from '../../components/CrossDepositButton';
 
 export default function Markets() {
   const intl = useIntl();
@@ -111,6 +112,8 @@ export default function Markets() {
           onToggle={() => toggleLocalStorageClick(isPriceInUSD, setIsPriceInUSD, 'marketsIsPriceInUSD')}
         />
       </div>
+
+      {reserves.length > 0 && <CrossDepositButton reserves={reserves} />}
 
       <MarketTable sortName={sortName} setSortName={setSortName} sortDesc={sortDesc} setSortDesc={setSortDesc}>
         {sortedData.map((item, index) => (

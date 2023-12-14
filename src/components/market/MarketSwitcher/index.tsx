@@ -8,12 +8,8 @@ import GradientText from '../../basic/GradientText';
 
 import messages from './messages';
 import staticStyles from './style';
-import {
-  availableMarkets,
-  marketsData,
-  getNetworkConfig,
-  CustomMarket,
-} from '../../../helpers/config/markets-and-network-config';
+import { availableMarkets, marketsData, getNetworkConfig, CustomMarket } from '../../../helpers/config/markets-and-network-config';
+import { Typography } from '@mui/material';
 
 interface MarketSwitcherProps {
   toTop?: boolean;
@@ -24,13 +20,10 @@ interface MarketSwitcherProps {
 export default function MarketSwitcher({ toTop, className, textButton }: MarketSwitcherProps) {
   const intl = useIntl();
   const { currentTheme, sm } = useThemeContext();
-  const { currentMarket, setCurrentMarket, currentMarketData, networkConfig } =
-    useProtocolDataContext();
+  const { currentMarket, setCurrentMarket, currentMarketData, networkConfig } = useProtocolDataContext();
 
   const [visible, setVisible] = useState(false);
-  const [isFirstMarketButtonClick, setFirstMarketClick] = useState(
-    !localStorage.getItem('firstMarketButtonClick')
-  );
+  const [isFirstMarketButtonClick, setFirstMarketClick] = useState(!localStorage.getItem('firstMarketButtonClick'));
   const firstMarketButtonClick = () => {
     setFirstMarketClick(false);
     localStorage.setItem('firstMarketButtonClick', 'false');
@@ -49,11 +42,7 @@ export default function MarketSwitcher({ toTop, className, textButton }: MarketS
   };
 
   const transparentDarkColor = rgba(`${currentTheme.darkBlue.rgb}, 0.05`);
-  const selectedMarketTestnetMark = networkConfig.isFork
-    ? 'F'
-    : networkConfig.isTestnet
-    ? networkConfig.name.charAt(0).toUpperCase()
-    : undefined;
+  const selectedMarketTestnetMark = networkConfig.isFork ? 'F' : networkConfig.isTestnet ? networkConfig.name.charAt(0).toUpperCase() : undefined;
 
   return (
     <DropdownWrapper
@@ -77,51 +66,33 @@ export default function MarketSwitcher({ toTop, className, textButton }: MarketS
             type="button"
           >
             <div className="MarketSwitcher__button-content">
+              <img className="MarketSwitcher__button-subLogo" src={currentMarketData.logo} alt="" />
               <div className="MarketSwitcher__button-text">
-                <div
+                {/* <div
                   className={classNames('MarketSwitcher__buttonLogo-inner', {
                     MarketSwitcher__buttonLogoInnerWithSubLogo: !!currentMarketData.subLogo,
                   })}
                 >
-                  <img
-                    src={
-                      !!currentMarketData.activeLogo
-                        ? currentMarketData.activeLogo
-                        : currentMarketData.logo
-                    }
-                    alt=""
-                  />
-                </div>
+                  <img src={!!currentMarketData.activeLogo ? currentMarketData.activeLogo : currentMarketData.logo} alt="" />
+                </div> */}
 
-                <p>{intl.formatMessage(messages.market)}</p>
+                {/* <p>{intl.formatMessage(messages.market)}</p> */}
+                <Typography variant="subtitle1" sx={{ color: 'white' }}>
+                  {currentMarketData.name}
+                </Typography>
               </div>
-
-              {!!currentMarketData.subLogo && (
-                <img
-                  className="MarketSwitcher__button-subLogo"
-                  src={currentMarketData.subLogo}
-                  alt=""
-                />
-              )}
             </div>
 
-            {selectedMarketTestnetMark && (
-              <span className="MarketSwitcher__kovan">{selectedMarketTestnetMark}</span>
-            )}
+            {selectedMarketTestnetMark && <span className="MarketSwitcher__kovan">{selectedMarketTestnetMark}</span>}
           </button>
         )
       }
     >
       <div className="MarketSwitcher__content">
-        <p className="MarketSwitcher__title">{intl.formatMessage(messages.changeMarket)}</p>
         {availableMarkets.map((market) => {
           const marketData = marketsData[market];
           const config = getNetworkConfig(marketData.chainId);
-          const testnetMark = config.isFork
-            ? 'F'
-            : config.isTestnet
-            ? config.name.charAt(0).toUpperCase()
-            : undefined;
+          const testnetMark = config.isFork ? 'F' : config.isTestnet ? config.name.charAt(0).toUpperCase() : undefined;
           return (
             <button
               onClick={() => handleSetCurrentMarket(market)}
@@ -133,22 +104,22 @@ export default function MarketSwitcher({ toTop, className, textButton }: MarketS
               key={market}
             >
               <div className="MarketSwitcher__market-content">
+                <img className="MarketSwitcher__button-subLogo" src={marketData.logo} alt="" />
                 <div className="MarketSwitcher__market-inner">
-                  <div className="MarketSwitcher__logo-inner">
+                  {/* <div className="MarketSwitcher__logo-inner">
                     <img src={marketData.logo} alt={market} />
-                  </div>
+                  </div> */}
 
-                  <GradientText
+                  <Typography variant="subtitle1" sx={{ color: 'white' }}>
+                    {marketData.name}
+                  </Typography>
+                  {/* <GradientText
                     className="MarketSwitcher__marketText"
-                    colorStart={currentTheme.secondary.rgb}
-                    colorEnd={currentTheme.primary.rgb}
-                    title={intl.formatMessage(messages.market)}
-                  />
+                    colorStart={currentTheme.white.rgb}
+                    colorEnd={currentTheme.white.rgb}
+                    title={marketData.name}
+                  /> */}
                 </div>
-
-                {!!marketData.subLogo && (
-                  <img className="MarketSwitcher__subLogo" src={marketData.subLogo} alt="" />
-                )}
               </div>
 
               {testnetMark && <span className="MarketSwitcher__kovan">{testnetMark}</span>}

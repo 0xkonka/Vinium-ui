@@ -8,6 +8,10 @@ import polygon from './polygon.svg';
 import arbitrium from './arbitrium.svg';
 import avalanche from './avalanche.svg';
 
+import ethereumLogo from './ethereum.png';
+import polygonLogo from './polygon.png';
+import avalancheLogo from './avalanche.png';
+
 export {
   aaveLogo,
   aaveActiveLogo,
@@ -18,4 +22,7 @@ export {
   aavev2ActiveLogo,
   arbitrium,
   avalanche,
+  ethereumLogo,
+  polygonLogo,
+  avalancheLogo,
 };
