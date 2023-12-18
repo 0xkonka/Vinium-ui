@@ -6,8 +6,6 @@ import { useProtocolDataContext } from '../../protocol-data-provider';
 import { formatEther, formatUnits } from 'ethers/lib/utils';
 import { getContract } from '../../utils';
 import ChefIncentivesControllerABI from '../../../abi/ChefIncentivesControllerABI.json';
-import { useWeb3React } from '@web3-react/core';
-import { providers } from 'ethers';
 
 // interval in which the rpc data is refreshed
 // const POLLING_INTERVAL = 3000 * 1000;
@@ -40,7 +38,6 @@ export function usePoolData(
 ): PoolDataResponse {
   const currentAccount: string | undefined = userAddress ? userAddress.toLowerCase() : undefined;
   const { currentMarketData } = useProtocolDataContext();
-  const { library } = useWeb3React<providers.Web3Provider>();
   const [loadingReserves, setLoadingReserves] = useState<boolean>(false);
   const [errorReserves, setErrorReserves] = useState<boolean>(false);
   const [loadingUserReserves, setLoadingUserReserves] = useState<boolean>(false);
@@ -58,12 +55,12 @@ export function usePoolData(
       provider,
     });
 
-    if (!provider || !library) return;
+    if (!provider) return;
 
     try {
       setLoadingReserves(true);
       if (incentiveControllerAddress) {
-        const chefIncentiveController = getContract(incentiveControllerAddress, ChefIncentivesControllerABI, library!);
+        const chefIncentiveController = getContract(incentiveControllerAddress, ChefIncentivesControllerABI, provider!);
         // const chefIncentiveController = ChefIncentivesControllerFactory.connect(incentiveControllerAddress, provider);
         const [totalApsValue, globalRewardsPerSecValue, reservesResponse]: [any, any, ReservesDataHumanized] = await Promise.all([
           chefIncentiveController.totalAllocPoint(),
@@ -88,7 +85,6 @@ export function usePoolData(
           reserve.rewardEligableDeposits = formatUnits(aTokenPoolInfo.totalSupply, reserve.decimals);
           reserve.rewardEligableBorrows = formatUnits(debtTokenPoolInfo.totalSupply, reserve.decimals);
         }
-
         setReserves(reservesResponse);
       } else {
         const reservesResponse = await poolDataProviderContract.getReservesHumanized(lendingPoolAddressProvider);
@@ -112,7 +108,7 @@ export function usePoolData(
       provider,
     });
 
-    if (!provider) return;
+    if (!provider || !currentAccount) return;
 
     try {
       setLoadingUserReserves(true);

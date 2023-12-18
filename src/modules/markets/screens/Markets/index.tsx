@@ -114,8 +114,12 @@ export default function Markets() {
         />
       </div>
 
-      {reserves.length > 0 && <CrossDepositButton reserves={reserves} />}
-      {reserves.length > 0 && user && <CrossWithdrawButton user={user} reserves={reserves} />}
+      {reserves.length > 0 && user && user?.userReservesData.length! > 0 && (
+        <>
+          <CrossDepositButton reserves={reserves} />
+          <CrossWithdrawButton user={user} reserves={reserves} />
+        </>
+      )}
 
       <MarketTable sortName={sortName} setSortName={setSortName} sortDesc={sortDesc} setSortDesc={setSortDesc}>
         {sortedData.map((item, index) => (
