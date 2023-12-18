@@ -19,12 +19,13 @@ import { useIncentivesDataContext } from '../../../../libs/pool-data-provider/ho
 import { useChefIncentiveData } from '../../../../libs/vinium-protocol-js/hooks/use-chef-incentive-controller';
 
 import CrossDepositButton from '../../components/CrossDepositButton';
+import CrossWithdrawButton from '../../components/CrossWithdrawButton';
 
 export default function Markets() {
   const intl = useIntl();
   const { currentTheme } = useThemeContext();
   const { marketRefPriceInUsd } = useStaticPoolDataContext();
-  const { reserves } = useDynamicPoolDataContext();
+  const { user, reserves } = useDynamicPoolDataContext();
   const { reserveIncentives } = useIncentivesDataContext();
   const [isPriceInUSD, setIsPriceInUSD] = useState(localStorage.getItem('marketsIsPriceInUSD') === 'true');
 
@@ -114,6 +115,7 @@ export default function Markets() {
       </div>
 
       {reserves.length > 0 && <CrossDepositButton reserves={reserves} />}
+      {reserves.length > 0 && user && <CrossWithdrawButton user={user} reserves={reserves} />}
 
       <MarketTable sortName={sortName} setSortName={setSortName} sortDesc={sortDesc} setSortDesc={setSortDesc}>
         {sortedData.map((item, index) => (

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -72,14 +72,14 @@ const CrossDepositButton = ({ reserves }: { reserves: ComputedReserveData[] }) =
     });
   }
 
-  const handleGetTransactions = async () => {
-    return lendingPool.deposit({
+  const handleGetTransactions = useCallback(async () => {
+    return await lendingPool.deposit({
       user: currentAccount,
       reserve: reserves[+assetId].underlyingAsset,
       amount: depositBal.toString(),
       referralCode: getReferralCode(),
     });
-  };
+  }, [assetId, currentAccount, reserves, lendingPool, depositBal]);
 
   if (!walletBal) return <div />;
 
@@ -178,7 +178,7 @@ const CrossDepositButton = ({ reserves }: { reserves: ComputedReserveData[] }) =
               boxTitle={intl.formatMessage(defaultMessages.deposit)}
               boxDescription={intl.formatMessage(messages.boxDescription)}
               approveDescription={intl.formatMessage(messages.approveDescription)}
-              getTransactionsData={handleGetTransactions}
+              getTransactionsData={() => handleGetTransactions()}
               blockingError={blockingError}
               aTokenData={aTokenData}
             ></PoolTxConfirmationView>
